@@ -75,8 +75,7 @@ li {
 
   font-weight: bold;
   font-style: normal;
-  font-size: 130px;
-  /* border: #fff solid 10px; */
+  font-size: 80px;
   min-height: 100vh;
   border-bottom: #bcbcbc 1px solid;
 }
