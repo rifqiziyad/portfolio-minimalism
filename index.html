@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIFQI ZIYADI MTINAN — Web Developer &amp; Creative Technologist</title>
+  <meta name="description"
+    content="Personal portfolio of Rifqi Ziyadi Mtinan. Visceral aesthetic, technical precision, and modern brutalist web engineering.">
+  <meta name="keywords"
+    content="Rifqi Ziyadi Mtinan, Web Developer, Creative Technologist, Frontend, Brutalism, Portfolio">
+
+  <!-- Favicon icon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+  <!-- Google Fonts: Syne (Headline) + Inter (Body) + Space Grotesk (Labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Glowing Orange Cursor Blob -->
+  <div id="cursor-blob" aria-hidden="true"></div>
+  <div id="cursor-glow" aria-hidden="true"></div>
+  <div id="cursor-dot" aria-hidden="true"></div>
+
+  <!-- Noise Overlay for Rich Brutalist Texture -->
+  <div class="noise-overlay" aria-hidden="true"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="site-header" id="header">
+    <div class="nav-container">
+      <a href="#hero" class="nav-brand" aria-label="Home">
+        <span class="brand-name">RIFQI</span>
+        <span class="brand-badge">©26</span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="#works" class="nav-link">WORK</a></li>
+          <li class="nav-item"><a href="#vision" class="nav-link">STUDIO</a></li>
+          <li class="nav-item"><a href="#skills" class="nav-link">SKILLS</a></li>
+          <li class="nav-item"><a href="#contact" class="nav-link">CONTACT</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-right">
+        <span class="status-indicator">
+          <span class="status-dot"></span>
+          AVAILABLE FOR 2026
+        </span>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══════════════════════════════════════ -->
+    <!-- HERO SECTION                            -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- <section class="section section-hero" id="hero">
+      <div class="bg-outline-text bg-text-hero" data-parallax="0.25" aria-hidden="true">DEVELOPER</div>
+
+      <div class="container hero-container">
+        <div class="hero-content">
+          <div class="hero-top-meta reveal reveal-fade">
+            <span class="mono-tag">// PORTFOLIO @2026</span>
+            <span class="mono-tag">BASED IN INDONESIA</span>
+          </div>
+
+          <h1 class="hero-title reveal reveal-up">
+            I BUILD DIGITAL ARTIFACTS THAT SHATTER THE NOISE.
+          </h1>
+
+          <div class="hero-bottom-grid">
+            <p class="hero-description reveal reveal-up delay-1">
+              Visceral aesthetic. Technical precision. Operating at the intersection of modern high-performance web
+              engineering and brutalist digital architecture.
+            </p>
+
+            <div class="hero-actions reveal reveal-up delay-2">
+              <a href="#works" class="btn-brutal">
+                <span>EXPLORE ARCHIVE</span>
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7.5 2V13M7.5 13L2.5 8M7.5 13L12.5 8" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator" aria-hidden="true">
+        <span class="scroll-text">SCROLL</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section> -->
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- TRANSITION / MARQUEE BANNER             -->
+    <!-- ═══════════════════════════════════════ -->
+    <!-- <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-track">
+        <span>MINIMALISM</span>
+        <span class="separator">◆</span>
+        <span>BRUTALISM</span>
+        <span class="separator">◆</span>
+        <span>HIGH PERFORMANCE</span>
+        <span class="separator">◆</span>
+        <span>CREATIVE CODE</span>
+        <span class="separator">◆</span>
+        <span>ARCHITECTURAL UX</span>
+        <span class="separator">◆</span>
+        <span>MINIMALISM</span>
+        <span class="separator">◆</span>
+        <span>BRUTALISM</span>
+        <span class="separator">◆</span>
+        <span>HIGH PERFORMANCE</span>
+        <span class="separator">◆</span>
+        <span>CREATIVE CODE</span>
+        <span class="separator">◆</span>
+      </div>
+    </div> -->
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- VISION / EDITORIAL SECTION              -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-vision" id="vision">
+      <div class="bg-outline-text bg-text-vision" data-parallax="0.15" aria-hidden="true">FORM</div>
+
+      <div class="container vision-container">
+        <div class="vision-wrapper">
+          <!-- Overlapping Large Text (Layer in front of photo) -->
+          <div class="vision-text-layer vision-layer-top" id="visionLayerTop" aria-hidden="true">
+            <span class="vision-giant-title" id="visionTitle"><span class="vision-title-inner"
+                id="visionTitleInner">VISION</span></span>
+          </div>
+
+          <!-- Central Portrait Photo (Scroll Parallax on Wrapper, Intro Animation on Box) -->
+          <div class="vision-image-wrapper" id="visionImageWrapper">
+            <div class="vision-image-box" id="visionImageBox">
+              <div class="image-inner">
+                <img src="assets/profile.jpg" alt="Rifqi Ziyadi Mtinan" class="profile-img" id="visionProfileImg"
+                  loading="lazy">
+                <div class="image-overlay-scanline"></div>
+              </div>
+              <div class="image-caption">
+                <span>RIFQI Z. MTINAN</span>
+                <span>WEB DEVELOPER / CREATIVE TECH</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Outlined Subtitle (Layer in front of photo) -->
+          <div class="vision-text-layer vision-layer-bottom" id="visionLayerBottom" aria-hidden="true">
+            <span class="vision-giant-outline" id="visionSystem"><span class="vision-system-inner"
+                id="visionSystemInner">SYSTEM</span></span>
+          </div>
+        </div>
+
+        <div class="vision-manifesto reveal reveal-up">
+          <div class="manifesto-grid">
+            <div class="manifesto-col">
+              <span class="section-badge">[ PHILOSOPHY ]</span>
+              <h2 class="manifesto-heading">FUNCTION IS FORM. CODE IS CRAFT.</h2>
+            </div>
+            <div class="manifesto-col">
+              <p class="manifesto-text">
+                Every project is approached as a bespoke digital structure. By stripping away frivolous decoration and
+                prioritizing typographic scale, deliberate contrast, and tactile responsiveness, we build interfaces
+                that command immediate focus and respect.
+              </p>
+              <div class="stats-row">
+                <div class="stat-item">
+                  <span class="stat-num" data-count="3">03+</span>
+                  <span class="stat-label">YEARS EXPERIENCE</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num" data-count="24">24+</span>
+                  <span class="stat-label">PROJECTS SHIPPED</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-num">99.9%</span>
+                  <span class="stat-label">PERFORMANCE SCORE</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- WORKS / ARCHIVE SECTION                 -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-works" id="works">
+      <div class="bg-outline-text bg-text-works" data-parallax="0.2" aria-hidden="true">ARCHIVE</div>
+
+      <div class="container works-container">
+        <div class="section-header reveal reveal-fade">
+          <div class="section-title-wrap">
+            <span class="section-badge">// SELECTED WORKS</span>
+            <h2 class="section-main-title">THE ARCHIVE</h2>
+          </div>
+          <span class="works-counter">04 WORKS RECORDED</span>
+        </div>
+
+        <!-- Project 001: Text Left, Image Right -->
+        <article class="project-item project-layout-normal" id="project-noir">
+          <div class="project-info reveal reveal-left">
+            <div class="project-meta">
+              <span class="project-num">001 / FASHION</span>
+              <span class="project-tag">WEB APPLICATION</span>
+            </div>
+            <h3 class="project-title">NOIR</h3>
+            <p class="project-desc">
+              A deep-dive into monochromatic textures and high-contrast digital layouts for an avant-garde couture
+              house. Features custom interactive canvas filters, smooth audio reactive cues, and instantaneous
+              navigation.
+            </p>
+            <div class="project-details">
+              <div class="detail-row">
+                <span class="detail-label">YEAR</span>
+                <span class="detail-val">2024</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">STACK</span>
+                <span class="detail-val">HTML5 • CSS3 • WebGL • JS</span>
+              </div>
+            </div>
+            <div class="project-link-wrap">
+              <a href="#contact" class="project-link">
+                <span>VIEW CASE STUDY</span>
+                <span class="arrow">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="project-visual reveal reveal-scale">
+            <div class="project-img-frame">
+              <img src="assets/project-1.jpg" alt="NOIR Fashion Platform" class="project-img" loading="lazy">
+              <div class="project-badge-float">001</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 002: Image Left, Text Right (Reversed) -->
+        <article class="project-item project-layout-reversed" id="project-brute">
+          <div class="project-visual reveal reveal-scale">
+            <div class="project-img-frame">
+              <img src="assets/project-2.jpg" alt="BRUTE Architecture Web" class="project-img" loading="lazy">
+              <div class="project-badge-float">002</div>
+            </div>
+          </div>
+
+          <div class="project-info reveal reveal-right">
+            <div class="project-meta">
+              <span class="project-num">002 / ARCHITECTURE</span>
+              <span class="project-tag">ENGINEERING PLATFORM</span>
+            </div>
+            <h3 class="project-title">BRUTE</h3>
+            <p class="project-desc">
+              Conceptual web experience for a structural engineering firm focused on monolithic concrete structures.
+              Designed with strict typographic ratios, raw borders, and fluid scroll-linked kinetic typography.
+            </p>
+            <div class="project-details">
+              <div class="detail-row">
+                <span class="detail-label">YEAR</span>
+                <span class="detail-val">2024</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">STACK</span>
+                <span class="detail-val">Vanilla JS • CSS Grid • API</span>
+              </div>
+            </div>
+            <div class="project-link-wrap">
+              <a href="#contact" class="project-link">
+                <span>VIEW CASE STUDY</span>
+                <span class="arrow">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 003: Text Left, Image Right -->
+        <article class="project-item project-layout-normal" id="project-prism">
+          <div class="project-info reveal reveal-left">
+            <div class="project-meta">
+              <span class="project-num">003 / CYBERNETICS</span>
+              <span class="project-tag">DATA VISUALIZATION</span>
+            </div>
+            <h3 class="project-title">PRISM</h3>
+            <p class="project-desc">
+              Real-time cybernetic network analytics visualization console. Engineered to handle large streaming
+              datasets with sub-millisecond DOM rendering updates and custom dark UI telemetry matrices.
+            </p>
+            <div class="project-details">
+              <div class="detail-row">
+                <span class="detail-label">YEAR</span>
+                <span class="detail-val">2023</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">STACK</span>
+                <span class="detail-val">Node.js • SVG Charts • WebSocket</span>
+              </div>
+            </div>
+            <div class="project-link-wrap">
+              <a href="#contact" class="project-link">
+                <span>VIEW CASE STUDY</span>
+                <span class="arrow">↗</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="project-visual reveal reveal-scale">
+            <div class="project-img-frame">
+              <img src="assets/project-3.jpg" alt="PRISM Data Visualization" class="project-img" loading="lazy">
+              <div class="project-badge-float">003</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 004: Image Left, Text Right -->
+        <article class="project-item project-layout-reversed" id="project-void">
+          <div class="project-visual reveal reveal-scale">
+            <div class="project-img-frame">
+              <img src="assets/project-4.jpg" alt="VOID Experimental Art" class="project-img" loading="lazy">
+              <div class="project-badge-float">004</div>
+            </div>
+          </div>
+
+          <div class="project-info reveal reveal-right">
+            <div class="project-meta">
+              <span class="project-num">004 / EXPERIMENTAL</span>
+              <span class="project-tag">CREATIVE GALLERY</span>
+            </div>
+            <h3 class="project-title">VOID</h3>
+            <p class="project-desc">
+              An interactive 3D digital sculpture gallery exploring brutalist massing and ambient lighting. Minimalist
+              sound design, seamless scene changes, and an uncompromising dark atmosphere.
+            </p>
+            <div class="project-details">
+              <div class="detail-row">
+                <span class="detail-label">YEAR</span>
+                <span class="detail-val">2023</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">STACK</span>
+                <span class="detail-val">Three.js • Shader GLSL • Vanilla CSS</span>
+              </div>
+            </div>
+            <div class="project-link-wrap">
+              <a href="#contact" class="project-link">
+                <span>VIEW CASE STUDY</span>
+                <span class="arrow">↗</span>
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- SKILLS & CAPABILITIES SECTION           -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-skills" id="skills">
+      <div class="bg-outline-text bg-text-skills" data-parallax="0.18" aria-hidden="true">STACK</div>
+
+      <div class="container skills-container">
+        <div class="section-header reveal reveal-fade">
+          <div class="section-title-wrap">
+            <span class="section-badge">// TECHNICAL MASTERY</span>
+            <h2 class="section-main-title">CAPABILITIES</h2>
+          </div>
+          <span class="works-counter">MODERN TOOLSET</span>
+        </div>
+
+        <div class="skills-table">
+          <div class="skill-row reveal reveal-up">
+            <span class="skill-index">01</span>
+            <div class="skill-main">
+              <h3 class="skill-title">CORE WEB ARCHITECTURE</h3>
+              <p class="skill-desc">HTML5 Semantic Standards, CSS3 Modern Flex/Grid Layouts, Pure Vanilla JavaScript
+                ESNext</p>
+            </div>
+            <div class="skill-tags">
+              <span class="tag">HTML5</span>
+              <span class="tag">CSS3</span>
+              <span class="tag">JavaScript</span>
+            </div>
+            <span class="skill-arrow">→</span>
+          </div>
+
+          <div class="skill-row reveal reveal-up delay-1">
+            <span class="skill-index">02</span>
+            <div class="skill-main">
+              <h3 class="skill-title">FRONTEND FRAMEWORKS &amp; LIBS</h3>
+              <p class="skill-desc">React.js, Next.js App Router, Vue.js, State Management, High-Density Reactive UI</p>
+            </div>
+            <div class="skill-tags">
+              <span class="tag">React</span>
+              <span class="tag">Next.js</span>
+              <span class="tag">TypeScript</span>
+            </div>
+            <span class="skill-arrow">→</span>
+          </div>
+
+          <div class="skill-row reveal reveal-up delay-2">
+            <span class="skill-index">03</span>
+            <div class="skill-main">
+              <h3 class="skill-title">BACKEND &amp; API INTEGRATION</h3>
+              <p class="skill-desc">Node.js, Express, RESTful APIs, PHP, Laravel, PostgreSQL, MySQL Database
+                Architecture</p>
+            </div>
+            <div class="skill-tags">
+              <span class="tag">Node.js</span>
+              <span class="tag">PHP</span>
+              <span class="tag">SQL</span>
+            </div>
+            <span class="skill-arrow">→</span>
+          </div>
+
+          <div class="skill-row reveal reveal-up delay-3">
+            <span class="skill-index">04</span>
+            <div class="skill-main">
+              <h3 class="skill-title">DESIGN &amp; INTERACTIVE CREATIVE</h3>
+              <p class="skill-desc">Figma UI/UX Design, Micro-Interactions, ScrollTrigger Choreography, Performance
+                Optimization</p>
+            </div>
+            <div class="skill-tags">
+              <span class="tag">Figma</span>
+              <span class="tag">Animation</span>
+              <span class="tag">SEO / Core Web Vitals</span>
+            </div>
+            <span class="skill-arrow">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- CONTACT SECTION                         -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-contact" id="contact">
+      <div class="bg-outline-text bg-text-contact" data-parallax="0.2" aria-hidden="true">CONNECT</div>
+
+      <div class="container contact-container">
+        <div class="contact-card reveal reveal-up">
+          <div class="contact-header">
+            <span class="section-badge">[ READY TO INITIATE ]</span>
+            <h2 class="contact-massive-title">
+              LET'S BUILD<br>
+              SOMETHING<br>
+              UNFORGETTABLE.
+            </h2>
+          </div>
+
+          <div class="contact-body">
+            <p class="contact-intro">
+              Have an ambitious project in mind, a vision to realize, or looking to build a high-performance web
+              experience? My inbox is always open.
+            </p>
+
+            <a href="mailto:rifqiziyadimtinan@gmail.com" class="contact-email-cta">
+              <span class="email-text">rifqiziyadimtinan@gmail.com</span>
+              <span class="cta-arrow">↗</span>
+            </a>
+          </div>
+
+          <div class="contact-footer-grid">
+            <div class="social-block">
+              <span class="block-title">NETWORK</span>
+              <ul class="social-links">
+                <li><a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-link">GITHUB
+                    ↗</a></li>
+                <li><a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
+                    class="social-link">LINKEDIN ↗</a></li>
+                <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                    class="social-link">INSTAGRAM ↗</a></li>
+                <li><a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-link">TWITTER / X
+                    ↗</a></li>
+              </ul>
+            </div>
+
+            <div class="location-block">
+              <span class="block-title">LOCATION &amp; TIME</span>
+              <p class="location-info">INDONESIA (WIB / GMT+7)</p>
+              <p class="local-time" id="localTimeDisplay">LOCAL TIME: 00:00:00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SITE FOOTER                             -->
+  <!-- ═══════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="container footer-container">
+      <div class="footer-left">
+        <span class="footer-brand">RIFQI ZIYADI MTINAN</span>
+        <span class="footer-copy">© 2026 ALL RIGHTS RESERVED.</span>
+      </div>
+      <div class="footer-center">
+        <span>CRAFTED WITH PURE HTML • CSS • JS</span>
+      </div>
+      <div class="footer-right">
+        <a href="#hero" class="back-to-top" id="backToTop">
+          <span>BACK TO TOP</span>
+          <span class="arrow">↑</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- GSAP Core & ScrollTrigger Plugin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
