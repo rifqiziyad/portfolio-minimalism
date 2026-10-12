@@ -1,0 +1,213 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" class="cyber-cluster-svg" aria-label="Jagged Crystal Shards Cluster">
+  <defs>
+    <!-- Crisp Bloom Filters -->
+    <filter id="glow-shard-laser" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="blur1" />
+      <feGaussianBlur stdDeviation="1.5" result="blur2" />
+      <feMerge>
+        <feMergeNode in="blur1" />
+        <feMergeNode in="blur2" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glow-shard-core" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="7" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Linear Gradients for Crystal Facets -->
+    <linearGradient id="c-shard-orange-fire" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff7700" stop-opacity="0.9" />
+      <stop offset="60%" stop-color="#ff3300" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#9333ea" stop-opacity="0.85" />
+    </linearGradient>
+
+    <linearGradient id="c-shard-violet-ice" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4c1d95" stop-opacity="0.8" />
+      <stop offset="45%" stop-color="#8b5cf6" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0.9" />
+    </linearGradient>
+
+    <linearGradient id="c-shard-amber-blade" x1="30%" y1="0%" x2="70%" y2="100%">
+      <stop offset="0%" stop-color="#ffcc00" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#ff5500" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.4" />
+    </linearGradient>
+
+    <linearGradient id="c-shard-magenta-deep" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d946ef" stop-opacity="0.85" />
+      <stop offset="60%" stop-color="#a855f7" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#ff3700" stop-opacity="0.8" />
+    </linearGradient>
+
+    <radialGradient id="c-node-star" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+      <stop offset="30%" stop-color="#ff9900" stop-opacity="0.95" />
+      <stop offset="70%" stop-color="#a855f7" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#ff4500" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <style>
+    .crystal-facet {
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      mix-blend-mode: screen;
+      cursor: pointer;
+    }
+    .crystal-facet:hover {
+      fill-opacity: 0.98 !important;
+      stroke-width: 2.4 !important;
+      filter: drop-shadow(0 0 16px rgba(255, 69, 0, 0.85));
+    }
+  </style>
+
+  <g id="crystal-shards-cluster">
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SHARD 1: TALL PRIMARY CRYSTAL OBELISK (Tilted Top-Right 65°)  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="shard-primary">
+      <!-- Front Left Facet -->
+      <polygon class="crystal-facet" points="230,190 340,65 275,225"
+        fill="url(#c-shard-violet-ice)" stroke="#c084fc" stroke-width="1.3" />
+      
+      <!-- Front Right Illuminated Facet -->
+      <polygon class="crystal-facet" points="275,225 340,65 375,215"
+        fill="url(#c-shard-orange-fire)" stroke="#ff7700" stroke-width="1.5" />
+
+      <!-- Apex Chisel Tip Shard -->
+      <polygon class="crystal-facet" points="340,65 375,215 350,140"
+        fill="url(#c-shard-amber-blade)" stroke="#ffffff" stroke-width="1.4" opacity="0.9" />
+
+      <!-- Lower Body Facet Left -->
+      <polygon class="crystal-facet" points="230,190 275,225 295,310"
+        fill="url(#c-shard-magenta-deep)" stroke="#a855f7" stroke-width="1.2" />
+
+      <!-- Lower Body Facet Right -->
+      <polygon class="crystal-facet" points="275,225 375,215 295,310"
+        fill="url(#c-shard-orange-fire)" stroke="#ff4500" stroke-width="1.3" />
+
+      <!-- Sharp Shard Ridge Line -->
+      <line x1="340" y1="65" x2="275" y2="225" stroke="#ffffff" stroke-width="1.6" filter="url(#glow-shard-laser)" />
+      <line x1="275" y1="225" x2="295" y2="310" stroke="#ffaa00" stroke-width="1.4" />
+    </g>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SHARD 2: JAGGED SECONDARY SHARD (Projecting Sharp Left-Up)    -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="shard-secondary">
+      <!-- Upper Blade Facet -->
+      <polygon class="crystal-facet" points="80,145 185,195 165,270"
+        fill="url(#c-shard-amber-blade)" stroke="#ffaa00" stroke-width="1.4" />
+
+      <!-- Lower Shadow Facet -->
+      <polygon class="crystal-facet" points="80,145 165,270 115,315"
+        fill="url(#c-shard-violet-ice)" stroke="#8b5cf6" stroke-width="1.3" />
+
+      <!-- Cleavage Connection to Core -->
+      <polygon class="crystal-facet" points="165,270 230,190 295,310"
+        fill="url(#c-shard-magenta-deep)" stroke="#9333ea" stroke-width="1.2" />
+
+      <polygon class="crystal-facet" points="165,270 115,315 220,335"
+        fill="url(#c-shard-orange-fire)" stroke="#ff4500" stroke-width="1.2" />
+
+      <!-- Shard Ridge Line -->
+      <line x1="80" y1="145" x2="165" y2="270" stroke="#ffdd00" stroke-width="1.5" filter="url(#glow-shard-laser)" />
+    </g>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- SHARD 3: DOWNWARD JAGGED DAGGER SHARD (Projecting Down-Right)  -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="shard-dagger">
+      <!-- Upper Dagger Face -->
+      <polygon class="crystal-facet" points="295,310 380,270 395,420"
+        fill="url(#c-shard-orange-fire)" stroke="#ff5500" stroke-width="1.4" />
+
+      <!-- Lower Dagger Face -->
+      <polygon class="crystal-facet" points="295,310 395,420 280,380"
+        fill="url(#c-shard-violet-ice)" stroke="#a855f7" stroke-width="1.3" />
+
+      <!-- Stepped Cleavage Facet -->
+      <polygon class="crystal-facet" points="220,335 295,310 280,380"
+        fill="url(#c-shard-magenta-deep)" stroke="#c084fc" stroke-width="1.1" />
+
+      <line x1="295" y1="310" x2="395" y2="420" stroke="#ff7700" stroke-width="1.5" filter="url(#glow-shard-laser)" />
+    </g>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- DETACHED FLOATING CRYSTAL SPLINTERS (Pecahan Lepas Melayang)   -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="splinter-fragments">
+      <!-- Splinter Top-Left -->
+      <polygon class="crystal-facet" points="115,75 160,105 130,135"
+        fill="url(#c-shard-amber-blade)" stroke="#ffaa00" stroke-width="1.2" />
+
+      <!-- Splinter Far Right -->
+      <polygon class="crystal-facet" points="415,175 450,210 395,235"
+        fill="url(#c-shard-orange-fire)" stroke="#ff4500" stroke-width="1.2" />
+
+      <!-- Splinter Bottom Left -->
+      <polygon class="crystal-facet" points="150,380 195,425 175,365"
+        fill="url(#c-shard-violet-ice)" stroke="#c084fc" stroke-width="1.2" />
+    </g>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- FRACTURE CLEAVAGE LINES (Garis Retakan Laser Antar Kristal)    -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="fracture-lines" stroke-linecap="round">
+      <line x1="80" y1="145" x2="340" y2="65" stroke="#ff8c00" stroke-width="1.2" stroke-dasharray="3 4" opacity="0.8" />
+      <line x1="340" y1="65" x2="395" y2="420" stroke="#a855f7" stroke-width="1.2" stroke-dasharray="4 5" opacity="0.75" />
+      <line x1="80" y1="145" x2="395" y2="420" stroke="#ffffff" stroke-width="1.1" stroke-dasharray="3 5" opacity="0.65" />
+      <line x1="115" y1="75" x2="80" y2="145" stroke="#ffaa00" stroke-width="1" stroke-dasharray="2 3" opacity="0.7" />
+      <line x1="375" y1="215" x2="415" y2="175" stroke="#ff4500" stroke-width="1" stroke-dasharray="2 3" opacity="0.7" />
+    </g>
+
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <!-- RAZOR-SHARP APEX VERTEX NODES (Point Stars Hanya di Ujung)    -->
+    <!-- ══════════════════════════════════════════════════════════════ -->
+    <g class="apex-star-points">
+      <!-- Tip Shard 1 (Top-Right) -->
+      <g transform="translate(340, 65)">
+        <circle r="14" fill="url(#c-node-star)" filter="url(#glow-shard-core)" />
+        <circle r="3.5" fill="#ffffff" />
+        <circle r="7" fill="none" stroke="#ff4500" stroke-width="1.2" />
+      </g>
+
+      <!-- Tip Shard 2 (Left) -->
+      <g transform="translate(80, 145)">
+        <circle r="14" fill="url(#c-node-star)" filter="url(#glow-shard-core)" />
+        <circle r="3.5" fill="#ffffff" />
+        <circle r="7" fill="none" stroke="#a855f7" stroke-width="1.2" />
+      </g>
+
+      <!-- Tip Shard 3 (Bottom-Right) -->
+      <g transform="translate(395, 420)">
+        <circle r="14" fill="url(#c-node-star)" filter="url(#glow-shard-core)" />
+        <circle r="3.5" fill="#ffffff" />
+        <circle r="7" fill="none" stroke="#ff7700" stroke-width="1.2" />
+      </g>
+
+      <!-- Center Intersection Vertex -->
+      <g transform="translate(275, 225)">
+        <circle r="16" fill="url(#c-node-star)" filter="url(#glow-shard-core)" />
+        <circle r="4" fill="#ffffff" />
+        <circle r="8" fill="none" stroke="#ffffff" stroke-width="1.4" />
+      </g>
+
+      <!-- Left Mid Intersection -->
+      <g transform="translate(165, 270)">
+        <circle r="10" fill="url(#c-node-star)" />
+        <circle r="2.5" fill="#ffffff" />
+      </g>
+
+      <!-- Right Mid Intersection -->
+      <g transform="translate(375, 215)">
+        <circle r="11" fill="url(#c-node-star)" />
+        <circle r="3" fill="#ffffff" />
+      </g>
+    </g>
+  </g>
+</svg>

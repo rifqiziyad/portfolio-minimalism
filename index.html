@@ -45,6 +45,7 @@
       <nav class="nav-menu" id="navMenu">
         <ul class="nav-list">
           <li class="nav-item"><a href="#works" class="nav-link">WORK</a></li>
+          <li class="nav-item"><a href="#timeline" class="nav-link">TIMELINE</a></li>
           <li class="nav-item"><a href="#vision" class="nav-link">STUDIO</a></li>
           <li class="nav-item"><a href="#skills" class="nav-link">SKILLS</a></li>
           <li class="nav-item"><a href="#contact" class="nav-link">CONTACT</a></li>
@@ -368,6 +369,100 @@
             </div>
           </div>
         </article>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- TIMELINE & TRAJECTORY SECTION           -->
+    <!-- ═══════════════════════════════════════ -->
+    <section class="section section-timeline" id="timeline">
+      <div class="bg-outline-text bg-text-timeline" data-parallax="0.18" aria-hidden="true">STREAM</div>
+
+      <div class="container timeline-container">
+        <div class="section-header reveal reveal-fade">
+          <div class="section-title-wrap">
+            <span class="section-badge">// EVOLUTION &amp; TRAJECTORY</span>
+            <h2 class="section-main-title">THE TIMELINE</h2>
+          </div>
+          <span class="works-counter">2022 — 2026</span>
+        </div>
+
+        <div class="timeline-stream-container">
+          <!-- Dynamic SVG Track Overlay: Mathematically anchors to card border docks -->
+          <svg class="timeline-dynamic-track" id="prodTimelineTrackSvg" fill="none">
+            <path id="prodTrackPathGlow" stroke="rgba(255, 69, 0, 0.22)" stroke-width="5" />
+            <path id="prodTrackPath" stroke="rgba(255, 69, 0, 0.75)" stroke-width="2" stroke-dasharray="6 6" />
+          </svg>
+
+          <!-- Milestone 1: Centered Card (2022 Genesis) -->
+          <div class="timeline-card-wrapper" id="timeline-wrap-1">
+            <div class="timeline-card reveal reveal-up" id="prod-card-1">
+              <div class="card-dock dock-top" id="prod-dock-c1-top"><span class="dock-point"></span></div>
+              <div class="card-dock dock-bottom" id="prod-dock-c1-bottom"><span class="dock-point"></span></div>
+
+              <div class="timeline-card-year">
+                <span>2022</span>
+                <span class="timeline-card-tag">// GENESIS</span>
+              </div>
+              <h3 class="timeline-card-heading">CREATIVE CODE EXPLORATION</h3>
+              <p class="timeline-card-text">
+                Architecting modern frontend systems, responsive interfaces, and experimental WebGL shaders. Deep focus on performance and visceral brutalist layout precision.
+              </p>
+            </div>
+          </div>
+
+          <!-- Interval 1: Floats Left in Vertical Gap between Card 1 & Card 2 -->
+          <div class="timeline-interval interval-left" id="prod-interval-1">
+            <div class="interval-illustration" id="prod-art-1">
+              <img src="assets/cluster-apex.svg" alt="Apex Crystal Shards" loading="lazy">
+              <div class="flank-dock" id="prod-dock-int-1"><span class="dock-point"></span></div>
+              <span class="flank-anchor-tag">CRYSTAL_SHARD // 01</span>
+            </div>
+          </div>
+
+          <!-- Milestone 2: Centered Card (2024 Expansion) -->
+          <div class="timeline-card-wrapper" id="timeline-wrap-2">
+            <div class="timeline-card reveal reveal-up" id="prod-card-2">
+              <div class="card-dock dock-left" id="prod-dock-c2-left"><span class="dock-point purple"></span></div>
+              <div class="card-dock dock-bottom" id="prod-dock-c2-bottom"><span class="dock-point purple"></span></div>
+
+              <div class="timeline-card-year">
+                <span>2024</span>
+                <span class="timeline-card-tag">// EXPANSION</span>
+              </div>
+              <h3 class="timeline-card-heading">ADVANCED INTERACTION DESIGN</h3>
+              <p class="timeline-card-text">
+                Pioneering dark brutalist aesthetics, micro-interactions, and GSAP scroll choreographies. Shipped commercial platforms with flawless 60fps rendering and dynamic vector depth.
+              </p>
+            </div>
+          </div>
+
+          <!-- Interval 2: Floats Right in Vertical Gap between Card 2 & Card 3 -->
+          <div class="timeline-interval interval-right" id="prod-interval-2">
+            <div class="interval-illustration" id="prod-art-2">
+              <img src="assets/cluster-gem.svg" alt="Shattered Crystal Prism" loading="lazy">
+              <div class="flank-dock" id="prod-dock-int-2"><span class="dock-point purple"></span></div>
+              <span class="flank-anchor-tag">CRYSTAL_SHARD // 02</span>
+            </div>
+          </div>
+
+          <!-- Milestone 3: Centered Card (2026 Apex) -->
+          <div class="timeline-card-wrapper" id="timeline-wrap-3">
+            <div class="timeline-card reveal reveal-up" id="prod-card-3">
+              <div class="card-dock dock-right" id="prod-dock-c3-right"><span class="dock-point"></span></div>
+              <div class="card-dock dock-bottom" id="prod-dock-c3-bottom"><span class="dock-point"></span></div>
+
+              <div class="timeline-card-year">
+                <span>2026</span>
+                <span class="timeline-card-tag">// APEX</span>
+              </div>
+              <h3 class="timeline-card-heading">HIGH-PERFORMANCE ARCHITECTURE</h3>
+              <p class="timeline-card-text">
+                Leading bespoke digital engineering, high-density reactive user interfaces, and modular component systems for next-generation creative agencies and design systems.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 

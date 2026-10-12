@@ -489,4 +489,118 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // ═════════════════════════════════════════════════════════════
+  // 9. TIMELINE DYNAMIC PERIMETER DOCKING & SCROLL CHOREOGRAPHY
+  // ═════════════════════════════════════════════════════════════
+  function initTimelineChoreography() {
+    const container = document.querySelector('.timeline-stream-container');
+    const svg = document.getElementById('prodTimelineTrackSvg');
+    const path = document.getElementById('prodTrackPath');
+    const pathGlow = document.getElementById('prodTrackPathGlow');
+    if (!container || !svg || !path) return;
+
+    function renderTimelinePath() {
+      const cRect = container.getBoundingClientRect();
+      svg.setAttribute('viewBox', `0 0 ${cRect.width} ${cRect.height}`);
+
+      function getDockPos(id) {
+        const el = document.getElementById(id);
+        if (!el) return { x: cRect.width / 2, y: 0 };
+        const r = el.getBoundingClientRect();
+        return {
+          x: Math.round(r.left + r.width / 2 - cRect.left),
+          y: Math.round(r.top + r.height / 2 - cRect.top)
+        };
+      }
+
+      const p_top = { x: Math.round(cRect.width / 2), y: 15 };
+      const p_c1_top = getDockPos('prod-dock-c1-top');
+      const p_c1_bottom = getDockPos('prod-dock-c1-bottom');
+      const p_int1 = getDockPos('prod-dock-int-1');
+      const p_c2_left = getDockPos('prod-dock-c2-left');
+      const p_c2_bottom = getDockPos('prod-dock-c2-bottom');
+      const p_int2 = getDockPos('prod-dock-int-2');
+      const p_c3_right = getDockPos('prod-dock-c3-right');
+      const p_c3_bottom = getDockPos('prod-dock-c3-bottom');
+      const p_bottom = { x: Math.round(cRect.width / 2), y: Math.round(cRect.height - 15) };
+
+      // Continuous zigzag trajectory: sweeps between center cards and intermediate floating clusters!
+      const d = `M ${p_top.x},${p_top.y}
+                 L ${p_c1_top.x},${p_c1_top.y}
+                 M ${p_c1_bottom.x},${p_c1_bottom.y}
+                 L ${p_int1.x},${p_int1.y}
+                 L ${p_c2_left.x},${p_c2_left.y}
+                 M ${p_c2_bottom.x},${p_c2_bottom.y}
+                 L ${p_int2.x},${p_int2.y}
+                 L ${p_c3_right.x},${p_c3_right.y}
+                 M ${p_c3_bottom.x},${p_c3_bottom.y}
+                 L ${p_bottom.x},${p_bottom.y}`;
+
+      path.setAttribute('d', d);
+      if (pathGlow) {
+        pathGlow.setAttribute('d', d);
+      }
+    }
+
+    renderTimelinePath();
+    window.addEventListener('resize', renderTimelinePath);
+    window.addEventListener('load', renderTimelinePath);
+
+    if (window.ResizeObserver) {
+      new ResizeObserver(renderTimelinePath).observe(container);
+    }
+
+    // GSAP ScrollTrigger Animations for Timeline
+    if (hasGSAP) {
+      // Parallax floating on intermediate crystal shards
+      const art1 = document.getElementById('prod-art-1');
+      const art2 = document.getElementById('prod-art-2');
+
+      if (art1) {
+        gsap.to(art1, {
+          y: -40,
+          rotation: -3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#prod-interval-1',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.2
+          }
+        });
+      }
+
+      if (art2) {
+        gsap.to(art2, {
+          y: -40,
+          rotation: 3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '#prod-interval-2',
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.2
+          }
+        });
+      }
+
+      // Laser path stroke dashoffset scrubbing
+      ScrollTrigger.create({
+        trigger: container,
+        start: 'top 75%',
+        end: 'bottom 85%',
+        scrub: 0.8,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          path.style.strokeDashoffset = `${(1 - progress) * 220}px`;
+          if (pathGlow) {
+            pathGlow.style.opacity = `${0.18 + progress * 0.4}`;
+          }
+        }
+      });
+    }
+  }
+
+  initTimelineChoreography();
 });
