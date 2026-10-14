@@ -461,37 +461,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ═════════════════════════════════════════════════════════════
-  // 8. TACTILE PROJECT IMAGE TILT / HOVER REACTION
-  // ═════════════════════════════════════════════════════════════
-  const projectFrames = document.querySelectorAll('.project-img-frame');
-
-  projectFrames.forEach((frame) => {
-    frame.addEventListener('mousemove', (e) => {
-      const rect = frame.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      const rotateX = ((y - centerY) / centerY) * -5;
-      const rotateY = ((x - centerX) / centerX) * 5;
-
-      const img = frame.querySelector('.project-img');
-      if (img) {
-        img.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale(1.05)`;
-      }
-    });
-
-    frame.addEventListener('mouseleave', () => {
-      const img = frame.querySelector('.project-img');
-      if (img) {
-        img.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-      }
-    });
-  });
-
-  // ═════════════════════════════════════════════════════════════
-  // 9. TIMELINE DYNAMIC PERIMETER DOCKING & SCROLL CHOREOGRAPHY
+  // 8. TIMELINE DYNAMIC PERIMETER DOCKING & SCROLL CHOREOGRAPHY
   // ═════════════════════════════════════════════════════════════
   function initTimelineChoreography() {
     const container = document.querySelector('.timeline-stream-container');
