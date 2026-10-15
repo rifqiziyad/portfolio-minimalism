@@ -981,6 +981,7 @@ body.has-cursor #cursor-dot {
 
 /* ─── 9.5 TIMELINE SECTION (STAGGERED INTERVAL ARCHITECTURE) ─── */
 .section-timeline {
+  --shard-size: clamp(850px, 60vw, 1200px);
   position: relative;
   overflow: hidden;
   background-color: var(--bg-primary);
@@ -1065,6 +1066,37 @@ body.has-cursor #cursor-dot {
   font-size: 0.82rem;
   color: var(--text-secondary);
   line-height: 1.7;
+}
+
+/* Giant Background Wireframe Crystal Shards (Overflowing section bounds like outline text) */
+.bg-outline-shard {
+  position: absolute;
+  width: var(--shard-size);
+  height: var(--shard-size);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  opacity: 0.24;
+  will-change: transform;
+  filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.03));
+}
+
+.bg-outline-shard img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.bg-outline-shard.bg-shard-right {
+  top: 27%;
+  right: calc(var(--shard-size) * -0.5);
+  transform: rotate(-10deg);
+}
+
+.bg-outline-shard.bg-shard-left {
+  top: 58%;
+  left: calc(var(--shard-size) * -0.5);
+  transform: rotate(12deg);
 }
 
 /* Intermediate Vertical Intervals (Illustrations float in gaps between cards) */
@@ -1188,6 +1220,9 @@ body.has-cursor #cursor-dot {
 }
 
 @media (max-width: 992px) {
+  .section-timeline {
+    --shard-size: clamp(600px, 70vw, 850px);
+  }
   .timeline-stream-container {
     padding: 30px 0;
   }
@@ -1197,20 +1232,21 @@ body.has-cursor #cursor-dot {
   }
   .timeline-interval {
     min-height: 230px;
+    padding: 0 2%;
   }
   .interval-illustration {
     width: 230px;
     height: 230px;
   }
-  .timeline-interval.interval-left {
-    padding-left: 2%;
-  }
-  .timeline-interval.interval-right {
-    padding-right: 2%;
+  .bg-outline-shard {
+    opacity: 0.20;
   }
 }
 
 @media (max-width: 640px) {
+  .section-timeline {
+    --shard-size: clamp(420px, 90vw, 550px);
+  }
   .timeline-interval {
     justify-content: center !important;
     padding-left: 0 !important;
@@ -1220,6 +1256,9 @@ body.has-cursor #cursor-dot {
   .interval-illustration {
     width: 180px;
     height: 180px;
+  }
+  .bg-outline-shard {
+    opacity: 0.14;
   }
   .timeline-dynamic-track {
     display: none;

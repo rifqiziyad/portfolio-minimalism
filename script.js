@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // GSAP ScrollTrigger Animations for Timeline
     if (hasGSAP) {
-      // Parallax floating on intermediate crystal shards
+      // Parallax floating on intermediate colored crystal shards
       const art1 = document.getElementById('prod-art-1');
       const art2 = document.getElementById('prod-art-2');
 
@@ -553,6 +553,41 @@ document.addEventListener('DOMContentLoaded', () => {
             scrub: 1.2
           }
         });
+      }
+
+      // Parallax for Giant Background Wireframe Crystal Shards (Overflowing screen edges)
+      const bgShardRight = document.getElementById('bgShardRight');
+      const bgShardLeft = document.getElementById('bgShardLeft');
+      const timelineSection = document.getElementById('timeline');
+
+      if (timelineSection) {
+        if (bgShardRight) {
+          gsap.to(bgShardRight, {
+            y: 180,
+            rotation: 6,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: timelineSection,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.5
+            }
+          });
+        }
+
+        if (bgShardLeft) {
+          gsap.to(bgShardLeft, {
+            y: 210,
+            rotation: -8,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: timelineSection,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1.8
+            }
+          });
+        }
       }
 
       // Laser path stroke dashoffset scrubbing

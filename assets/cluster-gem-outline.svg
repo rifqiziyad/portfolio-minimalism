@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%" class="cyber-cluster-svg" aria-label="Shattered Geometric Crystal Shards Outline Wireframe">
+  <style>
+    .outline-facet {
+      fill: rgba(255, 255, 255, 0.015);
+      stroke: rgba(255, 255, 255, 0.22);
+      stroke-width: 1.1;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .outline-ridge {
+      stroke: rgba(255, 255, 255, 0.45);
+      stroke-width: 1.3;
+    }
+    .outline-fracture {
+      stroke: rgba(255, 255, 255, 0.16);
+      stroke-width: 0.9;
+      stroke-dasharray: 3 4;
+    }
+    .outline-vertex {
+      fill: #070707;
+      stroke: rgba(255, 255, 255, 0.45);
+      stroke-width: 1.2;
+    }
+    .outline-vertex-dot {
+      fill: #ffffff;
+      opacity: 0.7;
+    }
+  </style>
+
+  <g id="shattered-crystal-outline">
+    <!-- SHARD A: UPPER NEEDLE CRYSTAL -->
+    <g class="crystal-needle-upper">
+      <polygon class="outline-facet" points="160,50 250,135 190,170" />
+      <polygon class="outline-facet" points="160,50 190,170 120,130" />
+      <line class="outline-ridge" x1="160" y1="50" x2="190" y2="170" />
+    </g>
+
+    <!-- SHARD B: LATERAL SPIKE -->
+    <g class="crystal-spike-right">
+      <polygon class="outline-facet" points="250,135 430,175 320,225" />
+      <polygon class="outline-facet" points="430,175 355,275 320,225" />
+      <polygon class="outline-facet" points="250,135 320,225 255,230" />
+      <line class="outline-ridge" x1="430" y1="175" x2="320" y2="225" />
+    </g>
+
+    <!-- SHARD C: CENTRAL FRACTURED CORE MONOLITH -->
+    <g class="crystal-core-monolith">
+      <polygon class="outline-facet" points="190,170 250,135 255,230 205,245" />
+      <polygon class="outline-facet" points="205,245 255,230 320,225 270,320" />
+      <polygon class="outline-facet" points="190,170 205,245 155,265" />
+      <line class="outline-ridge" x1="250" y1="135" x2="270" y2="320" />
+    </g>
+
+    <!-- SHARD D: LOWER DAGGER CRYSTAL -->
+    <g class="crystal-dagger-lower">
+      <polygon class="outline-facet" points="205,245 155,265 175,440" />
+      <polygon class="outline-facet" points="205,245 270,320 175,440" />
+      <polygon class="outline-facet" points="270,320 355,275 255,385" />
+      <polygon class="outline-facet" points="270,320 255,385 175,440" />
+      <line class="outline-ridge" x1="205" y1="245" x2="175" y2="440" />
+    </g>
+
+    <!-- DETACHED FLOATING CRYSTAL SPLINTERS -->
+    <g class="floating-splinters">
+      <polygon class="outline-facet" points="335,55 375,80 345,110" />
+      <polygon class="outline-facet" points="75,220 115,250 85,285" />
+      <polygon class="outline-facet" points="370,340 410,380 360,405" />
+    </g>
+
+    <!-- FRACTURE CLEAVAGE LASER TRACES -->
+    <g class="fracture-traces" stroke-linecap="round">
+      <line class="outline-fracture" x1="160" y1="50" x2="430" y2="175" />
+      <line class="outline-fracture" x1="430" y1="175" x2="175" y2="440" />
+      <line class="outline-fracture" x1="160" y1="50" x2="175" y2="440" />
+      <line class="outline-fracture" x1="335" y1="55" x2="250" y2="135" />
+      <line class="outline-fracture" x1="75" y1="220" x2="155" y2="265" />
+    </g>
+
+    <!-- TECHNICAL OUTLINE NODES -->
+    <g class="shard-nodes">
+      <g transform="translate(160, 50)">
+        <circle class="outline-vertex" r="5" />
+        <circle class="outline-vertex-dot" r="1.5" />
+      </g>
+      <g transform="translate(430, 175)">
+        <circle class="outline-vertex" r="5" />
+        <circle class="outline-vertex-dot" r="1.5" />
+      </g>
+      <g transform="translate(175, 440)">
+        <circle class="outline-vertex" r="5" />
+        <circle class="outline-vertex-dot" r="1.5" />
+      </g>
+      <g transform="translate(250, 135)">
+        <circle class="outline-vertex" r="4" />
+      </g>
+      <g transform="translate(320, 225)">
+        <circle class="outline-vertex" r="4" />
+      </g>
+      <g transform="translate(205, 245)">
+        <circle class="outline-vertex" r="6" />
+        <circle class="outline-vertex-dot" r="2" />
+      </g>
+      <g transform="translate(270, 320)">
+        <circle class="outline-vertex" r="4" />
+      </g>
+    </g>
+  </g>
+</svg>
+
