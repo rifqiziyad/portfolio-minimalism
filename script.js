@@ -329,6 +329,9 @@ document.addEventListener('DOMContentLoaded', () => {
         batch.forEach((el, index) => {
           el.classList.add('revealed');
         });
+        if (typeof window.renderTimelinePath === 'function') {
+          window.renderTimelinePath();
+        }
       }
     });
 
@@ -513,6 +516,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    window.renderTimelinePath = renderTimelinePath;
     renderTimelinePath();
     window.addEventListener('resize', renderTimelinePath);
     window.addEventListener('load', renderTimelinePath);
@@ -521,39 +525,17 @@ document.addEventListener('DOMContentLoaded', () => {
       new ResizeObserver(renderTimelinePath).observe(container);
     }
 
+    if (document.fonts) {
+      document.fonts.ready.then(renderTimelinePath);
+    }
+
+    setTimeout(renderTimelinePath, 100);
+    setTimeout(renderTimelinePath, 350);
+    setTimeout(renderTimelinePath, 900);
+
     // GSAP ScrollTrigger Animations for Timeline
     if (hasGSAP) {
-      // Parallax floating on intermediate colored crystal shards
-      const art1 = document.getElementById('prod-art-1');
-      const art2 = document.getElementById('prod-art-2');
-
-      if (art1) {
-        gsap.to(art1, {
-          y: -40,
-          rotation: -3,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#prod-interval-1',
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.2
-          }
-        });
-      }
-
-      if (art2) {
-        gsap.to(art2, {
-          y: -40,
-          rotation: 3,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#prod-interval-2',
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.2
-          }
-        });
-      }
+      ScrollTrigger.addEventListener('refresh', renderTimelinePath);
 
       // Parallax for Giant Background Wireframe Crystal Shards (Overflowing screen edges)
       const bgShardRight = document.getElementById('bgShardRight');
