@@ -348,13 +348,6 @@
       padding: 26px 28px;
       backdrop-filter: blur(14px);
       box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
-      transition: all 0.3s ease;
-    }
-
-    .timeline-card-demo:hover {
-      border-color: var(--accent-orange);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 50px rgba(255, 69, 0, 0.18);
     }
 
     /* Intermediate Intervals: Illustrations Float in the Vertical Spaces Between Cards */
@@ -385,12 +378,6 @@
       align-items: center;
       justify-content: center;
       filter: drop-shadow(0 0 25px rgba(255, 69, 0, 0.35));
-      transition: transform 0.4s ease, filter 0.4s ease;
-    }
-
-    .interval-illustration:hover {
-      transform: scale(1.06);
-      filter: drop-shadow(0 0 35px rgba(168, 85, 247, 0.65));
     }
 
     .interval-illustration img {
@@ -735,14 +722,7 @@
 
             <style>
               .facet-poly {
-                transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
                 mix-blend-mode: screen;
-                cursor: pointer;
-              }
-              .facet-poly:hover {
-                fill-opacity: 0.95 !important;
-                stroke-width: 2.5 !important;
-                filter: drop-shadow(0 0 18px rgba(255, 69, 0, 0.8));
               }
               .pulse-node, .pulse-node-alt {
                 transform-origin: center;

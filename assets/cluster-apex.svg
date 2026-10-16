@@ -54,14 +54,7 @@
 
   <style>
     .crystal-facet {
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
       mix-blend-mode: screen;
-      cursor: pointer;
-    }
-    .crystal-facet:hover {
-      fill-opacity: 0.98 !important;
-      stroke-width: 2.4 !important;
-      filter: drop-shadow(0 0 16px rgba(255, 69, 0, 0.85));
     }
   </style>
 

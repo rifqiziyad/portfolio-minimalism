@@ -86,13 +86,7 @@
 
   <style>
     .facet-poly {
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       mix-blend-mode: screen;
-    }
-    .facet-poly:hover {
-      fill-opacity: 0.95 !important;
-      stroke-width: 2.2 !important;
-      filter: drop-shadow(0 0 16px rgba(255, 69, 0, 0.75));
     }
     .laser-line {
       vector-effect: non-scaling-stroke;

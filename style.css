@@ -713,11 +713,6 @@ body.has-cursor #cursor-dot {
   height: 100%;
   object-fit: cover;
   filter: grayscale(100%) contrast(110%);
-  transition: filter var(--transition-slow);
-}
-
-.vision-image-box:hover .profile-img {
-  filter: grayscale(40%) contrast(115%);
 }
 
 .image-overlay-scanline {
@@ -957,11 +952,6 @@ body.has-cursor #cursor-dot {
   object-fit: cover;
   will-change: transform;
   filter: grayscale(20%) brightness(0.95);
-  transition: filter 0.8s ease;
-}
-
-.project-item:hover .project-img {
-  filter: grayscale(0%) brightness(1.05);
 }
 
 .project-badge-float {
@@ -1023,12 +1013,6 @@ body.has-cursor #cursor-dot {
   padding: 30px 32px;
   backdrop-filter: blur(16px);
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
-  transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-}
-
-.timeline-card:hover {
-  border-color: var(--accent-orange);
-  box-shadow: 0 20px 50px rgba(255, 69, 0, 0.25), 0 0 30px rgba(168, 85, 247, 0.15);
 }
 
 .timeline-card-year {
@@ -1076,14 +1060,51 @@ body.has-cursor #cursor-dot {
   user-select: none;
   z-index: 0;
   opacity: 0.24;
-  will-change: transform;
+  will-change: transform, opacity;
   filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.03));
 }
 
-.bg-outline-shard img {
+.bg-outline-shard img,
+.bg-outline-shard svg {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  overflow: visible;
+  display: block;
+}
+
+.bg-outline-shard .outline-facet {
+  fill: rgba(255, 255, 255, 0.015);
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1.1;
+}
+
+.bg-outline-shard .outline-ridge {
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.3;
+}
+
+.bg-outline-shard .outline-fracture {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.9;
+  stroke-dasharray: 3 4;
+}
+
+.bg-outline-shard .outline-vertex {
+  fill: #070707;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.2;
+}
+
+.bg-outline-shard .outline-vertex-dot {
+  fill: #ffffff;
+  opacity: 0.7;
+}
+
+.bg-outline-shard .shard-group,
+.bg-outline-shard .shard-sub-facet,
+.bg-outline-shard .splinter-piece {
+  will-change: transform;
 }
 
 .bg-outline-shard.bg-shard-right {
@@ -1126,13 +1147,7 @@ body.has-cursor #cursor-dot {
   align-items: center;
   justify-content: center;
   filter: drop-shadow(0 0 25px rgba(255, 69, 0, 0.35));
-  transition: transform 0.5s var(--ease-out-expo), filter 0.5s ease;
   will-change: transform;
-}
-
-.interval-illustration:hover {
-  transform: scale(1.06);
-  filter: drop-shadow(0 0 35px rgba(168, 85, 247, 0.65));
 }
 
 .interval-illustration img {
@@ -1281,14 +1296,6 @@ body.has-cursor #cursor-dot {
   padding: clamp(1.75rem, 3.5vw, 2.75rem) 1.5rem;
   border-bottom: 1px solid var(--border-subtle);
   background-color: transparent;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
-  cursor: pointer;
-}
-
-.skill-row:hover {
-  background-color: rgba(255, 255, 255, 0.02);
-  border-bottom-color: var(--border-strong);
-  transform: translateX(8px);
 }
 
 .skill-index {
@@ -1306,11 +1313,6 @@ body.has-cursor #cursor-dot {
   text-transform: uppercase;
   color: var(--text-primary);
   margin-bottom: 0.35rem;
-  transition: color var(--transition-fast);
-}
-
-.skill-row:hover .skill-title {
-  color: #ffffff;
 }
 
 .skill-desc {
@@ -1332,23 +1334,11 @@ body.has-cursor #cursor-dot {
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
   letter-spacing: 0.05em;
-  transition: border-color var(--transition-fast), color var(--transition-fast);
-}
-
-.skill-row:hover .tag {
-  border-color: var(--border-medium);
-  color: var(--text-primary);
 }
 
 .skill-arrow {
   font-size: 1.5rem;
   color: var(--text-muted);
-  transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-.skill-row:hover .skill-arrow {
-  color: var(--accent-orange);
-  transform: translateX(6px);
 }
 
 /* ─── 11. CONTACT SECTION ─── */
