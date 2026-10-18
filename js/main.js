@@ -11,6 +11,11 @@
   function bootstrap() {
     const app = window.Portfolio || {};
 
+    // 0. Render Dynamic Content from PortfolioData Module
+    if (app.renderer && typeof app.renderer.renderAll === 'function') {
+      app.renderer.renderAll();
+    }
+
     // 1. Dynamic Cursor Blob & Glow
     if (app.cursor && typeof app.cursor.initCursor === 'function') {
       app.cursor.initCursor();

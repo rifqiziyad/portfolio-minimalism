@@ -216,116 +216,8 @@
           <span class="works-counter">03 WORKS RECORDED</span>
         </div>
 
-        <!-- Project 001: Text Left, Image Right -->
-        <article class="project-item project-layout-normal" id="project-btn">
-          <div class="project-info reveal reveal-left">
-            <div class="project-meta">
-              <span class="project-num">001 / BANKING BACKOFFICE</span>
-              <span class="project-tag">INTERNAL PLATFORM</span>
-            </div>
-            <h3 class="project-title">BTN BACKOFFICE</h3>
-            <p class="project-desc">
-              A mission-critical backoffice platform engineered to monitor transactions, govern sensitive user records, and orchestrate dynamic in-app features within Bank BTN’s mobile banking ecosystem.
-            </p>
-            <div class="project-details">
-              <div class="detail-row">
-                <span class="detail-label">YEAR</span>
-                <span class="detail-val">2024</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">STACK</span>
-                <span class="detail-val">JavaScript • React.js • Material UI • Redux</span>
-              </div>
-            </div>
-            <div class="project-link-wrap">
-              <a href="#contact" class="project-link">
-                <span>INQUIRE DETAILS</span>
-                <span class="arrow">↗</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="project-visual reveal reveal-scale">
-            <div class="project-img-frame">
-              <img src="assets/project-1.jpg" alt="BTN Mobile Banking Backoffice System" class="project-img" loading="lazy">
-              <div class="project-badge-float">001</div>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 002: Image Left, Text Right (Reversed) -->
-        <article class="project-item project-layout-reversed" id="project-hibank">
-          <div class="project-visual reveal reveal-scale">
-            <div class="project-img-frame">
-              <img src="assets/project-2.jpg" alt="Hibank Client Portal System" class="project-img" loading="lazy">
-              <div class="project-badge-float">002</div>
-            </div>
-          </div>
-
-          <div class="project-info reveal reveal-right">
-            <div class="project-meta">
-              <span class="project-num">002 / INTERNET BANKING</span>
-              <span class="project-tag">CLIENT PORTAL</span>
-            </div>
-            <h3 class="project-title">HIBANK PORTAL</h3>
-            <p class="project-desc">
-              Architected and integrated comprehensive Internet Banking modules for Hibank, including inter-bank fund transfers, real-time bill payments, account summaries, and financial transaction processing.
-            </p>
-            <div class="project-details">
-              <div class="detail-row">
-                <span class="detail-label">YEAR</span>
-                <span class="detail-val">2024</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">STACK</span>
-                <span class="detail-val">React • TypeScript • Redux Toolkit • Material UI</span>
-              </div>
-            </div>
-            <div class="project-link-wrap">
-              <a href="#contact" class="project-link">
-                <span>INQUIRE DETAILS</span>
-                <span class="arrow">↗</span>
-              </a>
-            </div>
-          </div>
-        </article>
-
-        <!-- Project 003: Text Left, Image Right -->
-        <article class="project-item project-layout-normal" id="project-octo">
-          <div class="project-info reveal reveal-left">
-            <div class="project-meta">
-              <span class="project-num">003 / CUSTOMER PLATFORM</span>
-              <span class="project-tag">SYSTEM REVAMP</span>
-            </div>
-            <h3 class="project-title">OCTO CLICK</h3>
-            <p class="project-desc">
-              Full-scale modernization of CIMB Niaga OCTO Click's fund transfer ecosystem. Refactored multi-stage transaction flows, optimized user feedback states, and enforced banking security standards.
-            </p>
-            <div class="project-details">
-              <div class="detail-row">
-                <span class="detail-label">YEAR</span>
-                <span class="detail-val">2024 — 2025</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-label">STACK</span>
-                <span class="detail-val">React • TypeScript • Material UI • REST API</span>
-              </div>
-            </div>
-            <div class="project-link-wrap">
-              <a href="#contact" class="project-link">
-                <span>INQUIRE DETAILS</span>
-                <span class="arrow">↗</span>
-              </a>
-            </div>
-          </div>
-
-          <div class="project-visual reveal reveal-scale">
-            <div class="project-img-frame">
-              <img src="assets/project-3.jpg" alt="CIMB Niaga OCTO Click Revamp" class="project-img" loading="lazy">
-              <div class="project-badge-float">003</div>
-            </div>
-          </div>
-        </article>
+        <!-- Dynamic Works List rendered from data/portfolio-data.js -->
+        <div class="works-list" id="worksList"></div>
       </div>
     </section>
 
@@ -506,77 +398,8 @@
           <span class="works-counter">2021 — PRESENT</span>
         </div>
 
-        <div class="timeline-stream-container">
-          <!-- Dynamic SVG Track Overlay: Mathematically anchors to card border docks -->
-          <svg class="timeline-dynamic-track" id="prodTimelineTrackSvg" fill="none">
-            <path id="prodTrackPathGlow" stroke="rgba(255, 69, 0, 0.22)" stroke-width="5" />
-            <path id="prodTrackPath" stroke="rgba(255, 69, 0, 0.75)" stroke-width="2" stroke-dasharray="6 6" />
-          </svg>
-
-          <!-- Milestone 1: Centered Card (2021 - 2023 PT Boston Makmur Gemilang) -->
-          <div class="timeline-card-wrapper" id="timeline-wrap-1">
-            <div class="timeline-card reveal reveal-fade" id="prod-card-1">
-              <div class="card-dock dock-top" id="prod-dock-c1-top"><span class="dock-point"></span></div>
-              <div class="card-dock dock-bottom" id="prod-dock-c1-bottom"><span class="dock-point"></span></div>
-
-              <div class="timeline-card-year">
-                <span>2021 — 2023</span>
-              </div>
-              <h3 class="timeline-card-heading">PT BOSTON MAKMUR GEMILANG</h3>
-              <p class="timeline-card-text">
-                Developed internal desktop-based HR management systems (Kasumi) including recruitment forms, employee master data, organizational structure, and target evaluation modules using React.js and Redux. Built modern web solutions including Ignica.
-              </p>
-            </div>
-          </div>
-
-          <!-- Interval 1: Floats Left in Vertical Gap between Card 1 & Card 2 -->
-          <div class="timeline-interval interval-left" id="prod-interval-1">
-            <div class="interval-illustration" id="prod-art-1">
-              <img src="assets/cluster-apex.svg" alt="Apex Crystal Shards" loading="lazy">
-              <div class="flank-dock" id="prod-dock-int-1"><span class="dock-point"></span></div>
-            </div>
-          </div>
-
-          <!-- Milestone 2: Centered Card (2023 - 2024 Initial IST Banking Operations) -->
-          <div class="timeline-card-wrapper" id="timeline-wrap-2">
-            <div class="timeline-card reveal reveal-fade" id="prod-card-2">
-              <div class="card-dock dock-left" id="prod-dock-c2-left"><span class="dock-point purple"></span></div>
-              <div class="card-dock dock-bottom" id="prod-dock-c2-bottom"><span class="dock-point purple"></span></div>
-
-              <div class="timeline-card-year">
-                <span>2023 — 2024</span>
-              </div>
-              <h3 class="timeline-card-heading">PT INFOSYS SOLUSI TERPADU</h3>
-              <p class="timeline-card-text">
-                Engineered desktop-based internal banking web applications with React.js for transaction approvals, customer data governance, and financial reporting. Collaborated closely with backend engineers and QA teams to guarantee strict API and security compliance.
-              </p>
-            </div>
-          </div>
-
-          <!-- Interval 2: Floats Right in Vertical Gap between Card 2 & Card 3 -->
-          <div class="timeline-interval interval-right" id="prod-interval-2">
-            <div class="interval-illustration" id="prod-art-2">
-              <img src="assets/cluster-gem.svg" alt="Shattered Crystal Prism" loading="lazy">
-              <div class="flank-dock" id="prod-dock-int-2"><span class="dock-point purple"></span></div>
-            </div>
-          </div>
-
-          <!-- Milestone 3: Centered Card (2025 - Present Lead Banking Operations) -->
-          <div class="timeline-card-wrapper" id="timeline-wrap-3">
-            <div class="timeline-card reveal reveal-fade" id="prod-card-3">
-              <div class="card-dock dock-right" id="prod-dock-c3-right"><span class="dock-point"></span></div>
-              <div class="card-dock dock-bottom" id="prod-dock-c3-bottom"><span class="dock-point"></span></div>
-
-              <div class="timeline-card-year">
-                <span>2025 — PRESENT</span>
-              </div>
-              <h3 class="timeline-card-heading">PT INFOSYS SOLUSI TERPADU</h3>
-              <p class="timeline-card-text">
-                Spearheading frontend architecture for critical Internet Banking services and transaction revamp initiatives (OCTO Click CIMB Niaga, Hibank Client Portal, BTN Mobile Banking Backoffice) with strict banking security compliance, TypeScript, and Redux Toolkit.
-              </p>
-            </div>
-          </div>
-        </div>
+        <!-- Dynamic Timeline Stream rendered from data/portfolio-data.js -->
+        <div class="timeline-stream-container" id="timelineStream"></div>
       </div>
     </section>
 
@@ -595,58 +418,8 @@
           <span class="works-counter">CORE COMPETENCIES</span>
         </div>
 
-        <div class="skills-table">
-          <div class="skill-row reveal reveal-up">
-            <span class="skill-index">01</span>
-            <div class="skill-main">
-              <h3 class="skill-title">FRONTEND ARCHITECTURE</h3>
-              <p class="skill-desc">Modern component systems, high-density reactive state architecture, and enterprise UI engineering using React.js and TypeScript.</p>
-            </div>
-            <div class="skill-tags">
-              <span class="tag">React.js</span>
-              <span class="tag">TypeScript</span>
-              <span class="tag">Next.js</span>
-              <span class="tag">Redux Toolkit</span>
-              <span class="tag">Material UI</span>
-              <span class="tag">Tailwind CSS</span>
-              <span class="tag">Bootstrap</span>
-              <span class="tag">HTML5 / CSS3</span>
-            </div>
-            <span class="skill-arrow">→</span>
-          </div>
-
-          <div class="skill-row reveal reveal-up delay-1">
-            <span class="skill-index">02</span>
-            <div class="skill-main">
-              <h3 class="skill-title">BACKEND &amp; DATA INTEGRATION</h3>
-              <p class="skill-desc">Server-side runtime engineering, relational database management, and contract-first RESTful API consumption.</p>
-            </div>
-            <div class="skill-tags">
-              <span class="tag">Node.js</span>
-              <span class="tag">Express.js</span>
-              <span class="tag">RESTful APIs</span>
-              <span class="tag">MySQL</span>
-              <span class="tag">JSON Schemas</span>
-            </div>
-            <span class="skill-arrow">→</span>
-          </div>
-
-          <div class="skill-row reveal reveal-up delay-2">
-            <span class="skill-index">03</span>
-            <div class="skill-main">
-              <h3 class="skill-title">TOOLS &amp; ENGINEERING STANDARDS</h3>
-              <p class="skill-desc">Version control pipelines, banking security standards, state flow architecture, and agile cross-team collaboration.</p>
-            </div>
-            <div class="skill-tags">
-              <span class="tag">Git</span>
-              <span class="tag">Redux Flow</span>
-              <span class="tag">Banking Security</span>
-              <span class="tag">QA Handshake</span>
-              <span class="tag">Clean Architecture</span>
-            </div>
-            <span class="skill-arrow">→</span>
-          </div>
-        </div>
+        <!-- Dynamic Skills Table rendered from data/portfolio-data.js -->
+        <div class="skills-table" id="skillsTable"></div>
       </div>
     </section>
 
@@ -665,49 +438,8 @@
           <span class="works-counter">ACADEMIC BACKGROUND</span>
         </div>
 
-        <div class="education-table">
-          <div class="education-row reveal reveal-up">
-            <span class="education-index">01</span>
-            <div class="education-main">
-              <div class="education-meta-top">
-                <span class="education-program-tag">UNDERGRADUATE DEGREE</span>
-                <span class="education-period">FEB 2026 — PRESENT</span>
-              </div>
-              <h3 class="education-degree">COMPUTER SCIENCE</h3>
-              <p class="education-school">Binus Online</p>
-              <p class="education-desc">Pendidikan tinggi formal yang berfokus pada rekayasa perangkat lunak, struktur data dan algoritma, komputasi terdistribusi, serta perancangan sistem berbasis teknologi informasi modern.</p>
-            </div>
-            <span class="education-arrow">→</span>
-          </div>
-
-          <div class="education-row reveal reveal-up delay-1">
-            <span class="education-index">02</span>
-            <div class="education-main">
-              <div class="education-meta-top">
-                <span class="education-program-tag">ACCELERATED IMMERSIVE</span>
-                <span class="education-period">MAY 2021 — AUG 2021</span>
-              </div>
-              <h3 class="education-degree">FULL STACK DEVELOPER</h3>
-              <p class="education-school">Bootcamp Fazztrack</p>
-              <p class="education-desc">Pelatihan intensif pengembangan aplikasi web end-to-end dengan penekanan pada modern JavaScript, React ecosystem, arsitektur REST API, dan integrasi basis data.</p>
-            </div>
-            <span class="education-arrow">→</span>
-          </div>
-
-          <div class="education-row reveal reveal-up delay-2">
-            <span class="education-index">03</span>
-            <div class="education-main">
-              <div class="education-meta-top">
-                <span class="education-program-tag">SECONDARY EDUCATION</span>
-                <span class="education-period">JUN 2016 — APR 2019</span>
-              </div>
-              <h3 class="education-degree">NATURAL SCIENCE (MIPA)</h3>
-              <p class="education-school">Madrasah Aliyah Khazanah Kebajikan</p>
-              <p class="education-desc">Fondasi analitis, logika matematika, sains alamiah, dan metodologi pemecahan masalah sistematis.</p>
-            </div>
-            <span class="education-arrow">→</span>
-          </div>
-        </div>
+        <!-- Dynamic Education Table rendered from data/portfolio-data.js -->
+        <div class="education-table" id="educationTable"></div>
       </div>
     </section>
 
@@ -790,8 +522,12 @@
   <!-- Lenis Smooth Scroll -->
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
 
+  <!-- Portfolio Data (JSON-structured data module) -->
+  <script src="data/portfolio-data.js"></script>
+
   <!-- Modular Application Scripts (Layered Architecture — works on both file:// and HTTP) -->
   <script defer src="js/core/scroll.js"></script>
+  <script defer src="js/core/renderer.js"></script>
   <script defer src="js/components/cursor.js"></script>
   <script defer src="js/components/navigation.js"></script>
   <script defer src="js/components/clock.js"></script>
