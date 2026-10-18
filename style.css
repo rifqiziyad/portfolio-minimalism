@@ -1439,119 +1439,170 @@ body.has-cursor #cursor-dot {
   padding-bottom: clamp(6rem, 12vw, 12rem);
 }
 
-.contact-card {
+.contact-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 1.5vw, 1.5rem);
   position: relative;
   z-index: 2;
-  border: 1px solid var(--border-medium);
+}
+
+.bento-card {
+  position: relative;
+  z-index: 2;
   background-color: var(--bg-card);
-  padding: clamp(2.5rem, 6vw, 6rem);
+  border: 1px solid var(--border-medium);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: transform var(--transition-smooth), border-color var(--transition-fast), background-color var(--transition-fast);
 }
 
-.contact-header {
-  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+.bento-card:hover {
+  border-color: var(--accent-orange);
+  background-color: rgba(255, 69, 0, 0.025);
+  transform: translateY(-4px);
 }
 
-.contact-massive-title {
+.bento-card-span-2 {
+  grid-column: span 2;
+}
+
+.bento-card.bento-location {
+  cursor: default;
+}
+
+.bento-card.bento-location:hover {
+  transform: none;
+  background-color: var(--bg-card);
+  border-color: var(--border-medium);
+}
+
+.bento-arrow {
+  position: absolute;
+  top: clamp(1.25rem, 2vw, 1.75rem);
+  right: clamp(1.25rem, 2vw, 1.75rem);
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.bento-card:hover .bento-arrow {
+  transform: translate(3px, -3px);
+  color: var(--accent-orange);
+}
+
+.bento-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bento-email .bento-main {
+  padding-right: 2rem;
+}
+
+.bento-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 7.5vw, 7.5rem);
+  font-size: clamp(1.2rem, 1.6vw, 1.5rem);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
   color: var(--text-primary);
+  margin-bottom: 0.35rem;
 }
 
-.contact-body {
-  margin-bottom: clamp(3rem, 6vw, 5rem);
-  max-width: 65ch;
+.bento-title-lg {
+  font-size: clamp(1.15rem, 2.2vw, 1.85rem);
+  line-height: 1.2;
+  word-break: break-word;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
 }
 
-.contact-intro {
-  font-size: clamp(1rem, 1.35vw, 1.35rem);
+.bento-card:hover .bento-title-lg {
+  color: var(--accent-orange);
+}
+
+.bento-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
   color: var(--text-secondary);
-  line-height: 1.6;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0;
 }
 
-.contact-email-cta {
+.bento-handle {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--accent-orange);
+  margin-bottom: 0;
+}
+
+.bento-action {
   display: inline-flex;
   align-items: center;
-  gap: 1.25rem;
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 3.2vw, 2.75rem);
-  font-weight: 800;
-  color: var(--accent-orange);
-  border-bottom: 2px solid var(--accent-orange);
-  padding-bottom: 0.5rem;
-  transition: transform var(--transition-smooth), color var(--transition-fast), border-color var(--transition-fast);
-}
-
-.contact-email-cta .cta-arrow {
-  font-size: 1.2em;
-  transition: transform var(--transition-fast);
-}
-
-.contact-email-cta:hover {
-  color: #ffffff;
-  border-bottom-color: #ffffff;
-  transform: translateX(10px);
-}
-
-.contact-email-cta:hover .cta-arrow {
-  transform: translate(6px, -6px);
-}
-
-.contact-footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 3rem;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 3rem;
-}
-
-.block-title {
-  display: block;
+  gap: 0.5rem;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--text-muted);
-  letter-spacing: 0.15em;
-  margin-bottom: 1.25rem;
-}
-
-.social-links {
-  display: flex;
-  gap: clamp(1rem, 2.5vw, 2.5rem);
-  flex-wrap: wrap;
-}
-
-.social-link {
-  font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  border-bottom: 1px solid transparent;
-  padding-bottom: 0.2rem;
-}
-
-.social-link:hover {
-  color: var(--text-primary);
-  border-bottom-color: var(--accent-orange);
-}
-
-.location-info {
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  color: var(--text-primary);
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-}
-
-.local-time {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
   color: var(--accent-orange);
+  margin-top: 0.75rem;
+  transition: gap var(--transition-fast);
+}
+
+.bento-action .action-arrow {
+  font-size: 1.1em;
+  transition: transform var(--transition-fast);
+}
+
+.bento-card:hover .bento-action {
+  gap: 0.85rem;
+}
+
+.bento-card:hover .bento-action .action-arrow {
+  transform: translateX(4px);
+}
+
+@media (max-width: 992px) {
+  .contact-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bento-card-span-2 {
+    grid-column: span 2;
+  }
+
+  .bento-location {
+    grid-column: span 2;
+  }
+
+  .bento-card:nth-child(5) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-bento-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-card-span-2,
+  .bento-location,
+  .bento-card:nth-child(5) {
+    grid-column: span 1;
+  }
 }
 
 /* ─── 12. SITE FOOTER ─── */
@@ -1684,10 +1735,6 @@ body.has-cursor #cursor-dot {
 
   .education-arrow {
     display: none;
-  }
-
-  .contact-footer-grid {
-    grid-template-columns: 1fr;
   }
 }
 

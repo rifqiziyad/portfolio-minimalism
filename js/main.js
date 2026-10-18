@@ -40,12 +40,7 @@
       app.navigation.initNavigation();
     }
 
-    // 5. Live Jakarta / WIB Clock
-    if (app.clock && typeof app.clock.initClock === 'function') {
-      app.clock.initClock();
-    }
-
-    // 6. Timeline Dynamic Perimeter Docking & Crystal Shatter Choreography
+    // 5. Timeline Dynamic Perimeter Docking & Crystal Shatter Choreography
     if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
       app.timeline.initTimelineChoreography();
     }
