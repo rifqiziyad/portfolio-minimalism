@@ -825,8 +825,8 @@ body.has-cursor #cursor-dot {
 
 .project-item {
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  gap: clamp(2.5rem, 6vw, 7rem);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+  gap: clamp(2.5rem, 4.5vw, 5.5rem);
   align-items: center;
   min-height: 85vh;
   padding: clamp(3rem, 6vw, 6rem) 0;
@@ -840,7 +840,17 @@ body.has-cursor #cursor-dot {
 }
 
 .project-layout-reversed {
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
+}
+
+.project-info {
+  min-width: 0;
+  width: 100%;
+}
+
+.project-visual {
+  min-width: 0;
+  width: 100%;
 }
 
 .project-meta {
@@ -868,13 +878,15 @@ body.has-cursor #cursor-dot {
 
 .project-title {
   font-family: var(--font-display);
-  font-size: clamp(3rem, 7vw, 7.5rem);
+  font-size: clamp(2.25rem, 4vw, 4.5rem);
   font-weight: 800;
-  line-height: 0.9;
+  line-height: 0.95;
   letter-spacing: -0.04em;
   text-transform: uppercase;
   color: var(--text-primary);
   margin-bottom: 1.5rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .project-desc {
