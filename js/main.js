@@ -44,6 +44,11 @@
     if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
       app.timeline.initTimelineChoreography();
     }
+
+    // 6. Contact Crystal Assembly & Reverse Shatter Choreography
+    if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
+      app.contact.initContactCrystalAnimation();
+    }
   }
 
   if (document.readyState === 'loading') {
