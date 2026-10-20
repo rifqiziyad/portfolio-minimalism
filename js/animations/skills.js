@@ -11,11 +11,83 @@
 
   window.Portfolio = window.Portfolio || {};
 
+  function fitSkillTextsToTriangles(stage) {
+    if (!stage) return;
+    const shards = stage.querySelectorAll('.skill-tri-shard');
+    shards.forEach((el) => {
+      const textEl = el.querySelector('.skill-tri-text');
+      const textWrap = el.querySelector('.skill-tri-text-wrap');
+      const ptsData = el.dataset.pts;
+      if (!textEl || !textWrap || !ptsData) return;
+
+      const pts = ptsData.split(';').map((pair) => pair.split(',').map(Number));
+      if (pts.length !== 3) return;
+      const [p1, p2, p3] = pts;
+
+      const angle = Number(el.dataset.angle) || 0;
+      const safeSpan = Number(el.dataset.safeSpan) || 120;
+      let fontSize = parseFloat(textEl.getAttribute('font-size')) || Number(el.dataset.fontSize) || 11;
+
+      // Real rendered SVG width in the browser (accounting for loaded 'Syne' font & letter-spacing)
+      let measuredW = 0;
+      try {
+        measuredW = textEl.getComputedTextLength();
+      } catch (e) {
+        measuredW = 0;
+      }
+
+      if (measuredW > safeSpan && safeSpan > 20) {
+        fontSize = Math.max(7.2, Math.round((fontSize * (safeSpan / measuredW)) * 10) / 10);
+        textEl.setAttribute('font-size', fontSize + 'px');
+        try {
+          measuredW = textEl.getComputedTextLength();
+        } catch (e) {}
+      }
+
+      const W = measuredW || (fontSize * (textEl.textContent.length * 0.94));
+      const H = fontSize * 1.35;
+
+      const L1 = Math.hypot(p2[0] - p3[0], p2[1] - p3[1]);
+      const L2 = Math.hypot(p1[0] - p3[0], p1[1] - p3[1]);
+      const L3 = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
+      const perim = L1 + L2 + L3;
+      const area = Math.abs((p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])) / 2;
+
+      const n1 = [(p3[1] - p2[1]) / L1, -(p3[0] - p2[0]) / L1];
+      const n2 = [(p1[1] - p3[1]) / L2, -(p1[0] - p3[0]) / L2];
+      const n3 = [(p2[1] - p1[1]) / L3, -(p2[0] - p1[0]) / L3];
+
+      const rad = (angle * Math.PI) / 180;
+      const u = [Math.cos(rad), Math.sin(rad)];
+      const v = [-Math.sin(rad), Math.cos(rad)];
+
+      const R1 = 0.5 * W * Math.abs(u[0] * n1[0] + u[1] * n1[1]) + 0.5 * H * Math.abs(v[0] * n1[0] + v[1] * n1[1]);
+      const R2 = 0.5 * W * Math.abs(u[0] * n2[0] + u[1] * n2[1]) + 0.5 * H * Math.abs(v[0] * n2[0] + v[1] * n2[1]);
+      const R3 = 0.5 * W * Math.abs(u[0] * n3[0] + u[1] * n3[1]) + 0.5 * H * Math.abs(v[0] * n3[0] + v[1] * n3[1]);
+
+      const M = (2 * area - (L1 * R1 + L2 * R2 + L3 * R3)) / perim;
+      const lam1 = (L1 * (R1 + M)) / (2 * area);
+      const lam2 = (L2 * (R2 + M)) / (2 * area);
+      const lam3 = (L3 * (R3 + M)) / (2 * area);
+
+      const tx = Math.round((lam1 * p1[0] + lam2 * p2[0] + lam3 * p3[0]) * 10) / 10;
+      const ty = Math.round((lam1 * p1[1] + lam2 * p2[1] + lam3 * p3[1]) * 10) / 10;
+
+      textWrap.setAttribute('transform', `translate(${tx}, ${ty}) rotate(${angle})`);
+    });
+  }
+
   function initSkillsCrystalAnimation() {
     const stage = document.getElementById('skillsCrystalStage');
     const skillsSection = document.getElementById('skills');
     const svg = document.getElementById('skillsCrystalSvg');
     if (!stage || !skillsSection || !svg) return;
+
+    // Auto-fit label typography inside triangles (immediate + after Syne font loads)
+    fitSkillTextsToTriangles(stage);
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => fitSkillTextsToTriangles(stage));
+    }
 
     const shardEls = Array.from(stage.querySelectorAll('.skill-tri-shard'));
     if (!shardEls.length) return;
@@ -81,8 +153,6 @@
 
     // 1. GSAP ScrollTrigger Assembly Animation (Identical choreography to #bgContactCrystal)
     if (hasGSAP) {
-      const fractures = stage.querySelectorAll('.outline-fracture');
-
       const assembleTl = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
@@ -137,16 +207,6 @@
           0
         );
       });
-
-      // Fracture Cleavage Laser Traces bond together
-      if (fractures.length) {
-        assembleTl.fromTo(
-          fractures,
-          { strokeDashoffset: -54, opacity: 0.08 },
-          { strokeDashoffset: 0, opacity: 0.85 },
-          0
-        );
-      }
     }
 
     // 2. Interactive Hover Glow & Dynamic Radial Repulsion on Neighboring Triangular Shards

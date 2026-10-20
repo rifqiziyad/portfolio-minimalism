@@ -135,61 +135,111 @@
     container.innerHTML = itemsHtml;
   }
 
+  function normalizeAngleDeg(deg) {
+    let a = deg;
+    while (a > 90) a -= 180;
+    while (a < -90) a += 180;
+    return Math.max(-76, Math.min(76, a));
+  }
+
   function computeTriangleMetrics(p1, p2, p3) {
     const a = Math.hypot(p2[0] - p3[0], p2[1] - p3[1]);
     const b = Math.hypot(p1[0] - p3[0], p1[1] - p3[1]);
     const c = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
     const perim = a + b + c;
 
-    // Incenter (center of inscribed circle — widest interior point of the sharp triangle)
     const ix = (a * p1[0] + b * p2[0] + c * p3[0]) / perim;
     const iy = (a * p1[1] + b * p2[1] + c * p3[1]) / perim;
     const cx = (p1[0] + p2[0] + p3[0]) / 3;
     const cy = (p1[1] + p2[1] + p3[1]) / 3;
-    const tx = ix * 0.82 + cx * 0.18;
-    const ty = iy * 0.82 + cy * 0.18;
 
     const area =
       Math.abs((p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])) / 2;
     const inradius = (2 * area) / perim;
 
-    const edges = [
-      { len: a, pA: p2, pB: p3, opp: p1 },
-      { len: b, pA: p1, pB: p3, opp: p2 },
-      { len: c, pA: p1, pB: p2, opp: p3 }
-    ];
-    edges.sort((e1, e2) => e2.len - e1.len);
-    const longest = edges[0];
-    const shortest = edges[2];
-
-    const midShort = [
-      (shortest.pA[0] + shortest.pB[0]) / 2,
-      (shortest.pA[1] + shortest.pB[1]) / 2
-    ];
-    let angle =
-      Math.atan2(midShort[1] - shortest.opp[1], midShort[0] - shortest.opp[0]) *
-      (180 / Math.PI);
-
-    // Ensure text is NEVER upside down (-75 deg to +75 deg)
-    if (angle > 90) angle -= 180;
-    if (angle < -90) angle += 180;
-    angle = Math.max(-75, Math.min(75, angle));
-
-    const medianLen = Math.hypot(
-      midShort[0] - shortest.opp[0],
-      midShort[1] - shortest.opp[1]
-    );
-
     return {
       area,
       inradius,
-      tx,
-      ty,
       cx,
       cy,
-      angle: Math.round(angle * 10) / 10,
-      maxEdge: longest.len,
-      medianLen
+      ix,
+      iy
+    };
+  }
+
+  /**
+   * Uniform Pixel Margin Center (Anisotropic Rectangular Incenter) Algorithm:
+   * Finds the exact center (tx, ty) and orientation angle theta where the clearance from all
+   * 4 corners of the rotated text box to all 3 edges of the triangle is mathematically equal!
+   */
+  function computeInscribedTextPlacement(p1, p2, p3, text, skillSize) {
+    const m = computeTriangleMetrics(p1, p2, p3);
+    const L1 = Math.hypot(p2[0] - p3[0], p2[1] - p3[1]);
+    const L2 = Math.hypot(p1[0] - p3[0], p1[1] - p3[1]);
+    const L3 = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
+    const perim = L1 + L2 + L3;
+
+    const n1 = [(p3[1] - p2[1]) / L1, -(p3[0] - p2[0]) / L1];
+    const n2 = [(p1[1] - p3[1]) / L2, -(p1[0] - p3[0]) / L2];
+    const n3 = [(p2[1] - p1[1]) / L3, -(p2[0] - p1[0]) / L3];
+
+    // Syne 800 uppercase + 0.07em letter-spacing ratio (~0.94em per character)
+    const w0 = Math.max(4.2, text.length * 0.94);
+    const h0 = 1.4;
+
+    const pts = [p1, p2, p3];
+    const candidates = [];
+    for (let i = 0; i < 3; i++) {
+      const pa = pts[i], pb = pts[(i + 1) % 3], pc = pts[(i + 2) % 3];
+      candidates.push(normalizeAngleDeg(Math.atan2(pb[1] - pa[1], pb[0] - pa[0]) * (180 / Math.PI)));
+      const mid = [(pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2];
+      candidates.push(normalizeAngleDeg(Math.atan2(mid[1] - pc[1], mid[0] - pc[0]) * (180 / Math.PI)));
+    }
+
+    let best = null;
+
+    for (const angleDeg of candidates) {
+      const rad = (angleDeg * Math.PI) / 180;
+      const u = [Math.cos(rad), Math.sin(rad)];
+      const v = [-Math.sin(rad), Math.cos(rad)];
+
+      const r1_unit = 0.5 * w0 * Math.abs(u[0] * n1[0] + u[1] * n1[1]) + 0.5 * h0 * Math.abs(v[0] * n1[0] + v[1] * n1[1]);
+      const r2_unit = 0.5 * w0 * Math.abs(u[0] * n2[0] + u[1] * n2[1]) + 0.5 * h0 * Math.abs(v[0] * n2[0] + v[1] * n2[1]);
+      const r3_unit = 0.5 * w0 * Math.abs(u[0] * n3[0] + u[1] * n3[1]) + 0.5 * h0 * Math.abs(v[0] * n3[0] + v[1] * n3[1]);
+
+      const denom = L1 * r1_unit + L2 * r2_unit + L3 * r3_unit;
+      const fMax = (2 * m.area) / denom;
+
+      if (!best || fMax > best.fMax) {
+        best = { fMax, angleDeg, r1_unit, r2_unit, r3_unit };
+      }
+    }
+
+    const sizeScale = Math.sqrt(skillSize / 145);
+    const fontSize = Math.max(7.5, Math.min(12.8, Math.round(best.fMax * 0.55 * sizeScale * 10) / 10));
+
+    const R1 = fontSize * best.r1_unit;
+    const R2 = fontSize * best.r2_unit;
+    const R3 = fontSize * best.r3_unit;
+
+    // Exact uniform pixel clearance M so distance to Edge 1 = Edge 2 = Edge 3 = M
+    const M = (2 * m.area - (L1 * R1 + L2 * R2 + L3 * R3)) / perim;
+
+    const lam1 = (L1 * (R1 + M)) / (2 * m.area);
+    const lam2 = (L2 * (R2 + M)) / (2 * m.area);
+    const lam3 = (L3 * (R3 + M)) / (2 * m.area);
+
+    const tx = lam1 * p1[0] + lam2 * p2[0] + lam3 * p3[0];
+    const ty = lam1 * p1[1] + lam2 * p2[1] + lam3 * p3[1];
+    const safeSpan = Math.round(best.fMax * w0 * 0.65);
+
+    return {
+      ...m,
+      tx: Math.round(tx * 10) / 10,
+      ty: Math.round(ty * 10) / 10,
+      angle: Math.round(best.angleDeg * 10) / 10,
+      fontSize,
+      safeSpan
     };
   }
 
@@ -215,7 +265,7 @@
       P_320_105: pt(320, 105),
       P_120_330: pt(120, 330),
       I_352_162: pt(340, 155),
-      I_218_342: pt(190, 342)
+      I_218_342: pt(195, 312)
     };
 
     const baseDefs = [
@@ -306,8 +356,10 @@
       return { ...def, origIndex, ...m };
     });
 
-    // Rank triangles by area and pair with skills ranked by size (px) from JSON
-    const shardsByArea = [...enrichedShards].sort((a, b) => b.area - a.area);
+    // Rank triangles by effective capacity so wider facets host larger primary skills
+    const shardsByCapacity = [...enrichedShards].sort(
+      (a, b) => b.inradius * Math.sqrt(b.area) - a.inradius * Math.sqrt(a.area)
+    );
     const skillsBySize = skills
       .map((s, idx) => ({
         name: s.name || s.title || '',
@@ -316,25 +368,29 @@
       }))
       .sort((a, b) => b.size - a.size);
 
-    const pairedShards = shardsByArea
-      .map((shard, rank) => ({
-        ...shard,
-        skill: skillsBySize[rank]
-      }))
+    const pairedShards = shardsByCapacity
+      .map((shard, rank) => {
+        const skill = skillsBySize[rank];
+        const placement = computeInscribedTextPlacement(
+          shard.pts[0],
+          shard.pts[1],
+          shard.pts[2],
+          skill.name,
+          skill.size
+        );
+        return {
+          ...shard,
+          ...placement,
+          skill
+        };
+      })
       .sort((a, b) => a.origIndex - b.origIndex);
 
     const shardsSvgMarkup = pairedShards
       .map((item, idx) => {
         const [p1, p2, p3] = item.pts;
         const ptsStr = `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`;
-
-        // Scale text by skill.size while strictly bounding inside triangle so crystal is always much larger than text
-        const sizeScale = item.skill.size / 145;
-        const maxAllowedByLength =
-          (item.medianLen * 0.42) / Math.max(5.5, item.skill.name.length * 0.58);
-        const maxAllowedByWidth = item.inradius * 0.34;
-        const rawFont = Math.min(maxAllowedByLength, maxAllowedByWidth) * sizeScale;
-        const fontSize = Math.max(8.5, Math.min(15.5, Math.round(rawFont * 10) / 10));
+        const ptsData = `${p1[0]},${p1[1]};${p2[0]},${p2[1]};${p3[0]},${p3[1]}`;
 
         const insetPts = item.pts
           .map(
@@ -369,7 +425,11 @@
              data-tier="${item.tier}"
              data-cx="${Math.round(item.cx)}"
              data-cy="${Math.round(item.cy)}"
-             data-inradius="${Math.round(item.inradius)}">
+             data-inradius="${Math.round(item.inradius)}"
+             data-pts="${ptsData}"
+             data-angle="${item.angle}"
+             data-safe-span="${item.safeSpan}"
+             data-font-size="${item.fontSize}">
             <g class="skill-shard-scroll">
               <g class="skill-shard-body">
                 <polygon class="crystal-facet skill-tri-poly"
@@ -385,14 +445,14 @@
                          stroke-width="0.8"
                          pointer-events="none" />
                 <g class="skill-tri-text-wrap"
-                   transform="translate(${Math.round(item.tx)}, ${Math.round(item.ty)}) rotate(${item.angle})"
+                   transform="translate(${item.tx}, ${item.ty}) rotate(${item.angle})"
                    pointer-events="none">
                   <text class="skill-shard-label skill-tri-text"
                         x="0"
                         y="0"
                         text-anchor="middle"
                         dominant-baseline="central"
-                        font-size="${fontSize}px">${item.skill.name}</text>
+                        font-size="${item.fontSize}px">${item.skill.name}</text>
                 </g>
                 <polygon class="skill-tri-refract"
                          points="${ptsStr}"
@@ -479,15 +539,6 @@
         </defs>
 
         <g id="skills-crystal-formation">
-          <!-- Fracture Cleavage Laser Traces (Exact #bgContactCrystal lines scaled 2x) -->
-          <g class="fracture-traces" id="skillsFractureTraces" stroke-linecap="round">
-            <line class="outline-fracture" x1="320" y1="100" x2="860" y2="350" stroke="#ff8c00" stroke-width="2.2" stroke-dasharray="6 8" opacity="0.8" />
-            <line class="outline-fracture" x1="860" y1="350" x2="350" y2="880" stroke="#a855f7" stroke-width="2.4" stroke-dasharray="8 10" opacity="0.8" />
-            <line class="outline-fracture" x1="320" y1="100" x2="350" y2="880" stroke="#ffffff" stroke-width="2.0" stroke-dasharray="6 10" opacity="0.65" />
-            <line class="outline-fracture" x1="670" y1="110" x2="500" y2="270" stroke="#ffaa00" stroke-width="1.8" stroke-dasharray="4 6" opacity="0.75" />
-            <line class="outline-fracture" x1="150" y1="440" x2="310" y2="530" stroke="#c084fc" stroke-width="1.8" stroke-dasharray="4 6" opacity="0.75" />
-          </g>
-
           <g class="skills-shards-cluster" id="skillsShardsCluster">
             ${shardsSvgMarkup}
           </g>

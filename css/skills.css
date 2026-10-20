@@ -32,8 +32,7 @@
 
 .skill-tri-shard,
 .skill-shard-scroll,
-.skill-shard-body,
-.skills-crystal-stage .outline-fracture {
+.skill-shard-body {
   will-change: transform, opacity;
 }
 
