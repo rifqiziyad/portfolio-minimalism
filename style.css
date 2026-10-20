@@ -268,8 +268,8 @@ body.has-cursor #cursor-dot {
 }
 
 .bg-text-contact {
-  bottom: 5%;
-  right: -3%;
+  top: 8%;
+  right: -5%;
 }
 
 /* Tags, Badges, Labels */
