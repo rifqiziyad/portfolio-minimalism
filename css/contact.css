@@ -1,0 +1,225 @@
+/* ─── CONTACT SECTION ─── */
+.section-contact {
+  padding-bottom: clamp(6rem, 12vw, 12rem);
+}
+
+/* Contact Background Assembling Crystal */
+.bg-contact-crystal {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(550px, 50vw, 850px);
+  height: clamp(550px, 50vw, 850px);
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  opacity: 0.65;
+  will-change: transform, opacity, filter;
+  filter: drop-shadow(0 0 60px rgba(255, 85, 0, 0.22));
+}
+
+.bg-contact-crystal svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  overflow: visible;
+  display: block;
+}
+
+.bg-contact-crystal .shard-group,
+.bg-contact-crystal .shard-sub-facet,
+.bg-contact-crystal .splinter-piece,
+.bg-contact-crystal .outline-fracture {
+  will-change: transform, opacity;
+}
+
+.contact-container {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(1rem, 1.5vw, 1.5rem);
+  position: relative;
+  z-index: 2;
+}
+
+.bento-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(18, 18, 18, 0.45);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: transform var(--transition-smooth), border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.bento-card:hover {
+  border-color: var(--accent-orange);
+  background: rgba(255, 69, 0, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(255, 69, 0, 0.18);
+  transform: translateY(-4px);
+}
+
+.bento-card-span-2 {
+  grid-column: span 2;
+}
+
+.bento-card.bento-location {
+  cursor: default;
+}
+
+.bento-card.bento-location:hover {
+  transform: none;
+  background: rgba(18, 18, 18, 0.45);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.bento-arrow {
+  position: absolute;
+  top: clamp(1.25rem, 2vw, 1.75rem);
+  right: clamp(1.25rem, 2vw, 1.75rem);
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  line-height: 1;
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.bento-card:hover .bento-arrow {
+  transform: translate(3px, -3px);
+  color: var(--accent-orange);
+}
+
+.bento-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.bento-email .bento-main {
+  padding-right: 2rem;
+}
+
+.bento-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 1.6vw, 1.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.bento-title-lg {
+  font-size: clamp(1.15rem, 2.2vw, 1.85rem);
+  line-height: 1.2;
+  word-break: break-word;
+  color: var(--text-primary);
+  transition: color var(--transition-fast);
+}
+
+.bento-card:hover .bento-title-lg {
+  color: var(--accent-orange);
+}
+
+.bento-subtitle {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+
+.bento-handle {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--accent-orange);
+  margin-bottom: 0;
+}
+
+.bento-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--accent-orange);
+  margin-top: 0.75rem;
+  transition: gap var(--transition-fast);
+}
+
+.bento-action .action-arrow {
+  font-size: 1.1em;
+  transition: transform var(--transition-fast);
+}
+
+.bento-card:hover .bento-action {
+  gap: 0.85rem;
+}
+
+.bento-card:hover .bento-action .action-arrow {
+  transform: translateX(4px);
+}
+
+/* ─── RESPONSIVE: CONTACT ─── */
+@media (max-width: 992px) {
+  .bg-contact-crystal {
+    width: clamp(480px, 70vw, 650px);
+    height: clamp(480px, 70vw, 650px);
+    opacity: 0.58;
+  }
+
+  .contact-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bento-card-span-2 {
+    grid-column: span 2;
+  }
+
+  .bento-location {
+    grid-column: span 2;
+  }
+
+  .bento-card:nth-child(5) {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .bg-contact-crystal {
+    width: clamp(340px, 90vw, 460px);
+    height: clamp(340px, 90vw, 460px);
+    opacity: 0.5;
+  }
+
+  .contact-bento-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-card-span-2,
+  .bento-location,
+  .bento-card:nth-child(5) {
+    grid-column: span 1;
+  }
+}
+

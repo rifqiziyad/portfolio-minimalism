@@ -1,0 +1,115 @@
+/* ─── EDUCATION & CREDENTIALS SECTION ─── */
+.section-education {
+  position: relative;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.education-table {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+  z-index: 2;
+}
+
+.education-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px;
+  gap: 2rem;
+  align-items: center;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem) 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: transparent;
+  transition: background-color var(--transition-fast);
+}
+
+.education-row:hover {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.education-index {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.education-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.education-program-tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  padding: 0.2rem 0.6rem;
+  background-color: rgba(255, 69, 0, 0.08);
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  color: var(--accent-orange);
+  letter-spacing: 0.06em;
+}
+
+.education-period {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.education-degree {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.education-school {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #d1d1d6;
+  margin-bottom: 0.5rem;
+}
+
+.education-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 75ch;
+}
+
+.education-arrow {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+  transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+.education-row:hover .education-arrow {
+  color: var(--accent-orange);
+  transform: translateX(4px);
+}
+
+/* ─── RESPONSIVE: EDUCATION ─── */
+@media (max-width: 1024px) {
+  .education-row {
+    grid-template-columns: 60px 1fr;
+  }
+
+  .education-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .education-row {
+    grid-template-columns: 40px 1fr;
+    padding: 1.5rem 0;
+  }
+}
+

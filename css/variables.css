@@ -1,0 +1,35 @@
+/* ─── CSS CUSTOM PROPERTIES (DESIGN TOKENS) ─── */
+:root {
+  --bg-primary: #070707;
+  --bg-secondary: #0e0e0e;
+  --bg-card: #121212;
+  --bg-card-hover: #171717;
+  
+  --text-primary: #f5f5f7;
+  --text-secondary: #a0a0a5;
+  --text-muted: #606066;
+  
+  --accent-orange: #ff4500;
+  --accent-orange-glow: rgba(255, 69, 0, 0.4);
+  --accent-red: #e63917;
+  --accent-amber: #ff8c00;
+  
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-strong: rgba(255, 255, 255, 0.3);
+  --border-accent: rgba(255, 69, 0, 0.6);
+
+  --font-display: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Space Grotesk', monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --transition-fast: 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-smooth: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+  --max-width: 1440px;
+  --header-height: 72px;
+}
+

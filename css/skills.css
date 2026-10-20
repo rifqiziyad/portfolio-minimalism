@@ -1,0 +1,84 @@
+/* ─── SKILLS & CAPABILITIES SECTION ─── */
+.skills-table {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-subtle);
+  position: relative;
+  z-index: 2;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto 40px;
+  gap: 2rem;
+  align-items: center;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem) 1.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: transparent;
+}
+
+.skill-index {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent-orange);
+}
+
+.skill-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.skill-desc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.skill-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  padding: 0.3rem 0.65rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.skill-arrow {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+/* ─── RESPONSIVE: SKILLS ─── */
+@media (max-width: 1024px) {
+  .skill-row {
+    grid-template-columns: 60px 1fr auto;
+  }
+
+  .skill-arrow {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .skill-row {
+    grid-template-columns: 40px 1fr;
+    padding: 1.5rem 0;
+  }
+
+  .skill-tags {
+    display: none;
+  }
+}
+

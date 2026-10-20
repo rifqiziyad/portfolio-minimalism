@@ -1,0 +1,291 @@
+/* ─── TIMELINE SECTION (STAGGERED INTERVAL ARCHITECTURE) ─── */
+.section-timeline {
+  --shard-size: clamp(850px, 60vw, 1200px);
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.timeline-stream-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 50px 0;
+}
+
+.timeline-dynamic-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.timeline-card-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 40px 0;
+  z-index: 3;
+}
+
+.timeline-card {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  background: rgba(18, 18, 18, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 30px 32px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.timeline-card-year {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.02em;
+}
+
+.timeline-card-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #e5e5e7;
+  letter-spacing: 0.02em;
+}
+
+.timeline-card-text {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* Giant Background Wireframe Crystal Shards (Overflowing section bounds like outline text) */
+.bg-outline-shard {
+  position: absolute;
+  width: var(--shard-size);
+  height: var(--shard-size);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  opacity: 0.24;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 50px rgba(255, 255, 255, 0.03));
+}
+
+.bg-outline-shard img,
+.bg-outline-shard svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  overflow: visible;
+  display: block;
+}
+
+.bg-outline-shard .outline-facet {
+  fill: rgba(255, 255, 255, 0.015);
+  stroke: rgba(255, 255, 255, 0.22);
+  stroke-width: 1.1;
+}
+
+.bg-outline-shard .outline-ridge {
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.3;
+}
+
+.bg-outline-shard .outline-fracture {
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 0.9;
+  stroke-dasharray: 3 4;
+}
+
+.bg-outline-shard .outline-vertex {
+  fill: #070707;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 1.2;
+}
+
+.bg-outline-shard .outline-vertex-dot {
+  fill: #ffffff;
+  opacity: 0.7;
+}
+
+.bg-outline-shard .shard-group,
+.bg-outline-shard .shard-sub-facet,
+.bg-outline-shard .splinter-piece {
+  will-change: transform;
+}
+
+.bg-outline-shard.bg-shard-right {
+  top: 27%;
+  right: calc(var(--shard-size) * -0.5);
+  transform: rotate(-10deg);
+}
+
+.bg-outline-shard.bg-shard-left {
+  top: 58%;
+  left: calc(var(--shard-size) * -0.5);
+  transform: rotate(12deg);
+}
+
+/* Intermediate Vertical Intervals (Illustrations float in gaps between cards) */
+.timeline-interval {
+  position: relative;
+  min-height: 290px;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  margin: -10px 0;
+}
+
+.timeline-interval.interval-left {
+  justify-content: flex-start;
+  padding-left: 6%;
+}
+
+.timeline-interval.interval-right {
+  justify-content: flex-end;
+  padding-right: 6%;
+}
+
+.interval-illustration {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 0 25px rgba(255, 69, 0, 0.35));
+  will-change: transform;
+}
+
+.interval-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Physical Perimeter Docks */
+.card-dock {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-dock.dock-left {
+  left: 0;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card-dock.dock-right {
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.card-dock.dock-bottom {
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+}
+
+.card-dock.dock-top {
+  left: 50%;
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+
+.flank-dock {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.dock-point {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--accent-orange);
+  box-shadow: 0 0 10px rgba(255, 69, 0, 0.9), 0 0 18px rgba(168, 85, 247, 0.6);
+}
+
+.dock-point.purple {
+  border-color: #a855f7;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.9), 0 0 18px rgba(255, 69, 0, 0.5);
+}
+
+/* ─── RESPONSIVE: TIMELINE ─── */
+@media (max-width: 992px) {
+  .section-timeline {
+    --shard-size: clamp(600px, 70vw, 850px);
+  }
+  .timeline-stream-container {
+    padding: 30px 0;
+  }
+  .timeline-card {
+    max-width: 88%;
+    padding: 24px;
+  }
+  .timeline-interval {
+    min-height: 230px;
+    padding: 0 2%;
+  }
+  .interval-illustration {
+    width: 230px;
+    height: 230px;
+  }
+  .bg-outline-shard {
+    opacity: 0.20;
+  }
+}
+
+@media (max-width: 640px) {
+  .section-timeline {
+    --shard-size: clamp(420px, 90vw, 550px);
+  }
+  .timeline-interval {
+    justify-content: center !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    min-height: 190px;
+  }
+  .interval-illustration {
+    width: 180px;
+    height: 180px;
+  }
+  .bg-outline-shard {
+    opacity: 0.14;
+  }
+  .timeline-dynamic-track {
+    display: none;
+  }
+}
+
