@@ -101,6 +101,9 @@
         tags: [
           'React.js',
           'TypeScript',
+          'JavaScript',
+          'Swift',
+          'SwfitUI',
           'Next.js',
           'Redux Toolkit',
           'Material UI',
@@ -114,7 +117,7 @@
         title: 'BACKEND & DATA INTEGRATION',
         description:
           'Server-side runtime engineering, relational database management, and contract-first RESTful API consumption.',
-        tags: ['Node.js', 'Express.js', 'RESTful APIs', 'MySQL', 'JSON Schemas']
+        tags: ['Java', 'Node.js', 'Express.js', 'RESTful APIs', 'MySQL', 'JSON Schemas']
       },
       {
         index: '03',

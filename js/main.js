@@ -11,9 +11,13 @@
   function bootstrap() {
     const app = window.Portfolio || {};
 
-    // 0. Render Dynamic Content from PortfolioData Module
+    // 0. Render Dynamic Content from PortfolioData Module & Background Crystal SVGs
     if (app.renderer && typeof app.renderer.renderAll === 'function') {
       app.renderer.renderAll();
+    }
+
+    if (app.crystalBackgrounds && typeof app.crystalBackgrounds.renderCrystalBackgrounds === 'function') {
+      app.crystalBackgrounds.renderCrystalBackgrounds();
     }
 
     // 1. Dynamic Cursor Blob & Glow
