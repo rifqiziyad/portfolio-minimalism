@@ -293,6 +293,8 @@ body.has-cursor #cursor-dot {
 }
 
 .section-header {
+  position: relative;
+  z-index: 3;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -1468,6 +1470,11 @@ body.has-cursor #cursor-dot {
 .bg-contact-crystal .splinter-piece,
 .bg-contact-crystal .outline-fracture {
   will-change: transform, opacity;
+}
+
+.contact-container {
+  position: relative;
+  z-index: 2;
 }
 
 .contact-bento-grid {
