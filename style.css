@@ -1025,13 +1025,21 @@ body.has-cursor #cursor-dot {
 .timeline-card {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   margin: 0 auto;
-  background: rgba(14, 14, 16, 0.95);
-  border: 1px solid var(--border-medium);
+  background: rgba(18, 18, 18, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   padding: 30px 32px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.timeline-card:hover {
+  border-color: var(--accent-orange);
+  background: rgba(255, 69, 0, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(255, 69, 0, 0.18);
 }
 
 .timeline-card-year {
