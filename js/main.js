@@ -49,7 +49,12 @@
       app.timeline.initTimelineChoreography();
     }
 
-    // 6. Contact Crystal Assembly & Reverse Shatter Choreography
+    // 6. Capabilities Interactive Crystal Assembly & Hover Repulsion
+    if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
+      app.skills.initSkillsCrystalAnimation();
+    }
+
+    // 7. Contact Crystal Assembly & Reverse Shatter Choreography
     if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
       app.contact.initContactCrystalAnimation();
     }

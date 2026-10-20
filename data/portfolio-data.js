@@ -93,45 +93,28 @@
     ],
 
     skills: [
-      {
-        index: '01',
-        title: 'FRONTEND ARCHITECTURE',
-        description:
-          'Modern component systems, high-density reactive state architecture, and enterprise UI engineering using React.js and TypeScript.',
-        tags: [
-          'React.js',
-          'TypeScript',
-          'JavaScript',
-          'Swift',
-          'SwfitUI',
-          'Next.js',
-          'Redux Toolkit',
-          'Material UI',
-          'Tailwind CSS',
-          'Bootstrap',
-          'HTML5 / CSS3'
-        ]
-      },
-      {
-        index: '02',
-        title: 'BACKEND & DATA INTEGRATION',
-        description:
-          'Server-side runtime engineering, relational database management, and contract-first RESTful API consumption.',
-        tags: ['Java', 'Node.js', 'Express.js', 'RESTful APIs', 'MySQL', 'JSON Schemas']
-      },
-      {
-        index: '03',
-        title: 'TOOLS & ENGINEERING STANDARDS',
-        description:
-          'Version control pipelines, banking security standards, state flow architecture, and agile cross-team collaboration.',
-        tags: [
-          'Git',
-          'Redux Flow',
-          'Banking Security',
-          'QA Handshake',
-          'Clean Architecture'
-        ]
-      }
+      { name: 'React.js', size: 175 },
+      { name: 'TypeScript', size: 170 },
+      { name: 'JavaScript', size: 165 },
+      { name: 'Next.js', size: 155 },
+      { name: 'Redux Toolkit', size: 150 },
+      { name: 'Tailwind CSS', size: 150 },
+      { name: 'Clean Architecture', size: 150 },
+      { name: 'Material UI', size: 145 },
+      { name: 'Banking Security', size: 145 },
+      { name: 'Node.js', size: 140 },
+      { name: 'HTML5 / CSS3', size: 140 },
+      { name: 'RESTful APIs', size: 138 },
+      { name: 'SwiftUI', size: 135 },
+      { name: 'Express.js', size: 132 },
+      { name: 'Redux Flow', size: 130 },
+      { name: 'Swift', size: 128 },
+      { name: 'Java', size: 128 },
+      { name: 'MySQL', size: 126 },
+      { name: 'JSON Schemas', size: 125 },
+      { name: 'QA Handshake', size: 125 },
+      { name: 'Git', size: 120 },
+      { name: 'Bootstrap', size: 120 }
     ],
 
     education: [
