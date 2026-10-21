@@ -2,6 +2,7 @@
 .section-skills {
   position: relative;
   overflow: hidden;
+  padding-bottom: clamp(1.5rem, 3.5vw, 3rem);
 }
 
 .skills-container {
@@ -15,7 +16,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(1rem, 3vw, 3rem) 0;
+  padding-top: clamp(0.5rem, 2vw, 1.5rem);
+  padding-bottom: 0;
   z-index: 2;
   will-change: filter, opacity;
   filter: drop-shadow(0 0 65px rgba(255, 85, 0, 0.24));
@@ -92,8 +94,13 @@
 }
 
 @media (max-width: 640px) {
+  .section-skills {
+    padding-bottom: 1.25rem;
+  }
+
   .skills-crystal-stage {
-    padding: 0.5rem 0;
+    padding-top: 0.25rem;
+    padding-bottom: 0;
   }
 
   .skills-crystal-svg {

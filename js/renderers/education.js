@@ -30,7 +30,6 @@
               <p class="education-school">${item.school}</p>
               <p class="education-desc">${item.description}</p>
             </div>
-            <span class="education-arrow">→</span>
           </div>
         `;
       })

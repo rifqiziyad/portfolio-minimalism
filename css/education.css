@@ -1,6 +1,7 @@
 /* ─── EDUCATION & CREDENTIALS SECTION ─── */
 .section-education {
   position: relative;
+  padding-top: clamp(3rem, 6vw, 5rem);
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -14,7 +15,7 @@
 
 .education-row {
   display: grid;
-  grid-template-columns: 80px 1fr 40px;
+  grid-template-columns: 80px 1fr;
   gap: 2rem;
   align-items: center;
   padding: clamp(1.75rem, 3.5vw, 2.75rem) 1.5rem;
@@ -84,25 +85,10 @@
   max-width: 75ch;
 }
 
-.education-arrow {
-  font-size: 1.5rem;
-  color: var(--text-muted);
-  transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-.education-row:hover .education-arrow {
-  color: var(--accent-orange);
-  transform: translateX(4px);
-}
-
 /* ─── RESPONSIVE: EDUCATION ─── */
 @media (max-width: 1024px) {
   .education-row {
     grid-template-columns: 60px 1fr;
-  }
-
-  .education-arrow {
-    display: none;
   }
 }
 
