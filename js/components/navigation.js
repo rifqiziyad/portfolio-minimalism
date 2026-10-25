@@ -74,6 +74,101 @@
         }
       });
     });
+
+    // 4. Navbar orange collision engine (Dual-layer clip-path)
+    function initNavbarCollision() {
+      const navInverted = document.getElementById('navInverted');
+      if (!navInverted || !header) return;
+
+      let targets = [];
+      function refreshTargets() {
+        targets = Array.from(
+          document.querySelectorAll(
+            '[data-nav-collision="true"], .project-img-frame, .bento-card'
+          )
+        );
+      }
+
+      refreshTargets();
+
+      let ticking = false;
+
+      function updateCollision() {
+        ticking = false;
+        const headerHeight = header.offsetHeight || 70;
+        const windowWidth = window.innerWidth;
+        const intersectingRects = [];
+
+        for (let i = 0; i < targets.length; i++) {
+          const el = targets[i];
+          const rect = el.getBoundingClientRect();
+
+          // Check vertical intersection with header band (0 to headerHeight)
+          if (rect.bottom > 0 && rect.top < headerHeight) {
+            const top = Math.max(0, rect.top);
+            const bottom = Math.min(headerHeight, rect.bottom);
+            const left = Math.max(0, rect.left);
+            const right = Math.min(windowWidth, rect.right);
+
+            if (right > left && bottom > top) {
+              intersectingRects.push({
+                left: Math.round(left),
+                right: Math.round(right),
+                top: Math.round(top),
+                bottom: Math.round(bottom)
+              });
+            }
+          }
+        }
+
+        if (intersectingRects.length === 0) {
+          navInverted.style.clipPath = 'polygon(0 0, 0 0, 0 0, 0 0)';
+        } else {
+          const polyPoints = intersectingRects.map(
+            (b) =>
+              `${b.left}px ${b.top}px, ${b.right}px ${b.top}px, ${b.right}px ${b.bottom}px, ${b.left}px ${b.bottom}px, ${b.left}px ${b.top}px`
+          );
+          navInverted.style.clipPath = `polygon(${polyPoints.join(', ')})`;
+        }
+      }
+
+      function requestUpdate() {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateCollision);
+        }
+      }
+
+      if (lenis) {
+        lenis.on('scroll', requestUpdate);
+      }
+      window.addEventListener('scroll', requestUpdate, { passive: true });
+      window.addEventListener('resize', () => {
+        refreshTargets();
+        requestUpdate();
+      });
+      window.addEventListener('load', () => {
+        refreshTargets();
+        requestUpdate();
+      });
+
+      // Synchronize hover state between base links and inverted links
+      const baseLinks = document.querySelectorAll('.nav-container-base .nav-link');
+      const invertedLinks = document.querySelectorAll('.nav-inverted-wrapper .nav-link');
+      baseLinks.forEach((link, idx) => {
+        link.addEventListener('mouseenter', () => {
+          if (invertedLinks[idx]) invertedLinks[idx].classList.add('is-hovered');
+        });
+        link.addEventListener('mouseleave', () => {
+          if (invertedLinks[idx]) invertedLinks[idx].classList.remove('is-hovered');
+        });
+      });
+
+      // Initial execution
+      requestUpdate();
+    }
+
+    initNavbarCollision();
   }
 
   window.Portfolio.navigation = {
