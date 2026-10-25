@@ -8,7 +8,6 @@
   z-index: 100;
   background-color: transparent;
   pointer-events: none;
-  mix-blend-mode: difference;
   color: #ffffff;
 }
 
@@ -33,31 +32,48 @@
 }
 
 .nav-brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.65rem;
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: #ffffff;
+}
+
+.brand-logo-svg {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.35)) drop-shadow(0 0 10px rgba(255, 69, 0, 0.25));
+  transition: transform var(--transition-smooth), filter var(--transition-smooth);
+}
+
+.brand-logo-svg .logo-shard {
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: 50px 50px;
+}
+
+.nav-brand:hover .brand-logo-svg {
+  filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.75)) drop-shadow(0 0 16px rgba(255, 95, 31, 0.6));
+}
+
+.nav-brand:hover .logo-shard-r {
+  transform: translate(-3.5px, 1px) rotate(-2deg);
+}
+
+.nav-brand:hover .logo-shard-z {
+  transform: translate(0px, -2.5px) scale(1.03);
+}
+
+.nav-brand:hover .logo-shard-i {
+  transform: translate(3.5px, 1px) rotate(2deg);
 }
 
 .brand-name {
   color: #ffffff;
-}
-
-.brand-badge {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #ffffff;
-  letter-spacing: 0.05em;
-  transition: opacity var(--transition-fast);
-}
-
-.nav-brand:hover .brand-badge {
-  opacity: 0.7;
 }
 
 .nav-list {
