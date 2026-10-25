@@ -38,12 +38,13 @@
                 <span class="detail-val">${item.stack}</span>
               </div>
             </div>
+            ${item.linkUrl ? `
             <div class="project-link-wrap">
-              <a href="${item.linkUrl || '#contact'}" class="project-link">
-                <span>${item.linkText || 'INQUIRE DETAILS'}</span>
+              <a href="${item.linkUrl}" class="project-link"${item.linkUrl.startsWith('http') ? ' target="_blank" rel="noopener noreferrer"' : ''}>
+                <span>${item.linkText || 'View Project'}</span>
                 <span class="arrow">↗</span>
               </a>
-            </div>
+            </div>` : ''}
           </div>
         `;
 
@@ -53,7 +54,7 @@
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
               <div class="project-gallery-badge">
                 <span class="badge-dot"></span>
-                <span>VIEW GALLERY ↗</span>
+                <span>View Gallery ↗</span>
               </div>
             </div>
           </div>

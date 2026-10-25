@@ -18,8 +18,7 @@
           'A mission-critical backoffice platform engineered to monitor transactions, govern sensitive user records, and orchestrate dynamic in-app features within Bank BTN’s mobile banking ecosystem.',
         year: '2024',
         stack: 'JavaScript • React.js • Material UI • Redux',
-        linkText: 'INQUIRE DETAILS',
-        linkUrl: '#contact',
+        linkUrl: null,
         image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
         imageAlt: 'BTN Mobile Banking Backoffice System',
         gallery: [
@@ -38,8 +37,7 @@
           'Architected and integrated comprehensive Internet Banking modules for Hibank, including inter-bank fund transfers, real-time bill payments, account summaries, and financial transaction processing.',
         year: '2024',
         stack: 'React • TypeScript • Redux Toolkit • Material UI',
-        linkText: 'INQUIRE DETAILS',
-        linkUrl: '#contact',
+        linkUrl: null,
         image: 'assets/hibank/1745218296927.jpg',
         imageAlt: 'Hibank Client Portal System',
         gallery: [
@@ -61,8 +59,7 @@
           'Full-scale modernization of CIMB Niaga OCTO Click\'s fund transfer ecosystem. Refactored multi-stage transaction flows, optimized user feedback states, and enforced banking security standards.',
         year: '2024 — 2025',
         stack: 'React • TypeScript • Material UI • REST API',
-        linkText: 'INQUIRE DETAILS',
-        linkUrl: '#contact',
+        linkUrl: null,
         image: 'assets/cimb/c1.png',
         imageAlt: 'CIMB Niaga OCTO Click Revamp',
         gallery: [
@@ -82,8 +79,7 @@
           'Advanced corporate banking web interface developed for Bank Negara Indonesia (BNI) featuring multi-level transaction authorization, liquidity dashboard, bulk payment processing, and corporate treasury management.',
         year: '2024',
         stack: 'React.js • TypeScript • Redux • Tailwind CSS • Secure REST',
-        linkText: 'INQUIRE DETAILS',
-        linkUrl: '#contact',
+        linkUrl: null,
         image: 'assets/bni/bni1.JPG',
         imageAlt: 'BNI Corporate Transactional Banking Portal',
         gallery: [
@@ -102,8 +98,7 @@
           'Next-generation smart locker and automated parcel delivery ecosystem. Features real-time locker telemetry, QR code authentication, user access governance, and fleet monitoring interfaces.',
         year: '2023 — 2024',
         stack: 'React Native • Flutter • TypeScript • WebSockets • Node.js',
-        linkText: 'INQUIRE DETAILS',
-        linkUrl: '#contact',
+        linkUrl: 'https://smartbox.build',
         image: 'assets/smartbox/s1.png',
         imageAlt: 'Smartbox Automated Locker & IoT Platform',
         gallery: [
