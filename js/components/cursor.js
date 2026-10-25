@@ -41,7 +41,7 @@
     });
 
     // Check interactive elements for cursor expansion (only clickable elements)
-    const interactiveElements = document.querySelectorAll('a, button, .btn-brutal');
+    const interactiveElements = document.querySelectorAll('a, button');
     interactiveElements.forEach((el) => {
       el.addEventListener('mouseenter', () => {
         isHoveringInteractive = true;
