@@ -8,7 +8,7 @@
 /* ─── BASE & FOUNDATION ─── */
 @import url('css/variables.css');
 @import url('css/global.css');
-/* @import url('css/cursor.css'); */
+@import url('css/cursor.css');
 
 /* ─── NAVIGATION & LAYOUT ─── */
 @import url('css/header.css');
