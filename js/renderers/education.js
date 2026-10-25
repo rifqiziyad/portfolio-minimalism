@@ -23,7 +23,6 @@
             <span class="education-index">${item.index}</span>
             <div class="education-main">
               <div class="education-meta-top">
-                <span class="education-program-tag">${item.programTag}</span>
                 <span class="education-period">${item.period}</span>
               </div>
               <h3 class="education-degree">${item.degree}</h3>

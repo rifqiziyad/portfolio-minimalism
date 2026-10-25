@@ -43,21 +43,17 @@
   flex-wrap: wrap;
 }
 
-.education-program-tag {
+.education-period {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  padding: 0.2rem 0.6rem;
-  background-color: rgba(255, 69, 0, 0.08);
-  border: 1px solid rgba(255, 69, 0, 0.3);
+  font-weight: 600;
   color: var(--accent-orange);
-  letter-spacing: 0.06em;
-}
-
-.education-period {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  background-color: rgba(255, 69, 0, 0.04);
 }
 
 .education-degree {
