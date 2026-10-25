@@ -37,12 +37,12 @@
           gsap.fromTo(
             img,
             {
-              yPercent: -8,
-              scale: 1.0
+              scale: 1.0,
+              transformOrigin: 'left top'
             },
             {
-              yPercent: 8,
-              scale: 1.14,
+              scale: 1.06,
+              transformOrigin: 'left top',
               ease: 'none',
               scrollTrigger: {
                 trigger: item,

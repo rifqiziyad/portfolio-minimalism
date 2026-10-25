@@ -136,9 +136,9 @@
 
 .project-img {
   width: 100%;
-  height: 118%;
-  margin-top: -9%;
+  height: 100%;
   object-fit: cover;
+  object-position: left top;
   will-change: transform;
   filter: grayscale(20%) brightness(0.95);
 }
