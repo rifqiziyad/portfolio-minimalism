@@ -40,7 +40,7 @@
   margin-bottom: 1rem;
 }
 
-.project-num {
+.project-category {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   font-weight: 700;
@@ -149,21 +149,6 @@
   object-fit: cover;
   will-change: transform;
   filter: grayscale(20%) brightness(0.95);
-}
-
-.project-badge-float {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background-color: rgba(7, 7, 7, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--border-medium);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--accent-orange);
-  padding: 0.35rem 0.75rem;
-  letter-spacing: 0.1em;
 }
 
 /* ─── RESPONSIVE: PORTFOLIO ─── */

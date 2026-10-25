@@ -23,7 +23,7 @@
         const infoMarkup = `
           <div class="project-info reveal ${infoRevealClass}">
             <div class="project-meta">
-              <span class="project-num">${item.num} / ${item.category}</span>
+              <span class="project-category">${item.category}</span>
               <span class="project-tag">${item.tag}</span>
             </div>
             <h3 class="project-title">${item.title}</h3>
@@ -51,7 +51,6 @@
           <div class="project-visual reveal reveal-scale">
             <div class="project-img-frame" data-gallery-project="${index}" role="button" tabindex="0" aria-label="View gallery for ${item.title}">
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
-              <div class="project-badge-float">${item.num}</div>
               <div class="project-gallery-badge">
                 <span class="badge-dot"></span>
                 <span>VIEW GALLERY ↗</span>

@@ -11,7 +11,6 @@
     works: [
       {
         id: 'project-btn',
-        num: '001',
         category: 'BANKING BACKOFFICE',
         tag: 'INTERNAL PLATFORM',
         title: 'BTN BACKOFFICE',
@@ -32,7 +31,6 @@
       },
       {
         id: 'project-hibank',
-        num: '002',
         category: 'INTERNET BANKING',
         tag: 'CLIENT PORTAL',
         title: 'HIBANK PORTAL',
@@ -56,7 +54,6 @@
       },
       {
         id: 'project-octo',
-        num: '003',
         category: 'CUSTOMER PLATFORM',
         tag: 'SYSTEM REVAMP',
         title: 'OCTO CLICK',
@@ -78,7 +75,6 @@
       },
       {
         id: 'project-bni',
-        num: '004',
         category: 'TRANSACTIONAL BANKING',
         tag: 'CORPORATE PORTAL',
         title: 'BNI CORPORATE',
@@ -99,7 +95,6 @@
       },
       {
         id: 'project-smartbox',
-        num: '005',
         category: 'IOT & LOGISTICS',
         tag: 'MOBILE APPLICATION',
         title: 'SMARTBOX PLATFORM',
