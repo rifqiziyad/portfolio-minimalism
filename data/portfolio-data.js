@@ -123,7 +123,7 @@
         programTag: 'UNDERGRADUATE DEGREE',
         period: 'FEB 2026 — PRESENT',
         degree: 'COMPUTER SCIENCE',
-        school: 'Binus Online',
+        school: 'Bina Nusantara University (BINUS Online)',
         description:
           'Pendidikan tinggi formal yang berfokus pada rekayasa perangkat lunak, struktur data dan algoritma, komputasi terdistribusi, serta perancangan sistem berbasis teknologi informasi modern.'
       },
