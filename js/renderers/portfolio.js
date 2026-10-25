@@ -1,7 +1,7 @@
 /**
- * FEATURED WORKS DOM RENDERER
- * Module: js/renderers/works.js
- * Injects project items and visual mockups into #worksList.
+ * FEATURED PORTFOLIO DOM RENDERER
+ * Module: js/renderers/portfolio.js
+ * Injects project items and visual mockups into #portfolioList.
  */
 
 (function (window, document) {
@@ -10,11 +10,11 @@
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
-  function renderWorks(works) {
-    const container = document.getElementById('worksList');
-    if (!container || !Array.isArray(works)) return;
+  function renderPortfolio(projects) {
+    const container = document.getElementById('portfolioList') || document.getElementById('worksList');
+    if (!container || !Array.isArray(projects)) return;
 
-    const html = works
+    const html = projects
       .map((item, index) => {
         const isReversed = index % 2 === 1;
         const layoutClass = isReversed ? 'project-layout-reversed' : 'project-layout-normal';
@@ -67,6 +67,8 @@
     container.innerHTML = html;
   }
 
-  window.Portfolio.renderer.renderWorks = renderWorks;
+  // Primary API and backward-compatible alias
+  window.Portfolio.renderer.renderPortfolio = renderPortfolio;
+  window.Portfolio.renderer.renderWorks = renderPortfolio;
 })(window, document);
 

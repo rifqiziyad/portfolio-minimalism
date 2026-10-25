@@ -1,5 +1,5 @@
-/* ─── WORKS / ARCHIVE SECTION ─── */
-.section-works {
+/* ─── PORTFOLIO SECTION ─── */
+.section-portfolio {
   position: relative;
 }
 
@@ -166,7 +166,7 @@
   letter-spacing: 0.1em;
 }
 
-/* ─── RESPONSIVE: WORKS ─── */
+/* ─── RESPONSIVE: PORTFOLIO ─── */
 @media (max-width: 1024px) {
   .project-item,
   .project-layout-reversed {

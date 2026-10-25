@@ -45,9 +45,8 @@
       <div class="nav-right">
         <nav class="nav-menu" id="navMenu">
           <ul class="nav-list">
-            <li class="nav-item"><a href="#works" class="nav-link">WORK</a></li>
+            <li class="nav-item"><a href="#portfolio" class="nav-link">PORTFOLIO</a></li>
             <li class="nav-item"><a href="#timeline" class="nav-link">TIMELINE</a></li>
-            <li class="nav-item"><a href="#vision" class="nav-link">STUDIO</a></li>
             <li class="nav-item"><a href="#skills" class="nav-link">SKILLS</a></li>
             <li class="nav-item"><a href="#education" class="nav-link">EDUCATION</a></li>
             <li class="nav-item"><a href="#contact" class="nav-link">CONTACT</a></li>
@@ -102,20 +101,20 @@
     </section>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- WORKS / PORTFOLIO SECTION               -->
+    <!-- PORTFOLIO SECTION                       -->
     <!-- ═══════════════════════════════════════ -->
-    <section class="section section-works" id="works">
-      <div class="bg-outline-text bg-text-works" data-parallax="0.2" aria-hidden="true">PORTFOLIO</div>
+    <section class="section section-portfolio" id="portfolio">
+      <div class="bg-outline-text bg-text-portfolio" data-parallax="0.2" aria-hidden="true">PORTFOLIO</div>
 
-      <div class="container works-container">
+      <div class="container portfolio-container">
         <div class="section-header reveal reveal-fade">
           <div class="section-title-wrap">
             <h2 class="section-main-title">PORTFOLIO</h2>
           </div>
         </div>
 
-        <!-- Dynamic Works List rendered from data/portfolio-data.js -->
-        <div class="works-list" id="worksList"></div>
+        <!-- Dynamic Portfolio List rendered from data/portfolio-data.js -->
+        <div class="portfolio-list" id="portfolioList"></div>
       </div>
     </section>
 
@@ -278,7 +277,7 @@
 
   <!-- Modular Application Scripts (Layered Architecture — works on both file:// and HTTP) -->
   <script defer src="js/core/scroll.js"></script>
-  <script defer src="js/renderers/works.js"></script>
+  <script defer src="js/renderers/portfolio.js"></script>
   <script defer src="js/renderers/timeline.js"></script>
   <script defer src="js/renderers/skills.js"></script>
   <script defer src="js/renderers/education.js"></script>
