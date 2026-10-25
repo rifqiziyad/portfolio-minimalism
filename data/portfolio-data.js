@@ -21,8 +21,14 @@
         stack: 'JavaScript • React.js • Material UI • Redux',
         linkText: 'INQUIRE DETAILS',
         linkUrl: '#contact',
-        image: 'assets/project-1.jpg',
-        imageAlt: 'BTN Mobile Banking Backoffice System'
+        image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
+        imageAlt: 'BTN Mobile Banking Backoffice System',
+        gallery: [
+          'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
+          'assets/btn/Screenshot 2025-04-25 at 16.08.42.png',
+          'assets/btn/Screenshot 2025-04-25 at 16.08.59.png',
+          'assets/btn/Screenshot 2025-04-25 at 16.09.24.png'
+        ]
       },
       {
         id: 'project-hibank',
@@ -36,8 +42,17 @@
         stack: 'React • TypeScript • Redux Toolkit • Material UI',
         linkText: 'INQUIRE DETAILS',
         linkUrl: '#contact',
-        image: 'assets/project-2.jpg',
-        imageAlt: 'Hibank Client Portal System'
+        image: 'assets/hibank/1745218296927.jpg',
+        imageAlt: 'Hibank Client Portal System',
+        gallery: [
+          'assets/hibank/1745218296927.jpg',
+          'assets/hibank/1745218296944.jpg',
+          'assets/hibank/1745218296962.jpg',
+          'assets/hibank/1745218296973.jpg',
+          'assets/hibank/1745218296987.jpg',
+          'assets/hibank/1745218297004.jpg',
+          'assets/hibank/1745218297015.jpg'
+        ]
       },
       {
         id: 'project-octo',
@@ -51,8 +66,58 @@
         stack: 'React • TypeScript • Material UI • REST API',
         linkText: 'INQUIRE DETAILS',
         linkUrl: '#contact',
-        image: 'assets/project-3.jpg',
-        imageAlt: 'CIMB Niaga OCTO Click Revamp'
+        image: 'assets/cimb/c1.png',
+        imageAlt: 'CIMB Niaga OCTO Click Revamp',
+        gallery: [
+          'assets/cimb/c1.png',
+          'assets/cimb/c2.png',
+          'assets/cimb/c3.png',
+          'assets/cimb/c4.png',
+          'assets/cimb/c5.png'
+        ]
+      },
+      {
+        id: 'project-bni',
+        num: '004',
+        category: 'TRANSACTIONAL BANKING',
+        tag: 'CORPORATE PORTAL',
+        title: 'BNI CORPORATE',
+        description:
+          'Advanced corporate banking web interface developed for Bank Negara Indonesia (BNI) featuring multi-level transaction authorization, liquidity dashboard, bulk payment processing, and corporate treasury management.',
+        year: '2024',
+        stack: 'React.js • TypeScript • Redux • Tailwind CSS • Secure REST',
+        linkText: 'INQUIRE DETAILS',
+        linkUrl: '#contact',
+        image: 'assets/bni/bni1.JPG',
+        imageAlt: 'BNI Corporate Transactional Banking Portal',
+        gallery: [
+          'assets/bni/bni1.JPG',
+          'assets/bni/bni2.JPG',
+          'assets/bni/bni3.JPG',
+          'assets/bni/bni4.JPG'
+        ]
+      },
+      {
+        id: 'project-smartbox',
+        num: '005',
+        category: 'IOT & LOGISTICS',
+        tag: 'MOBILE APPLICATION',
+        title: 'SMARTBOX PLATFORM',
+        description:
+          'Next-generation smart locker and automated parcel delivery ecosystem. Features real-time locker telemetry, QR code authentication, user access governance, and fleet monitoring interfaces.',
+        year: '2023 — 2024',
+        stack: 'React Native • Flutter • TypeScript • WebSockets • Node.js',
+        linkText: 'INQUIRE DETAILS',
+        linkUrl: '#contact',
+        image: 'assets/smartbox/s1.png',
+        imageAlt: 'Smartbox Automated Locker & IoT Platform',
+        gallery: [
+          'assets/smartbox/s1.png',
+          'assets/smartbox/s2.png',
+          'assets/smartbox/s3.png',
+          'assets/smartbox/s4.png',
+          'assets/smartbox/s5.png'
+        ]
       }
     ],
 

@@ -49,9 +49,13 @@
 
         const visualMarkup = `
           <div class="project-visual reveal reveal-scale">
-            <div class="project-img-frame">
+            <div class="project-img-frame" data-gallery-project="${index}" role="button" tabindex="0" aria-label="View gallery for ${item.title}">
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
               <div class="project-badge-float">${item.num}</div>
+              <div class="project-gallery-badge">
+                <span class="badge-dot"></span>
+                <span>VIEW GALLERY ↗</span>
+              </div>
             </div>
           </div>
         `;

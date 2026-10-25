@@ -261,6 +261,53 @@
     </div>
   </footer>
 
+  <!-- The Monolith Shard Lightbox (Portfolio Gallery Carousel) -->
+  <div class="carousel-modal" id="portfolioCarouselModal" role="dialog" aria-modal="true" aria-label="Portfolio Gallery">
+    <div class="carousel-scanline" aria-hidden="true"></div>
+
+    <!-- Header Bar -->
+    <div class="carousel-header">
+      <div class="carousel-project-info">
+        <h3 class="carousel-project-title" id="carouselProjectTitle">PROJECT</h3>
+        <span class="carousel-project-tag" id="carouselProjectTag">CATEGORY</span>
+      </div>
+
+      <div class="carousel-center-meta">
+        <span class="carousel-counter" id="carouselCounter">
+          <span class="carousel-counter-active" id="carouselCurrentIndex">01</span> / <span id="carouselTotalCount">04</span>
+        </span>
+      </div>
+
+      <button class="carousel-close-btn" id="carouselCloseBtn" aria-label="Close Gallery">
+        <span>ESC</span>
+        <span>✕</span>
+      </button>
+    </div>
+
+    <!-- Main Stage -->
+    <div class="carousel-stage" id="carouselStage">
+      <button class="carousel-nav-btn carousel-btn-prev" id="carouselPrevBtn" aria-label="Previous Slide">
+        <span>←</span>
+      </button>
+
+      <div class="carousel-slide-viewport" id="carouselViewport">
+        <div class="carousel-slide-card" id="carouselSlideCard">
+          <img src="" alt="Portfolio Showcase" class="carousel-main-img" id="carouselMainImg">
+        </div>
+      </div>
+
+      <button class="carousel-nav-btn carousel-btn-next" id="carouselNextBtn" aria-label="Next Slide">
+        <span>→</span>
+      </button>
+    </div>
+
+    <!-- Footer with interactive thumbnails -->
+    <div class="carousel-footer">
+      <div class="carousel-thumbs-track" id="carouselThumbsTrack" role="tablist" aria-label="Gallery Thumbnails"></div>
+      <div class="carousel-hint">SWIPE OR USE ARROW KEYS TO NAVIGATE • ESC TO CLOSE</div>
+    </div>
+  </div>
+
   <!-- GSAP Core & ScrollTrigger Plugin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -281,6 +328,7 @@
   <script defer src="js/components/crystal-backgrounds.js"></script>
   <script defer src="js/components/cursor.js"></script>
   <script defer src="js/components/navigation.js"></script>
+  <script defer src="js/components/carousel.js"></script>
   <script defer src="js/animations/vision.js"></script>
   <script defer src="js/animations/parallax.js"></script>
   <script defer src="js/animations/timeline.js"></script>

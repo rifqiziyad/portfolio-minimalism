@@ -58,6 +58,11 @@
     if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
       app.contact.initContactCrystalAnimation();
     }
+
+    // 8. The Monolith Shard Lightbox Carousel for Selected Works
+    if (app.carousel && typeof app.carousel.initCarousel === 'function') {
+      app.carousel.initCarousel();
+    }
   }
 
   if (document.readyState === 'loading') {
