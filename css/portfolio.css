@@ -48,14 +48,6 @@
   letter-spacing: 0.15em;
 }
 
-.project-tag {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  letter-spacing: 0.12em;
-  color: var(--text-muted);
-  text-transform: uppercase;
-}
-
 .project-title {
   font-family: var(--font-display);
   font-size: clamp(2.25rem, 4vw, 4.5rem);

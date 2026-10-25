@@ -12,7 +12,6 @@
       {
         id: 'project-btn',
         category: 'BANKING BACKOFFICE',
-        tag: 'INTERNAL PLATFORM',
         title: 'BTN BACKOFFICE',
         description:
           'A mission-critical backoffice platform engineered to monitor transactions, govern sensitive user records, and orchestrate dynamic in-app features within Bank BTN’s mobile banking ecosystem.',
@@ -31,7 +30,6 @@
       {
         id: 'project-hibank',
         category: 'INTERNET BANKING',
-        tag: 'CLIENT PORTAL',
         title: 'HIBANK PORTAL',
         description:
           'Architected and integrated comprehensive Internet Banking modules for Hibank, including inter-bank fund transfers, real-time bill payments, account summaries, and financial transaction processing.',
@@ -53,7 +51,6 @@
       {
         id: 'project-octo',
         category: 'CUSTOMER PLATFORM',
-        tag: 'SYSTEM REVAMP',
         title: 'OCTO CLICK',
         description:
           'Full-scale modernization of CIMB Niaga OCTO Click\'s fund transfer ecosystem. Refactored multi-stage transaction flows, optimized user feedback states, and enforced banking security standards.',
@@ -73,7 +70,6 @@
       {
         id: 'project-bni',
         category: 'TRANSACTIONAL BANKING',
-        tag: 'CORPORATE PORTAL',
         title: 'BNI CORPORATE',
         description:
           'Advanced corporate banking web interface developed for Bank Negara Indonesia (BNI) featuring multi-level transaction authorization, liquidity dashboard, bulk payment processing, and corporate treasury management.',
@@ -92,7 +88,6 @@
       {
         id: 'project-smartbox',
         category: 'IOT & LOGISTICS',
-        tag: 'MOBILE APPLICATION',
         title: 'SMARTBOX PLATFORM',
         description:
           'Next-generation smart locker and automated parcel delivery ecosystem. Features real-time locker telemetry, QR code authentication, user access governance, and fleet monitoring interfaces.',

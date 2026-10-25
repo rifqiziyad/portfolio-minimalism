@@ -24,7 +24,6 @@
           <div class="project-info reveal ${infoRevealClass}">
             <div class="project-meta">
               <span class="project-category">${item.category}</span>
-              <span class="project-tag">${item.tag}</span>
             </div>
             <h3 class="project-title">${item.title}</h3>
             <p class="project-desc">${item.description}</p>
