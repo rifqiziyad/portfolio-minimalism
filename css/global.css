@@ -155,17 +155,6 @@ ul, ol {
 }
 
 /* Tags, Badges, Labels */
-.section-badge {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent-orange);
-  margin-bottom: 0.75rem;
-}
-
 .mono-tag {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -192,13 +181,6 @@ ul, ol {
   letter-spacing: -0.03em;
   text-transform: uppercase;
   line-height: 1;
-}
-
-.works-counter {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  color: var(--text-secondary);
-  letter-spacing: 0.1em;
 }
 
 /* ─── SCROLL REVEAL ANIMATIONS ─── */
