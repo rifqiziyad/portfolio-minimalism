@@ -104,6 +104,9 @@ ul, ol {
 /* Giant Outlined Typography Background */
 .bg-outline-text {
   position: absolute;
+  top: clamp(0.5rem, 2vw, 2.5rem);
+  left: clamp(1.25rem, 4vw, 3.5rem);
+  right: auto;
   font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(5.5rem, 18vw, 24rem);
@@ -111,37 +114,12 @@ ul, ol {
   letter-spacing: -0.04em;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.12);
   pointer-events: none;
   user-select: none;
   z-index: 0;
   white-space: nowrap;
   will-change: transform;
-}
-
-.bg-text-portfolio {
-  top: 8%;
-  right: -8%;
-}
-
-.bg-text-timeline {
-  top: 12%;
-  left: -8%;
-}
-
-.bg-text-skills {
-  top: 10%;
-  left: -5%;
-}
-
-.bg-text-education {
-  top: 10%;
-  right: -5%;
-}
-
-.bg-text-contact {
-  top: 8%;
-  right: -5%;
 }
 
 /* Tags, Badges, Labels */
