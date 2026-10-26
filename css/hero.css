@@ -1,10 +1,10 @@
-/* ─── VISION / EDITORIAL SECTION ─── */
-.section-vision {
+/* ─── HERO / EDITORIAL SECTION (FRONTEND • DEVELOPER) ─── */
+.section-hero {
   padding-top: clamp(6rem, 12vw, 12rem);
   padding-bottom: clamp(6rem, 12vw, 12rem);
 }
 
-.vision-wrapper {
+.hero-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -14,7 +14,7 @@
   overflow: hidden;
 }
 
-.vision-text-layer {
+.hero-text-layer {
   position: absolute;
   pointer-events: none;
   user-select: none;
@@ -23,31 +23,31 @@
   z-index: 4;
 }
 
-.vision-layer-top {
+.hero-layer-top {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
-.vision-giant-title {
+.hero-giant-title {
   font-family: var(--font-display);
-  font-size: clamp(5rem, 21vw, 24rem);
+  font-size: clamp(4.25rem, 16vw, 18.5rem);
   font-weight: 800;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.04em;
   text-transform: uppercase;
   color: #ffffff;
-  line-height: 0.8;
+  line-height: 0.85;
   display: block;
   text-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
-.vision-title-inner,
-.vision-system-inner {
+.hero-title-inner,
+.hero-developer-inner {
   display: inline-block;
   will-change: transform, opacity;
 }
 
-.vision-image-wrapper {
+.hero-image-wrapper {
   position: relative;
   z-index: 1;
   display: flex;
@@ -57,7 +57,7 @@
   transform-origin: center center;
 }
 
-.vision-image-box {
+.hero-image-box {
   position: relative;
   z-index: 1;
   width: clamp(260px, 32vw, 460px);
@@ -106,22 +106,22 @@
   letter-spacing: 0.08em;
 }
 
-.vision-layer-bottom {
+.hero-layer-bottom {
   position: absolute;
   bottom: 8%;
   left: 50%;
   transform: translateX(-50%);
 }
 
-.vision-giant-outline {
+.hero-giant-outline {
   font-family: var(--font-display);
-  font-size: clamp(4rem, 16vw, 18rem);
+  font-size: clamp(3.5rem, 13.5vw, 15.5rem);
   font-weight: 800;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
   text-transform: uppercase;
   color: transparent;
   -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.35);
-  line-height: 0.8;
+  line-height: 0.85;
   display: block;
   text-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
 }

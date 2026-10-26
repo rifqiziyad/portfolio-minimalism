@@ -31,7 +31,9 @@
     }
 
     // 3. GSAP ScrollTrigger Parallax & Entrance Choreographies
-    if (app.vision && typeof app.vision.initVisionAnimations === 'function') {
+    if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
+      app.hero.initHeroAnimations();
+    } else if (app.vision && typeof app.vision.initVisionAnimations === 'function') {
       app.vision.initVisionAnimations();
     }
 
