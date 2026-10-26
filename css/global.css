@@ -105,11 +105,10 @@ ul, ol {
 .bg-outline-text {
   position: absolute;
   top: clamp(0.5rem, 2vw, 2.5rem);
-  left: clamp(1.25rem, 4vw, 3.5rem);
-  right: auto;
+  left: -3vw;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(5.5rem, 18vw, 24rem);
+  font-size: clamp(6.5rem, 22vw, 28rem);
   line-height: 0.8;
   letter-spacing: -0.04em;
   text-transform: uppercase;
