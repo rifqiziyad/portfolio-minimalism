@@ -22,7 +22,7 @@
       '#heroFrontend',
       { xPercent: 30 },
       {
-        xPercent: -250,
+        xPercent: -150,
         ease: 'none',
         scrollTrigger: {
           trigger: heroSection,
