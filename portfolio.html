@@ -70,17 +70,16 @@
   <main id="mainContent">
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- ALL PORTFOLIO ARCHIVE SECTION           -->
+    <!-- ALL PROJECTS ARCHIVE SECTION            -->
     <!-- ═══════════════════════════════════════ -->
     <section class="section section-portfolio section-portfolio-page" id="portfolio">
-      <div class="bg-outline-text bg-text-portfolio" data-parallax="0.2" aria-hidden="true">PORTFOLIO</div>
+      <div class="bg-outline-text bg-text-projects" data-parallax="0.2" aria-hidden="true">PROJECTS</div>
 
       <div class="container portfolio-container">
         <div class="section-header reveal reveal-fade">
           <div class="section-title-wrap">
             <h1 class="section-main-title">ALL PROJECTS</h1>
           </div>
-          <span class="portfolio-count-badge" id="portfolioTotalBadge">ARCHIVE</span>
         </div>
 
         <!-- Dynamic Full Portfolio List rendered from data/portfolio-data.js (All items) -->
@@ -175,17 +174,6 @@
   <script defer src="js/components/carousel.js"></script>
   <script defer src="js/animations/parallax.js"></script>
   <script defer src="js/main.js"></script>
-
-  <!-- Dynamic Badge Count Initialization -->
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const totalBadge = document.getElementById('portfolioTotalBadge');
-      if (totalBadge && window.PortfolioData) {
-        const count = (window.PortfolioData.portfolio || window.PortfolioData.works || []).length;
-        totalBadge.textContent = `${count < 10 ? '0' + count : count} WORKS`;
-      }
-    });
-  </script>
 </body>
 
 </html>
