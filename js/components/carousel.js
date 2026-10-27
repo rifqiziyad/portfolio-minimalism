@@ -36,6 +36,7 @@
     let currentGallery = [];
     let currentSlideIdx = 0;
     let activeSourceFrame = null;
+    let activeParallaxState = null;
     let isOpen = false;
     let isAnimating = false;
 
@@ -120,6 +121,19 @@
         scale: scale,
         clipStart: `inset(0% ${clipRight.toFixed(2)}% ${clipBottom.toFixed(2)}% 0%)`,
         clipEnd: 'inset(0% 0% 0% 0%)'
+      };
+    }
+
+    // Helper: read live parallax transform (scale, yPercent, y, x) from .project-img
+    function getParallaxState(imgEl) {
+      if (!imgEl || typeof gsap === 'undefined') {
+        return { scale: 1, yPercent: 0, y: 0, x: 0 };
+      }
+      return {
+        scale: gsap.getProperty(imgEl, 'scale') || 1,
+        yPercent: gsap.getProperty(imgEl, 'yPercent') || 0,
+        y: gsap.getProperty(imgEl, 'y') || 0,
+        x: gsap.getProperty(imgEl, 'x') || 0
       };
     }
 
@@ -310,6 +324,7 @@
           header,
           footer,
           slideCard,
+          mainImg,
           prevBtn,
           nextBtn,
           activeSourceFrame
@@ -318,11 +333,13 @@
 
         // Make modal container immediately visible so slideCard is 100% opaque from frame 0
         gsap.set(modal, { autoAlpha: 1 });
-        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, autoAlpha: 1 });
+        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, autoAlpha: 1, borderRadius: '6px' });
+        gsap.set(mainImg, { transformOrigin: 'left top' });
 
         const targetRect = getTargetRect(activeSourceFrame);
         const srcImg = (activeSourceFrame ? activeSourceFrame.querySelector('img') : null) || mainImg;
         const flip = computeCropMorphDelta(sourceRect, targetRect, srcImg);
+        activeParallaxState = getParallaxState(srcImg);
 
         // Seamlessly hand off from the page thumbnail to the expanding slideCard
         if (activeSourceFrame) {
@@ -371,8 +388,30 @@
           );
         }
 
-        // 5. Main image card expands smoothly from clicked portfolio thumbnail rect
+        // 5. Main image card & inner parallax image expand simultaneously
         if (flip) {
+          // Inner Image: Animate from thumbnail's live parallax transform to neutral
+          gsap.fromTo(
+            mainImg,
+            {
+              scale: activeParallaxState.scale,
+              yPercent: activeParallaxState.yPercent,
+              y: activeParallaxState.y,
+              x: activeParallaxState.x,
+              transformOrigin: 'left top'
+            },
+            {
+              scale: 1,
+              yPercent: 0,
+              y: 0,
+              x: 0,
+              duration: 0.58,
+              ease: 'expo.out',
+              clearProps: 'transform'
+            }
+          );
+
+          // Outer Card Frame: Morph position, scale, clipPath, and borderRadius (0px -> 6px)
           gsap.fromTo(
             slideCard,
             {
@@ -382,6 +421,7 @@
               scaleX: 1,
               scaleY: 1,
               clipPath: flip.clipStart,
+              borderRadius: '0px',
               autoAlpha: 1
             },
             {
@@ -391,6 +431,7 @@
               scaleX: 1,
               scaleY: 1,
               clipPath: flip.clipEnd,
+              borderRadius: '6px',
               autoAlpha: 1,
               duration: 0.58,
               ease: 'expo.out',
@@ -401,14 +442,16 @@
             }
           );
         } else {
+          gsap.set(mainImg, { clearProps: 'transform' });
           gsap.fromTo(
             slideCard,
-            { scale: 0.93, y: 18, autoAlpha: 0, x: 0 },
+            { scale: 0.93, y: 18, autoAlpha: 0, x: 0, borderRadius: '6px' },
             {
               scale: 1,
               y: 0,
               autoAlpha: 1,
               x: 0,
+              borderRadius: '6px',
               duration: 0.48,
               ease: 'expo.out',
               onComplete: () => {
@@ -439,6 +482,7 @@
           header,
           footer,
           slideCard,
+          mainImg,
           prevBtn,
           nextBtn,
           sourceFrame
@@ -457,6 +501,7 @@
         const sourceRect = sourceFrame ? sourceFrame.getBoundingClientRect() : null;
         const srcImg = (sourceFrame ? sourceFrame.querySelector('img') : null) || mainImg;
         const flip = computeCropMorphDelta(sourceRect, targetRect, srcImg);
+        const parallaxState = activeParallaxState || getParallaxState(srcImg);
 
         // 1. Header slides up & fades out
         if (header) {
@@ -496,15 +541,17 @@
           ease: 'power2.inOut'
         });
 
-        // 5. Reverse Preserving Crop Morph: shrink slideCard back to its portfolio thumbnail position
+        // 5. Reverse Preserving Crop Morph: shrink slideCard & morph inner image back to thumbnail
         const finalizeClose = () => {
           if (sourceFrame) {
             gsap.set(sourceFrame, { clearProps: 'opacity,visibility' });
           }
-          gsap.set(slideCard, { clearProps: 'transform,opacity,visibility,clipPath' });
+          gsap.set(slideCard, { clearProps: 'transform,opacity,visibility,clipPath,borderRadius' });
+          gsap.set(mainImg, { clearProps: 'transform' });
           gsap.set(modal, { autoAlpha: 0 });
           modal.classList.remove('is-active');
           activeSourceFrame = null;
+          activeParallaxState = null;
           isAnimating = false;
           unlockScroll();
         };
@@ -519,6 +566,18 @@
             });
           }
 
+          // Inner Image: Animate from neutral back to thumbnail's live parallax transform
+          gsap.to(mainImg, {
+            scale: parallaxState.scale,
+            yPercent: parallaxState.yPercent,
+            y: parallaxState.y,
+            x: parallaxState.x,
+            transformOrigin: 'left top',
+            duration: 0.46,
+            ease: 'expo.inOut'
+          });
+
+          // Outer Card Frame: Shrink back to thumbnail rect with borderRadius (6px -> 0px)
           gsap.to(slideCard, {
             x: flip.x,
             y: flip.y,
@@ -526,6 +585,7 @@
             scaleX: 1,
             scaleY: 1,
             clipPath: flip.clipStart,
+            borderRadius: '0px',
             duration: 0.46,
             ease: 'expo.inOut',
             onComplete: finalizeClose
@@ -559,6 +619,7 @@
         modal.style.visibility = 'hidden';
         modal.classList.remove('is-active');
         activeSourceFrame = null;
+        activeParallaxState = null;
         isAnimating = false;
         unlockScroll();
       }

@@ -229,6 +229,8 @@
   width: auto;
   height: auto;
   object-fit: contain;
+  will-change: transform;
+  transform-origin: left top;
 }
 
 /* Side navigation buttons */
