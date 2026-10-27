@@ -104,6 +104,38 @@
   gap: 1.5rem;
 }
 
+.nav-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  font-family: var(--font-label);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.nav-back-link .back-arrow {
+  color: #ffffff;
+  transition: transform var(--transition-fast);
+}
+
+.nav-back-link:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.nav-back-link:hover .back-arrow {
+  transform: translateX(-3px);
+}
+
 .mobile-toggle {
   display: none;
   flex-direction: column;

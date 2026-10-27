@@ -14,7 +14,20 @@
     const container = document.getElementById('portfolioList') || document.getElementById('worksList');
     if (!container || !Array.isArray(projects)) return;
 
-    const html = projects
+    // Check optional data-limit attribute (e.g. data-limit="3" on index.html)
+    const limitAttr = container.getAttribute('data-limit');
+    const limit = limitAttr ? parseInt(limitAttr, 10) : null;
+
+    // Map projects with originalIndex to ensure carousel modal indexes stay 100% matched
+    const itemsWithIndex = projects.map((item, originalIndex) =>
+      Object.assign({}, item, { originalIndex: typeof item.originalIndex === 'number' ? item.originalIndex : originalIndex })
+    );
+
+    const visibleProjects = (limit && !isNaN(limit) && limit > 0)
+      ? itemsWithIndex.slice(0, limit)
+      : itemsWithIndex;
+
+    const html = visibleProjects
       .map((item, index) => {
         const isReversed = index % 2 === 1;
         const layoutClass = isReversed ? 'project-layout-reversed' : 'project-layout-normal';
@@ -49,7 +62,7 @@
 
         const visualMarkup = `
           <div class="project-visual reveal reveal-scale">
-            <div class="project-img-frame" data-gallery-project="${index}" role="button" tabindex="0" aria-label="View gallery for ${item.title}">
+            <div class="project-img-frame" data-gallery-project="${item.originalIndex}" role="button" tabindex="0" aria-label="View gallery for ${item.title}">
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
               <div class="project-gallery-badge">
                 <span class="badge-dot"></span>
