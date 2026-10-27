@@ -53,7 +53,7 @@
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
               <div class="project-gallery-badge">
                 <span class="badge-dot"></span>
-                <span>View Gallery ↗</span>
+                <span>View ↗</span>
               </div>
             </div>
           </div>
