@@ -74,10 +74,39 @@
       };
     }
 
-    // Helper: calculate FLIP translation (dx, dy) and scale ratios (scaleX, scaleY)
-    function computeFlipDelta(sourceRect, targetRect) {
+    // Helper: calculate Preserving Crop Morph (uniform scale + dynamic top-left clip-path)
+    function computeCropMorphDelta(sourceRect, targetRect, srcImg) {
       if (!sourceRect || !targetRect || !targetRect.width || !targetRect.height) {
         return null;
+      }
+
+      const imgRef = srcImg || mainImg;
+      const aspectImg =
+        imgRef && imgRef.naturalWidth && imgRef.naturalHeight
+          ? imgRef.naturalWidth / imgRef.naturalHeight
+          : targetRect.width / targetRect.height;
+
+      const aspectFrame = sourceRect.width / sourceRect.height;
+      let scale = 1;
+      let clipRight = 0;
+      let clipBottom = 0;
+      let offsetX = 0;
+      let offsetY = 0;
+
+      if (aspectImg >= aspectFrame) {
+        // Image is wider than the 4:3 frame (e.g. widescreen 16:9 / 16:10)
+        // Height fits the frame height, right side is cropped off (anchored to top-left)
+        scale = sourceRect.height / targetRect.height;
+        const unclippedWidth = targetRect.width * scale;
+        clipRight = Math.max(0, (1 - sourceRect.width / unclippedWidth) * 100);
+        offsetX = (unclippedWidth - sourceRect.width) / 2;
+      } else {
+        // Image is taller than the frame
+        // Width fits the frame width, bottom side is cropped off (anchored to top-left)
+        scale = sourceRect.width / targetRect.width;
+        const unclippedHeight = targetRect.height * scale;
+        clipBottom = Math.max(0, (1 - sourceRect.height / unclippedHeight) * 100);
+        offsetY = (unclippedHeight - sourceRect.height) / 2;
       }
 
       const sourceCenterX = sourceRect.left + sourceRect.width / 2;
@@ -86,11 +115,39 @@
       const targetCenterY = targetRect.top + targetRect.height / 2;
 
       return {
-        x: sourceCenterX - targetCenterX,
-        y: sourceCenterY - targetCenterY,
-        scaleX: sourceRect.width / targetRect.width,
-        scaleY: sourceRect.height / targetRect.height
+        x: (sourceCenterX + offsetX) - targetCenterX,
+        y: (sourceCenterY + offsetY) - targetCenterY,
+        scale: scale,
+        clipStart: `inset(0% ${clipRight.toFixed(2)}% ${clipBottom.toFixed(2)}% 0%)`,
+        clipEnd: 'inset(0% 0% 0% 0%)'
       };
+    }
+
+    // Lock/Unlock background scroll without layout shift
+    function lockScroll() {
+      const lenis = getLenis();
+      if (lenis) lenis.stop();
+
+      const prevClientWidth = document.documentElement.clientWidth;
+      document.body.style.overflow = 'hidden';
+      const newClientWidth = document.documentElement.clientWidth;
+
+      const diff = newClientWidth - prevClientWidth;
+      if (diff > 0) {
+        document.body.style.paddingRight = `${diff}px`;
+        const headerEl = document.querySelector('.site-header');
+        if (headerEl) headerEl.style.paddingRight = `${diff}px`;
+      }
+    }
+
+    function unlockScroll() {
+      const lenis = getLenis();
+      if (lenis) lenis.start();
+
+      document.body.style.paddingRight = '';
+      const headerEl = document.querySelector('.site-header');
+      if (headerEl) headerEl.style.paddingRight = '';
+      document.body.style.overflow = '';
     }
 
     // Helper: format two-digit index (01, 02, etc.)
@@ -237,10 +294,8 @@
       updateMeta(currentSlideIdx);
       renderThumbs();
 
-      // Lock background scroll with Lenis
-      const lenis = getLenis();
-      if (lenis) lenis.stop();
-      document.body.style.overflow = 'hidden';
+      // Lock background scroll without layout shift
+      lockScroll();
 
       modal.classList.add('is-active');
       isOpen = true;
@@ -263,10 +318,11 @@
 
         // Make modal container immediately visible so slideCard is 100% opaque from frame 0
         gsap.set(modal, { autoAlpha: 1 });
-        gsap.set(slideCard, { x: 0, y: 0, scaleX: 1, scaleY: 1, scale: 1, autoAlpha: 1 });
+        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, autoAlpha: 1 });
 
         const targetRect = getTargetRect(activeSourceFrame);
-        const flip = computeFlipDelta(sourceRect, targetRect);
+        const srcImg = (activeSourceFrame ? activeSourceFrame.querySelector('img') : null) || mainImg;
+        const flip = computeCropMorphDelta(sourceRect, targetRect, srcImg);
 
         // Seamlessly hand off from the page thumbnail to the expanding slideCard
         if (activeSourceFrame) {
@@ -322,19 +378,24 @@
             {
               x: flip.x,
               y: flip.y,
-              scaleX: flip.scaleX,
-              scaleY: flip.scaleY,
+              scale: flip.scale,
+              scaleX: 1,
+              scaleY: 1,
+              clipPath: flip.clipStart,
               autoAlpha: 1
             },
             {
               x: 0,
               y: 0,
+              scale: 1,
               scaleX: 1,
               scaleY: 1,
+              clipPath: flip.clipEnd,
               autoAlpha: 1,
               duration: 0.58,
               ease: 'expo.out',
               onComplete: () => {
+                gsap.set(slideCard, { clearProps: 'clipPath' });
                 isAnimating = false;
               }
             }
@@ -368,7 +429,6 @@
       isOpen = false;
       isAnimating = true;
 
-      const lenis = getLenis();
       const sourceFrame = activeSourceFrame;
 
       if (typeof gsap !== 'undefined') {
@@ -388,15 +448,15 @@
         // Measure current transform in case close was triggered mid-animation
         const curX = gsap.getProperty(slideCard, 'x') || 0;
         const curY = gsap.getProperty(slideCard, 'y') || 0;
-        const curSX = gsap.getProperty(slideCard, 'scaleX') || 1;
-        const curSY = gsap.getProperty(slideCard, 'scaleY') || 1;
+        const curScale = gsap.getProperty(slideCard, 'scale') || 1;
 
-        gsap.set(slideCard, { x: 0, y: 0, scaleX: 1, scaleY: 1, scale: 1 });
+        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, clipPath: 'inset(0% 0% 0% 0%)' });
         const targetRect = getTargetRect(sourceFrame);
-        gsap.set(slideCard, { x: curX, y: curY, scaleX: curSX, scaleY: curSY });
+        gsap.set(slideCard, { x: curX, y: curY, scale: curScale });
 
         const sourceRect = sourceFrame ? sourceFrame.getBoundingClientRect() : null;
-        const flip = computeFlipDelta(sourceRect, targetRect);
+        const srcImg = (sourceFrame ? sourceFrame.querySelector('img') : null) || mainImg;
+        const flip = computeCropMorphDelta(sourceRect, targetRect, srcImg);
 
         // 1. Header slides up & fades out
         if (header) {
@@ -436,18 +496,17 @@
           ease: 'power2.inOut'
         });
 
-        // 5. Reverse FLIP: shrink slideCard back to its portfolio thumbnail position
+        // 5. Reverse Preserving Crop Morph: shrink slideCard back to its portfolio thumbnail position
         const finalizeClose = () => {
           if (sourceFrame) {
             gsap.set(sourceFrame, { clearProps: 'opacity,visibility' });
           }
-          gsap.set(slideCard, { clearProps: 'transform,opacity,visibility' });
+          gsap.set(slideCard, { clearProps: 'transform,opacity,visibility,clipPath' });
           gsap.set(modal, { autoAlpha: 0 });
           modal.classList.remove('is-active');
           activeSourceFrame = null;
           isAnimating = false;
-          if (lenis) lenis.start();
-          document.body.style.overflow = '';
+          unlockScroll();
         };
 
         if (flip) {
@@ -463,8 +522,10 @@
           gsap.to(slideCard, {
             x: flip.x,
             y: flip.y,
-            scaleX: flip.scaleX,
-            scaleY: flip.scaleY,
+            scale: flip.scale,
+            scaleX: 1,
+            scaleY: 1,
+            clipPath: flip.clipStart,
             duration: 0.46,
             ease: 'expo.inOut',
             onComplete: finalizeClose
@@ -499,8 +560,7 @@
         modal.classList.remove('is-active');
         activeSourceFrame = null;
         isAnimating = false;
-        if (lenis) lenis.start();
-        document.body.style.overflow = '';
+        unlockScroll();
       }
     }
 
