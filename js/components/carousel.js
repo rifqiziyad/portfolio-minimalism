@@ -22,8 +22,6 @@
     const viewport = document.getElementById('carouselViewport');
     const projectTitle = document.getElementById('carouselProjectTitle');
     const projectTag = document.getElementById('carouselProjectTag');
-    const currentIndexEl = document.getElementById('carouselCurrentIndex');
-    const totalCountEl = document.getElementById('carouselTotalCount');
     const mainImg = document.getElementById('carouselMainImg');
     const slideCard = document.getElementById('carouselSlideCard');
     const thumbsTrack = document.getElementById('carouselThumbsTrack');
@@ -164,11 +162,6 @@
       document.body.style.overflow = '';
     }
 
-    // Helper: format two-digit index (01, 02, etc.)
-    function formatNum(n) {
-      return n < 10 ? '0' + n : String(n);
-    }
-
     function getLenis() {
       const scrollService = window.Portfolio.scroll;
       return scrollService ? scrollService.getLenis() : null;
@@ -191,9 +184,6 @@
     }
 
     function updateMeta(index) {
-      if (currentIndexEl) {
-        currentIndexEl.textContent = formatNum(index + 1);
-      }
       updateActiveThumb(index);
     }
 
@@ -301,7 +291,6 @@
       // Populate header details
       if (projectTitle) projectTitle.textContent = project.title || 'PROJECT';
       if (projectTag) projectTag.textContent = project.category || project.tag || 'GALLERY';
-      if (totalCountEl) totalCountEl.textContent = formatNum(currentGallery.length);
 
       // Render initial image & thumbnails
       if (mainImg) mainImg.src = currentGallery[currentSlideIdx];

@@ -146,9 +146,4 @@
   window.Portfolio.hero = {
     initHeroAnimations
   };
-
-  // Backward compatibility alias
-  window.Portfolio.vision = {
-    initVisionAnimations: initHeroAnimations
-  };
 })(window, document);

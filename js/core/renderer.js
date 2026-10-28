@@ -17,8 +17,6 @@
 
     if (typeof renderer.renderPortfolio === 'function') {
       renderer.renderPortfolio(data.portfolio || data.works);
-    } else if (typeof renderer.renderWorks === 'function') {
-      renderer.renderWorks(data.portfolio || data.works);
     }
 
     if (typeof renderer.renderTimeline === 'function') {

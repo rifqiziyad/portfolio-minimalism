@@ -11,7 +11,7 @@
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
   function renderPortfolio(projects) {
-    const container = document.getElementById('portfolioList') || document.getElementById('worksList');
+    const container = document.getElementById('portfolioList');
     if (!container || !Array.isArray(projects)) return;
 
     // Check optional data-limit attribute (e.g. data-limit="3" on index.html)
@@ -83,8 +83,6 @@
     container.innerHTML = html;
   }
 
-  // Primary API and backward-compatible alias
   window.Portfolio.renderer.renderPortfolio = renderPortfolio;
-  window.Portfolio.renderer.renderWorks = renderPortfolio;
 })(window, document);
 

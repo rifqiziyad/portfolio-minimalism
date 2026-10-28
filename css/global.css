@@ -122,15 +122,6 @@ ul, ol {
   will-change: transform;
 }
 
-/* Tags, Badges, Labels */
-.mono-tag {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
 .section-header {
   position: relative;
   z-index: 3;

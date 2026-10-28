@@ -321,13 +321,6 @@
   transform: translateY(-2px);
 }
 
-.carousel-hint {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  color: var(--text-tertiary);
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .carousel-header {
@@ -359,10 +352,6 @@
   .carousel-thumb-item {
     width: 56px;
     height: 36px;
-  }
-
-  .carousel-hint {
-    display: none;
   }
 }
 
