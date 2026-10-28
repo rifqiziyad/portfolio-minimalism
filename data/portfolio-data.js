@@ -103,6 +103,41 @@
           'assets/smartbox/s4.png',
           'assets/smartbox/s5.png'
         ]
+      },
+      {
+        id: 'project-ignica',
+        category: 'DIGITAL RETAIL PLATFORM',
+        title: 'IGNICA PLATFORM',
+        description:
+          'Next-generation digital retail and in-store technology platform created for United Super Markets Holdings (U.S.M.H). Powers interactive digital signage, modern POS terminals, and responsive cross-device shopping experiences.',
+        year: '2022 — 2023',
+        stack: 'JavaScript • React.js • Responsive Web • HTML5 / CSS3',
+        linkUrl: 'https://ignica.com',
+        linkText: 'Visit ignica.com',
+        image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.png',
+        imageAlt: 'Ignica Digital Retail and In-Store Experience Platform',
+        gallery: [
+          'assets/ignica/Screenshot 2023-09-13 at 09.32.34.png',
+          'assets/ignica/Screenshot 2023-09-13 at 09.33.01.png',
+          'assets/ignica/ignica.com_(iPad Air).png',
+          'assets/ignica/ignica.com_(iPhone XR).png'
+        ]
+      },
+      {
+        id: 'project-kasumi',
+        category: 'ENTERPRISE HR SYSTEM',
+        title: 'KASUMI HR MANAGEMENT',
+        description:
+          'Internal desktop-based enterprise HR and workflow management platform for Kasumi supermarket chain. Includes digital recruitment workflows, personnel approval forms, employee master records, and target evaluation systems.',
+        year: '2021 — 2023',
+        stack: 'React.js • Redux • JavaScript • CSS3 / SCSS',
+        linkUrl: null,
+        image: 'assets/kasumi/home page.png',
+        imageAlt: 'Kasumi Enterprise HR Management System and Workflow Portal',
+        gallery: [
+          'assets/kasumi/home page.png',
+          'assets/kasumi/form recruitment.png'
+        ]
       }
     ],
 
