@@ -74,6 +74,75 @@
         }
       });
     });
+
+    // 4. Real-time Scroll Spy for Active Section Navbar Link
+    function initScrollSpy() {
+      const sectionIds = ['portfolio', 'timeline', 'skills', 'education', 'contact'];
+      const sectionElements = [];
+
+      sectionIds.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          sectionElements.push({ id, element: el });
+        }
+      });
+
+      if (!sectionElements.length) return;
+
+      const isPortfolioPage = window.location.pathname.includes('portfolio.html');
+
+      function updateActiveNav() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight;
+        const triggerPoint = scrollY + viewportHeight * 0.35;
+
+        let currentActiveId = null;
+
+        // Check if user has reached the bottom of the page
+        const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
+
+        if (isAtBottom) {
+          currentActiveId = sectionElements[sectionElements.length - 1].id;
+        } else {
+          sectionElements.forEach(({ id, element }) => {
+            const top = element.offsetTop;
+            const height = element.offsetHeight;
+            if (triggerPoint >= top && triggerPoint < top + height) {
+              currentActiveId = id;
+            }
+          });
+        }
+
+        navLinks.forEach((link) => {
+          const href = link.getAttribute('href') || '';
+          const isMatch =
+            (currentActiveId && (href === `#${currentActiveId}` || href.endsWith(`#${currentActiveId}`))) ||
+            (isPortfolioPage && currentActiveId === 'portfolio' && (href === '#portfolio' || href.includes('portfolio')));
+
+          if (isMatch) {
+            link.classList.add('is-active');
+          } else {
+            link.classList.remove('is-active');
+          }
+        });
+      }
+
+      if (lenis) {
+        lenis.on('scroll', updateActiveNav);
+      } else {
+        window.addEventListener('scroll', updateActiveNav, { passive: true });
+      }
+
+      // Sync with ScrollTrigger refresh if available
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.addEventListener('refresh', updateActiveNav);
+      }
+
+      // Initial check on load
+      updateActiveNav();
+    }
+
+    initScrollSpy();
   }
 
   window.Portfolio.navigation = {
