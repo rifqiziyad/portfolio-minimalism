@@ -66,6 +66,7 @@
   display: flex;
   align-items: center;
   gap: clamp(1.5rem, 3vw, 3rem);
+  position: relative;
 }
 
 .nav-link {
@@ -94,9 +95,28 @@
   color: #ffffff;
 }
 
-.nav-link:hover::after,
-.nav-link.is-active::after {
+.nav-link:hover::after {
   width: 100%;
+}
+
+/* Floating Single Kinetic Indicator for Desktop */
+.nav-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background-color: #ffffff;
+  pointer-events: none;
+  opacity: 0;
+  transform-origin: left center;
+  will-change: transform, width, opacity;
+  z-index: 2;
+}
+
+@media (min-width: 769px) {
+  .nav-link.is-active::after {
+    width: 0%;
+  }
 }
 
 .nav-right {
@@ -152,6 +172,10 @@
     visibility: visible;
   }
 
+  .nav-indicator {
+    display: none !important;
+  }
+
   .nav-list {
     flex-direction: column;
     align-items: flex-start;
@@ -160,6 +184,10 @@
 
   .nav-link {
     font-size: 1.75rem;
+  }
+
+  .nav-link.is-active::after {
+    width: 100%;
   }
 
   .mobile-toggle {

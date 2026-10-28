@@ -75,7 +75,7 @@
       });
     });
 
-    // 4. Real-time Scroll Spy for Active Section Navbar Link
+    // 4. Real-time Scroll Spy for Active Section Navbar Link with Kinetic Indicator Bar
     function initScrollSpy() {
       const sectionIds = ['portfolio', 'timeline', 'skills', 'education', 'contact'];
       const sectionElements = [];
@@ -89,42 +89,173 @@
 
       if (!sectionElements.length) return;
 
+      const navList = navMenu ? navMenu.querySelector('.nav-list') : null;
+      if (!navList) return;
+
+      // Single floating kinetic bar
+      let indicator = navList.querySelector('.nav-indicator');
+      if (!indicator) {
+        indicator = document.createElement('span');
+        indicator.className = 'nav-indicator';
+        indicator.id = 'navIndicator';
+        indicator.setAttribute('aria-hidden', 'true');
+        navList.appendChild(indicator);
+      }
+
       const isPortfolioPage = window.location.pathname.includes('portfolio.html');
+
+      let currentActiveId = null;
+      let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      let isLeaping = false;
+
+      function getLinkMetrics(link) {
+        if (!link || !navList) return { left: 0, width: 0 };
+        const linkRect = link.getBoundingClientRect();
+        const listRect = navList.getBoundingClientRect();
+        return {
+          left: linkRect.left - listRect.left,
+          width: linkRect.width
+        };
+      }
 
       function updateActiveNav() {
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
         const triggerPoint = scrollY + viewportHeight * 0.35;
+        const scrollDelta = scrollY - lastScrollY;
+        const scrollDirection = scrollDelta >= 0 ? 1 : -1; // 1 = down, -1 = up
+        lastScrollY = scrollY;
 
-        let currentActiveId = null;
+        let activeSection = null;
+        let activeSectionProgress = 0;
 
         // Check if user has reached the bottom of the page
         const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
 
         if (isAtBottom) {
-          currentActiveId = sectionElements[sectionElements.length - 1].id;
+          activeSection = sectionElements[sectionElements.length - 1];
+          activeSectionProgress = 1;
         } else {
-          sectionElements.forEach(({ id, element }) => {
-            const top = element.offsetTop;
-            const height = element.offsetHeight;
+          for (let i = 0; i < sectionElements.length; i++) {
+            const sec = sectionElements[i];
+            const top = sec.element.offsetTop;
+            const height = sec.element.offsetHeight;
             if (triggerPoint >= top && triggerPoint < top + height) {
-              currentActiveId = id;
+              activeSection = sec;
+              activeSectionProgress = Math.min(1, Math.max(0, (triggerPoint - top) / height));
+              break;
             }
-          });
+          }
         }
 
+        const newActiveId = activeSection ? activeSection.id : null;
+        const isDesktop = window.innerWidth > 768;
+
+        // Find active link element and toggle CSS classes
+        let activeLink = null;
         navLinks.forEach((link) => {
           const href = link.getAttribute('href') || '';
           const isMatch =
-            (currentActiveId && (href === `#${currentActiveId}` || href.endsWith(`#${currentActiveId}`))) ||
-            (isPortfolioPage && currentActiveId === 'portfolio' && (href === '#portfolio' || href.includes('portfolio')));
+            (newActiveId && (href === `#${newActiveId}` || href.endsWith(`#${newActiveId}`))) ||
+            (isPortfolioPage && newActiveId === 'portfolio' && (href === '#portfolio' || href.includes('portfolio')));
 
           if (isMatch) {
             link.classList.add('is-active');
+            activeLink = link;
           } else {
             link.classList.remove('is-active');
           }
         });
+
+        // Desktop Kinetic Indicator Choreography
+        if (!isDesktop || typeof gsap === 'undefined') {
+          return;
+        }
+
+        // Case 1: Hero / Above all sections (Neutral state)
+        if (!newActiveId || !activeLink) {
+          if (currentActiveId !== null) {
+            currentActiveId = null;
+            isLeaping = false;
+            gsap.to(indicator, {
+              autoAlpha: 0,
+              width: 0,
+              duration: 0.32,
+              ease: 'power2.in',
+              overwrite: 'all'
+            });
+          }
+          return;
+        }
+
+        const metrics = getLinkMetrics(activeLink);
+
+        // Case 2: New section entered -> KINETIC THROW & BOUNCE LEAP!
+        if (newActiveId !== currentActiveId) {
+          const isFirstActivation = (currentActiveId === null);
+          currentActiveId = newActiveId;
+          isLeaping = true;
+
+          if (isFirstActivation) {
+            // First entrance from hero: spring in directly at the link
+            gsap.fromTo(
+              indicator,
+              {
+                x: metrics.left,
+                width: 0,
+                autoAlpha: 0
+              },
+              {
+                x: metrics.left,
+                width: metrics.width,
+                autoAlpha: 1,
+                duration: 0.52,
+                ease: 'back.out(2.2)',
+                overwrite: 'all',
+                onComplete: () => {
+                  isLeaping = false;
+                }
+              }
+            );
+          } else {
+            // Throw leap across from previous nav link to new nav link with elastic bounce!
+            gsap.to(indicator, {
+              x: metrics.left,
+              width: metrics.width,
+              autoAlpha: 1,
+              duration: 0.58,
+              ease: 'back.out(2.2)',
+              overwrite: 'all',
+              onComplete: () => {
+                isLeaping = false;
+              }
+            });
+          }
+          return;
+        }
+
+        // Case 3: Scrolling within the same section -> DIRECTIONAL COMPRESSION & EXPANSION
+        if (!isLeaping && metrics.width > 0) {
+          // Shrink from 100% width down to 25% as section progresses towards 85% completion
+          const compressProgress = Math.min(1, activeSectionProgress / 0.85);
+          const minRatio = 0.25;
+          const currentWidthRatio = 1 - (1 - minRatio) * compressProgress;
+          const targetW = metrics.width * currentWidthRatio;
+
+          // Right edge stays anchored at the right side of the word;
+          // as user scrolls down, line shrinks towards the right;
+          // as user scrolls back up, line stays on the right and expands to the left!
+          const targetX = metrics.left + (metrics.width - targetW);
+
+          gsap.to(indicator, {
+            x: targetX,
+            width: targetW,
+            autoAlpha: 1,
+            duration: 0.12,
+            ease: 'power1.out',
+            overwrite: 'auto'
+          });
+        }
       }
 
       if (lenis) {
@@ -137,6 +268,17 @@
       if (typeof ScrollTrigger !== 'undefined') {
         ScrollTrigger.addEventListener('refresh', updateActiveNav);
       }
+
+      // Window resize handler
+      window.addEventListener('resize', () => {
+        if (window.innerWidth <= 768) {
+          if (indicator) {
+            gsap.set(indicator, { autoAlpha: 0 });
+          }
+        } else {
+          updateActiveNav();
+        }
+      });
 
       // Initial check on load
       updateActiveNav();
