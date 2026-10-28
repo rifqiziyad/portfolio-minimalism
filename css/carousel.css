@@ -145,24 +145,6 @@
   color: var(--accent-orange);
 }
 
-.carousel-center-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.carousel-counter {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #ffffff;
-}
-
-.carousel-counter-active {
-  color: var(--accent-orange);
-}
-
 .carousel-close-btn {
   font-family: var(--font-mono);
   font-size: 0.75rem;
