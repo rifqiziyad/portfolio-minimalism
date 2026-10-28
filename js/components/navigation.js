@@ -118,6 +118,15 @@
         };
       }
 
+      function calculateIndicatorTarget(metrics, sectionProgress) {
+        const compressProgress = Math.min(1, Math.max(0, sectionProgress / 0.85));
+        const minRatio = 0.25;
+        const currentWidthRatio = 1 - (1 - minRatio) * compressProgress;
+        const targetW = metrics.width * currentWidthRatio;
+        const targetX = metrics.left + (metrics.width - targetW);
+        return { x: targetX, width: targetW };
+      }
+
       function updateActiveNav() {
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
@@ -196,21 +205,26 @@
           currentActiveId = newActiveId;
           isLeaping = true;
 
+          // Calculate destination target dimensions based on real-time section progress
+          // (If scrolling down: enters from top progress=0 -> lands full width)
+          // (If scrolling up: enters from bottom progress~1 -> lands compressed/small in flight!)
+          const target = calculateIndicatorTarget(metrics, activeSectionProgress);
+
           if (isFirstActivation) {
             // First entrance from hero: spring in directly at the link
             gsap.fromTo(
               indicator,
               {
-                x: metrics.left,
+                x: target.x,
                 width: 0,
                 autoAlpha: 0
               },
               {
-                x: metrics.left,
-                width: metrics.width,
+                x: target.x,
+                width: target.width,
                 autoAlpha: 1,
-                duration: 0.52,
-                ease: 'back.out(2.2)',
+                duration: 0.45,
+                ease: 'back.out(1.8)',
                 overwrite: 'all',
                 onComplete: () => {
                   isLeaping = false;
@@ -220,11 +234,11 @@
           } else {
             // Throw leap across from previous nav link to new nav link with elastic bounce!
             gsap.to(indicator, {
-              x: metrics.left,
-              width: metrics.width,
+              x: target.x,
+              width: target.width,
               autoAlpha: 1,
-              duration: 0.58,
-              ease: 'back.out(2.2)',
+              duration: 0.45,
+              ease: 'back.out(1.8)',
               overwrite: 'all',
               onComplete: () => {
                 isLeaping = false;
@@ -236,20 +250,11 @@
 
         // Case 3: Scrolling within the same section -> DIRECTIONAL COMPRESSION & EXPANSION
         if (!isLeaping && metrics.width > 0) {
-          // Shrink from 100% width down to 25% as section progresses towards 85% completion
-          const compressProgress = Math.min(1, activeSectionProgress / 0.85);
-          const minRatio = 0.25;
-          const currentWidthRatio = 1 - (1 - minRatio) * compressProgress;
-          const targetW = metrics.width * currentWidthRatio;
-
-          // Right edge stays anchored at the right side of the word;
-          // as user scrolls down, line shrinks towards the right;
-          // as user scrolls back up, line stays on the right and expands to the left!
-          const targetX = metrics.left + (metrics.width - targetW);
+          const target = calculateIndicatorTarget(metrics, activeSectionProgress);
 
           gsap.to(indicator, {
-            x: targetX,
-            width: targetW,
+            x: target.x,
+            width: target.width,
             autoAlpha: 1,
             duration: 0.12,
             ease: 'power1.out',
