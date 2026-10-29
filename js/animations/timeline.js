@@ -60,15 +60,19 @@
 
     window.renderTimelinePath = renderTimelinePath;
     renderTimelinePath();
-    window.addEventListener('resize', renderTimelinePath);
-    window.addEventListener('load', renderTimelinePath);
 
-    if (window.ResizeObserver) {
-      new ResizeObserver(renderTimelinePath).observe(container);
-    }
+    if (!window._timelinePathListenersAttached) {
+      window._timelinePathListenersAttached = true;
+      window.addEventListener('resize', renderTimelinePath);
+      window.addEventListener('load', renderTimelinePath);
 
-    if (document.fonts) {
-      document.fonts.ready.then(renderTimelinePath);
+      if (window.ResizeObserver) {
+        new ResizeObserver(renderTimelinePath).observe(container);
+      }
+
+      if (document.fonts) {
+        document.fonts.ready.then(renderTimelinePath);
+      }
     }
 
     setTimeout(renderTimelinePath, 100);
@@ -78,6 +82,7 @@
     // GSAP ScrollTrigger Animations for Timeline
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
     if (hasGSAP) {
+      ScrollTrigger.removeEventListener('refresh', renderTimelinePath);
       ScrollTrigger.addEventListener('refresh', renderTimelinePath);
 
       // Hierarchical Shatter & Parallax Choreography for Giant Background Wireframe Crystal Shards
@@ -103,12 +108,21 @@
 
         // Subtle overall vertical parallax & monochrome wireframe intensification
         if (rightSvg) {
-          rightShatterTl.to(rightSvg, { y: 110, rotation: 4, transformOrigin: '50% 50%' }, 0);
+          rightShatterTl.fromTo(
+            rightSvg,
+            { y: 0, rotation: 0, transformOrigin: '50% 50%' },
+            { y: 110, rotation: 4, transformOrigin: '50% 50%' },
+            0
+          );
         }
-        rightShatterTl.to(bgShardRight, { opacity: 0.36 }, 0);
+        rightShatterTl.fromTo(bgShardRight, { opacity: 0.24 }, { opacity: 0.36 }, 0);
         if (rightFacets.length) {
-          rightShatterTl.to(
+          rightShatterTl.fromTo(
             rightFacets,
+            {
+              stroke: 'rgba(255, 255, 255, 0.22)',
+              fill: 'rgba(255, 255, 255, 0.015)'
+            },
             {
               stroke: 'rgba(255, 255, 255, 0.38)',
               fill: 'rgba(255, 255, 255, 0.03)'
@@ -119,87 +133,102 @@
 
         // Level 1: Primary Shard Groups (45–95px radial expansion biased inward, 8°–18° rotation)
         rightShatterTl
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.crystal-needle-upper'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -72, y: -58, rotation: -15, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.crystal-core-monolith'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -52, y: -10, rotation: -9, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.crystal-spike-right'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 46, y: -48, rotation: 14, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.crystal-dagger-lower'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -64, y: 82, rotation: 13, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 2: Internal Edge Sub-Facets (Peel away further from parent shard)
         rightShatterTl
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.sub-facet-a'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -32, y: -22, rotation: -11, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.sub-facet-b'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 24, y: 30, rotation: 12, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.sub-facet-c'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -38, y: 14, rotation: -13, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.sub-facet-d1'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -36, y: 26, rotation: 11, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.sub-facet-d2'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 28, y: 34, rotation: -14, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 3: Detached Crystal Splinters (110–180px burst into timeline space, 25°–45° rotation)
         rightShatterTl
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.splinter-1'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: -118, y: -125, rotation: -38, scale: 1.08, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.splinter-2'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: -175, y: -38, rotation: -44, scale: 1.12, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.splinter-3'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: -110, y: 135, rotation: 34, scale: 0.92, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.splinter-4'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: -155, y: -68, rotation: 39, scale: 1.05, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardRight.querySelector('.splinter-5'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: -142, y: 115, rotation: -33, scale: 0.95, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 4: Fracture Cleavage Traces (Dash flow + tension fade-out)
         if (rightFractures.length) {
-          rightShatterTl.to(
+          rightShatterTl.fromTo(
             rightFractures,
+            { strokeDashoffset: 0, opacity: 0.16 },
             { strokeDashoffset: -48, opacity: 0.12 },
             0
           );
@@ -225,12 +254,21 @@
 
         // Subtle overall vertical parallax & monochrome wireframe intensification
         if (leftSvg) {
-          leftShatterTl.to(leftSvg, { y: 125, rotation: -5, transformOrigin: '50% 50%' }, 0);
+          leftShatterTl.fromTo(
+            leftSvg,
+            { y: 0, rotation: 0, transformOrigin: '50% 50%' },
+            { y: 125, rotation: -5, transformOrigin: '50% 50%' },
+            0
+          );
         }
-        leftShatterTl.to(bgShardLeft, { opacity: 0.36 }, 0);
+        leftShatterTl.fromTo(bgShardLeft, { opacity: 0.24 }, { opacity: 0.36 }, 0);
         if (leftFacets.length) {
-          leftShatterTl.to(
+          leftShatterTl.fromTo(
             leftFacets,
+            {
+              stroke: 'rgba(255, 255, 255, 0.22)',
+              fill: 'rgba(255, 255, 255, 0.015)'
+            },
             {
               stroke: 'rgba(255, 255, 255, 0.38)',
               fill: 'rgba(255, 255, 255, 0.03)'
@@ -241,77 +279,90 @@
 
         // Level 1: Primary Shard Groups (45–95px radial expansion biased inward, 8°–18° rotation)
         leftShatterTl
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.shard-primary'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 78, y: -62, rotation: 15, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.shard-secondary'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: -45, y: -46, rotation: -14, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.shard-dagger'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 86, y: 76, rotation: 17, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 2: Internal Edge Sub-Facets (Peel away further from parent shard)
         leftShatterTl
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.sub-facet-p1'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 38, y: -26, rotation: 13, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.sub-facet-p2'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 34, y: 16, rotation: -10, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.sub-facet-s1'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 44, y: -18, rotation: 12, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.sub-facet-dg1'),
+            { x: 0, y: 0, rotation: 0, transformOrigin: '50% 50%' },
             { x: 42, y: 28, rotation: 14, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 3: Detached Crystal Splinters (110–180px burst into timeline space, 25°–45° rotation)
         leftShatterTl
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.splinter-1'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: 115, y: -112, rotation: 33, scale: 1.06, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.splinter-2'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: 178, y: -30, rotation: 45, scale: 1.12, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.splinter-3'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: 128, y: 132, rotation: -36, scale: 0.94, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.splinter-4'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: 156, y: 48, rotation: -40, scale: 1.08, transformOrigin: '50% 50%' },
             0
           )
-          .to(
+          .fromTo(
             bgShardLeft.querySelector('.splinter-5'),
+            { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
             { x: 140, y: 118, rotation: 31, scale: 0.96, transformOrigin: '50% 50%' },
             0
           );
 
         // Level 4: Fracture Cleavage Lines (Dash flow + tension fade-out)
         if (leftFractures.length) {
-          leftShatterTl.to(
+          leftShatterTl.fromTo(
             leftFractures,
+            { strokeDashoffset: 0, opacity: 0.16 },
             { strokeDashoffset: -48, opacity: 0.12 },
             0
           );

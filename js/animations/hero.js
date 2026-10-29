@@ -8,7 +8,7 @@
 
   window.Portfolio = window.Portfolio || {};
 
-  function initHeroAnimations() {
+  function initHeroAnimations(skipIntro = false) {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
     const heroSection = document.getElementById('hero');
@@ -76,7 +76,7 @@
     // so it never interferes with or delays the scroll parallax!
     const isAtTop = window.scrollY < 80;
 
-    if (isAtTop) {
+    if (isAtTop && !skipIntro) {
       // Initial setup for intro transition
       gsap.set('#heroImageBox', { scale: 1.45, opacity: 0 });
       gsap.set('#heroFrontendInner', { xPercent: 90, opacity: 0 });

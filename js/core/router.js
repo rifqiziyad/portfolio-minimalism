@@ -18,13 +18,81 @@
   let currentViewId = 'home';
   let isTransitioning = false;
   let homeSavedScrollY = 0;
+  let homeContext = null;
+  let portfolioContext = null;
+  let hasCompletedHeroIntro = false;
 
   function getLenis() {
     return window.Portfolio.scroll ? window.Portfolio.scroll.getLenis() : null;
   }
 
   function getScrollY() {
+    const lenis = getLenis();
+    if (lenis && typeof lenis.scroll === 'number') {
+      return lenis.scroll;
+    }
     return window.pageYOffset || document.documentElement.scrollTop || 0;
+  }
+
+  function mountHomeAnimations(skipHeroIntro = false) {
+    if (typeof gsap === 'undefined') return;
+    const viewHome = document.getElementById('viewHome');
+    if (!viewHome) return;
+
+    if (homeContext) {
+      homeContext.revert();
+    }
+
+    homeContext = gsap.context(() => {
+      const app = window.Portfolio || {};
+      if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
+        app.hero.initHeroAnimations(skipHeroIntro || hasCompletedHeroIntro);
+        hasCompletedHeroIntro = true;
+      }
+      if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
+        app.parallax.initParallaxAnimations(viewHome);
+      }
+      if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
+        app.timeline.initTimelineChoreography();
+      }
+      if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
+        app.skills.initSkillsCrystalAnimation();
+      }
+      if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
+        app.contact.initContactCrystalAnimation();
+      }
+    }, viewHome);
+  }
+
+  function unmountHomeAnimations() {
+    if (homeContext) {
+      homeContext.revert();
+      homeContext = null;
+    }
+  }
+
+  function mountPortfolioAnimations() {
+    if (typeof gsap === 'undefined') return;
+    const viewPortfolio = document.getElementById('viewPortfolio');
+    if (!viewPortfolio) return;
+
+    if (portfolioContext) {
+      portfolioContext.revert();
+    }
+
+    portfolioContext = gsap.context(() => {
+      const app = window.Portfolio || {};
+      if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
+        app.parallax.initParallaxAnimations(viewPortfolio);
+      }
+    }, viewPortfolio);
+  }
+
+  function unmountPortfolioAnimations() {
+    if (portfolioContext) {
+      portfolioContext.revert();
+      portfolioContext = null;
+    }
   }
 
   function updateBrowserUrl(view, targetAnchor) {
@@ -102,14 +170,21 @@
 
     const lenis = getLenis();
 
-    // GSAP Kinetic Brutalist Fade & Slide Transition
+    // GSAP Kinetic Brutalist Fade Transition
     if (typeof gsap !== 'undefined') {
       gsap.to(fromEl, {
         opacity: 0,
-        y: isGoingToPortfolio ? -24 : 24,
-        duration: 0.28,
+        duration: 0.22,
         ease: 'power2.inOut',
         onComplete: () => {
+          // 1. Unmount outgoing view animations
+          if (isGoingToPortfolio) {
+            unmountHomeAnimations();
+          } else {
+            unmountPortfolioAnimations();
+          }
+
+          // 2. Swap DOM visibility
           fromEl.style.display = 'none';
           fromEl.classList.remove('is-active');
 
@@ -117,49 +192,58 @@
           toEl.classList.add('is-active');
           currentViewId = targetView;
 
-          // Scroll orchestration
+          // 3. Inform Lenis about the new scroll height
+          if (lenis && typeof lenis.resize === 'function') {
+            lenis.resize();
+          }
+
+          // 4. Restore scroll offset BEFORE mounting triggers so ScrollTrigger calculates at destination
           if (isGoingToPortfolio) {
             if (lenis) {
               lenis.scrollTo(0, { immediate: true });
+              if (typeof lenis.emit === 'function') lenis.emit();
             } else {
               window.scrollTo(0, 0);
             }
+            mountPortfolioAnimations();
           } else {
-            // Returning to home
+            const targetPos = targetAnchor ? null : (homeSavedScrollY > 0 ? homeSavedScrollY : 0);
             if (targetAnchor) {
               scrollToAnchor(targetAnchor, true);
-            } else if (homeSavedScrollY > 0) {
-              if (lenis) {
-                lenis.scrollTo(homeSavedScrollY, { immediate: true });
-              } else {
-                window.scrollTo(0, homeSavedScrollY);
-              }
             } else {
               if (lenis) {
-                lenis.scrollTo(0, { immediate: true });
+                lenis.scrollTo(targetPos, { immediate: true });
+                if (typeof lenis.emit === 'function') lenis.emit();
               } else {
-                window.scrollTo(0, 0);
+                window.scrollTo(0, targetPos);
               }
             }
+            mountHomeAnimations(true);
           }
 
-          // Animate new view in
+          // 5. Recalibrate dimensions & triggers after scroll restored
+          if (lenis && typeof lenis.resize === 'function') {
+            lenis.resize();
+          }
+          if (typeof ScrollTrigger !== 'undefined') {
+            ScrollTrigger.refresh();
+          }
+
+          // 6. Animate incoming view opacity in cleanly
           gsap.fromTo(
             toEl,
-            {
-              opacity: 0,
-              y: isGoingToPortfolio ? 30 : -20
-            },
+            { opacity: 0 },
             {
               opacity: 1,
-              y: 0,
-              duration: 0.4,
+              duration: 0.32,
               ease: 'power2.out',
-              clearProps: 'transform,opacity',
+              clearProps: 'opacity',
               onComplete: () => {
                 isTransitioning = false;
 
-                // Recalibrate GSAP ScrollTrigger
+                if (lenis && typeof lenis.resize === 'function') {
+                  lenis.resize();
+                }
                 if (typeof ScrollTrigger !== 'undefined') {
                   ScrollTrigger.refresh();
                 }
@@ -175,6 +259,11 @@
       });
     } else {
       // Fallback for non-GSAP environments
+      if (isGoingToPortfolio) {
+        unmountHomeAnimations();
+      } else {
+        unmountPortfolioAnimations();
+      }
       fromEl.style.display = 'none';
       fromEl.classList.remove('is-active');
       toEl.style.display = 'block';
@@ -203,6 +292,9 @@
       const lenis = getLenis();
       if (lenis) {
         lenis.scrollTo(top, { immediate: immediate });
+        if (immediate && typeof lenis.emit === 'function') {
+          lenis.emit();
+        }
       } else {
         window.scrollTo({ top, behavior: immediate ? 'auto' : 'smooth' });
       }
@@ -325,6 +417,10 @@
       const backToTop = document.getElementById('backToTop');
       if (backToTop) backToTop.setAttribute('href', '#portfolio');
 
+      const lenis = getLenis();
+      if (lenis && typeof lenis.resize === 'function') lenis.resize();
+      mountPortfolioAnimations();
+
       // Replace initial history state so back button works reliably
       try {
         const isFileProtocol = window.location.protocol === 'file:';
@@ -338,6 +434,10 @@
       viewHome.style.display = 'block';
       viewHome.classList.add('is-active');
       document.title = TITLES.home;
+
+      const lenis = getLenis();
+      if (lenis && typeof lenis.resize === 'function') lenis.resize();
+      mountHomeAnimations(false);
 
       try {
         const isFileProtocol = window.location.protocol === 'file:';

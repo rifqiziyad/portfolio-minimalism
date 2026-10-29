@@ -8,31 +8,41 @@
 
   window.Portfolio = window.Portfolio || {};
 
-  function initParallaxAnimations() {
+  function initParallaxAnimations(container) {
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
 
     if (hasGSAP) {
-      // 1. BACKGROUND OUTLINED TEXTS PARALLAX (DEVELOPER, FORM, ARCHIVE, STACK, CONNECT)
-      gsap.utils.toArray('.bg-outline-text').forEach((text) => {
-        const speed = parseFloat(text.getAttribute('data-parallax')) || 0.2;
-        const parent = text.closest('section') || text.parentElement;
-        if (!parent) return;
+      const scope = container || document;
 
-        gsap.to(text, {
-          y: () => parent.offsetHeight * speed,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: parent,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.8,
-            invalidateOnRefresh: true
+      // 1. BACKGROUND OUTLINED TEXTS PARALLAX (PORTFOLIO, TIMELINE, SKILLS, EDUCATION, PROJECTS)
+      const outlineTexts = scope.querySelectorAll('.bg-outline-text');
+      outlineTexts.forEach((text) => {
+        const parent = text.closest('section') || text.parentElement;
+        if (!parent || parent.offsetParent === null) return;
+
+        const speed = parseFloat(text.getAttribute('data-parallax')) || 0.2;
+
+        gsap.fromTo(
+          text,
+          { y: 0 },
+          {
+            y: () => parent.offsetHeight * speed,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: parent,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.8,
+              invalidateOnRefresh: true
+            }
           }
-        });
+        );
       });
 
       // 2. THE ARCHIVE PROJECT IMAGES ZOOM + VERTICAL PARALLAX
-      gsap.utils.toArray('.project-item').forEach((item) => {
+      const projectItems = scope.querySelectorAll('.project-item');
+      projectItems.forEach((item) => {
+        if (item.offsetParent === null) return;
         const img = item.querySelector('.project-img');
         if (img) {
           gsap.fromTo(
@@ -44,14 +54,15 @@
             },
             {
               yPercent: 4,
-              scale: 1.14 ,
+              scale: 1.14,
               transformOrigin: 'left top',
               ease: 'none',
               scrollTrigger: {
                 trigger: item,
                 start: 'top bottom',
                 end: 'bottom top',
-                scrub: true
+                scrub: true,
+                invalidateOnRefresh: true
               }
             }
           );
@@ -59,27 +70,27 @@
       });
 
       // 3. SCROLL REVEAL VIA GSAP BATCH
-      ScrollTrigger.batch('.reveal', {
-        start: 'top 88%',
-        once: true,
-        onEnter: (batch) => {
-          batch.forEach((el) => {
-            el.classList.add('revealed');
-          });
-          if (typeof window.renderTimelinePath === 'function') {
-            window.renderTimelinePath();
+      const revealTargets = Array.from(scope.querySelectorAll('.reveal:not(.revealed)')).filter(
+        (el) => el.offsetParent !== null
+      );
+      if (revealTargets.length) {
+        ScrollTrigger.batch(revealTargets, {
+          start: 'top 88%',
+          once: true,
+          onEnter: (batch) => {
+            batch.forEach((el) => {
+              el.classList.add('revealed');
+            });
+            if (typeof window.renderTimelinePath === 'function') {
+              window.renderTimelinePath();
+            }
           }
-        }
-      });
-
-      // Refresh ScrollTrigger to calculate exact initial trigger positions
-      ScrollTrigger.refresh();
-      window.addEventListener('load', () => {
-        ScrollTrigger.refresh();
-      });
+        });
+      }
     } else {
       // Graceful fallback to native IntersectionObserver if GSAP is not available
-      const revealElements = document.querySelectorAll('.reveal');
+      const scope = container || document;
+      const revealElements = scope.querySelectorAll('.reveal');
       const revealObserver = new IntersectionObserver(
         (entries, observer) => {
           entries.forEach((entry) => {

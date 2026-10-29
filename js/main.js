@@ -30,43 +30,36 @@
       app.scroll.initScroll();
     }
 
-    // 3. GSAP ScrollTrigger Parallax & Entrance Choreographies
-    if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
-      app.hero.initHeroAnimations();
-    }
-
-    if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
-      app.parallax.initParallaxAnimations();
-    }
-
-    // 4. Navigation, Mobile Drawer & Smooth Anchor Links
+    // 3. Navigation, Mobile Drawer & Smooth Anchor Links
     if (app.navigation && typeof app.navigation.initNavigation === 'function') {
       app.navigation.initNavigation();
     }
 
-    // 5. Timeline Dynamic Perimeter Docking & Crystal Shatter Choreography
-    if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
-      app.timeline.initTimelineChoreography();
-    }
-
-    // 6. Capabilities Interactive Crystal Assembly & Hover Repulsion
-    if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
-      app.skills.initSkillsCrystalAnimation();
-    }
-
-    // 7. Contact Crystal Assembly & Reverse Shatter Choreography
-    if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
-      app.contact.initContactCrystalAnimation();
-    }
-
-    // 8. The Monolith Shard Lightbox Carousel for Selected Works
+    // 4. The Monolith Shard Lightbox Carousel for Selected Works
     if (app.carousel && typeof app.carousel.initCarousel === 'function') {
       app.carousel.initCarousel();
     }
 
-    // 9. Client-Side SPA Router (View Swapping & History Management)
+    // 5. Client-Side SPA Router (View Swapping, Scoped GSAP Contexts & History Management)
     if (app.router && typeof app.router.initRouter === 'function') {
       app.router.initRouter();
+    } else {
+      // Direct fallback if router is not present
+      if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
+        app.hero.initHeroAnimations();
+      }
+      if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
+        app.parallax.initParallaxAnimations();
+      }
+      if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
+        app.timeline.initTimelineChoreography();
+      }
+      if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
+        app.skills.initSkillsCrystalAnimation();
+      }
+      if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
+        app.contact.initContactCrystalAnimation();
+      }
     }
   }
 
