@@ -32,23 +32,29 @@
       const isFileProtocol = window.location.protocol === 'file:';
       let targetUrl = '';
 
-      if (view === 'portfolio') {
-        targetUrl = isFileProtocol ? 'portfolio.html' : 'portfolio.html';
+      if (isFileProtocol) {
+        // When opened directly via file://, origin is null.
+        // Changing hash is universally allowed and updates browser history without SecurityError!
+        targetUrl = view === 'portfolio' ? '#portfolio' : (targetAnchor || '#home');
       } else {
-        targetUrl = isFileProtocol ? 'index.html' : 'index.html';
-        if (targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#') {
-          targetUrl += targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
+        if (view === 'portfolio') {
+          targetUrl = 'portfolio.html';
+        } else {
+          targetUrl = 'index.html';
+          if (targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#') {
+            targetUrl += targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
+          }
         }
-      }
-
-      if (window.location.pathname.endsWith(targetUrl) && !targetAnchor) {
-        return;
       }
 
       window.history.pushState({ view, targetAnchor: targetAnchor || null }, TITLES[view] || document.title, targetUrl);
     } catch (err) {
-      // Graceful fallback for restricted file:// security sandbox environments
-      console.warn('[SPA Router] History pushState suppressed:', err.message);
+      // Fallback: update state without changing URL to prevent console noise
+      try {
+        window.history.pushState({ view, targetAnchor: targetAnchor || null }, TITLES[view] || document.title, null);
+      } catch (innerErr) {
+        // Silent
+      }
     }
   }
 
@@ -279,6 +285,7 @@
         // Derive from URL
         const isPortfolioUrl = window.location.pathname.includes('portfolio.html') ||
           window.location.search.includes('view=portfolio') ||
+          window.location.hash === '#portfolio' ||
           window.location.hash === '#portfolio-archive';
 
         switchView(isPortfolioUrl ? 'portfolio' : 'home', window.location.hash || null, false);
@@ -299,7 +306,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const hasViewPortfolioParam = urlParams.get('view') === 'portfolio';
     const isPortfolioPath = window.location.pathname.includes('portfolio.html');
-    const hasPortfolioHash = window.location.hash === '#portfolio-archive';
+    const hasPortfolioHash = window.location.hash === '#portfolio' || window.location.hash === '#portfolio-archive';
     const hasSessionRedirect = sessionStorage.getItem('spa_redirect') === 'portfolio';
 
     if (hasSessionRedirect) {
@@ -320,7 +327,8 @@
 
       // Replace initial history state so back button works reliably
       try {
-        window.history.replaceState({ view: 'portfolio' }, TITLES.portfolio, window.location.href);
+        const isFileProtocol = window.location.protocol === 'file:';
+        window.history.replaceState({ view: 'portfolio' }, TITLES.portfolio, isFileProtocol ? null : window.location.href);
       } catch (e) {}
     } else {
       currentViewId = 'home';
@@ -332,7 +340,8 @@
       document.title = TITLES.home;
 
       try {
-        window.history.replaceState({ view: 'home' }, TITLES.home, window.location.href);
+        const isFileProtocol = window.location.protocol === 'file:';
+        window.history.replaceState({ view: 'home' }, TITLES.home, isFileProtocol ? null : window.location.href);
       } catch (e) {}
     }
   }
