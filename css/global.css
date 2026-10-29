@@ -41,6 +41,18 @@ body {
   line-height: 1.6;
 }
 
+/* ─── SPA VIEW CONTAINERS ─── */
+.spa-view {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  will-change: opacity, transform;
+}
+
+.spa-view:not(.is-active) {
+  display: none;
+}
+
 img {
   display: block;
   max-width: 100%;

@@ -63,6 +63,11 @@
     if (app.carousel && typeof app.carousel.initCarousel === 'function') {
       app.carousel.initCarousel();
     }
+
+    // 9. Client-Side SPA Router (View Swapping & History Management)
+    if (app.router && typeof app.router.initRouter === 'function') {
+      app.router.initRouter();
+    }
   }
 
   if (document.readyState === 'loading') {

@@ -13,6 +13,12 @@
   <!-- Favicon icon (RZI Crystal Shard Monolith) -->
   <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
 
+  <!-- Instant SPA Entrypoint Redirect (Seamless client-side hydration) -->
+  <script>
+    sessionStorage.setItem('spa_redirect', 'portfolio');
+    window.location.replace('index.html?view=portfolio');
+  </script>
+
   <!-- Google Fonts: Syne (Headline) + Inter (Body) + Space Grotesk (Labels) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

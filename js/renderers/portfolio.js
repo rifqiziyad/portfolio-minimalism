@@ -10,8 +10,7 @@
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
-  function renderPortfolio(projects) {
-    const container = document.getElementById('portfolioList');
+  function renderProjectListTo(container, projects) {
     if (!container || !Array.isArray(projects)) return;
 
     // Check optional data-limit attribute (e.g. data-limit="3" on index.html)
@@ -81,6 +80,18 @@
       .join('');
 
     container.innerHTML = html;
+  }
+
+  function renderPortfolio(projects) {
+    const homeContainer = document.getElementById('portfolioList');
+    const fullContainer = document.getElementById('portfolioFullList');
+
+    if (homeContainer) {
+      renderProjectListTo(homeContainer, projects);
+    }
+    if (fullContainer) {
+      renderProjectListTo(fullContainer, projects);
+    }
   }
 
   window.Portfolio.renderer.renderPortfolio = renderPortfolio;

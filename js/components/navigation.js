@@ -64,6 +64,13 @@
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
 
+        // If currently in portfolio view and anchor targets a home section, let router switch views
+        if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
+          if (window.Portfolio.router.getCurrentView() === 'portfolio' && targetId !== '#portfolio') {
+            return;
+          }
+        }
+
         const targetElement = document.querySelector(targetId);
         if (targetElement && scrollService) {
           e.preventDefault();
@@ -102,7 +109,12 @@
         navList.appendChild(indicator);
       }
 
-      const isPortfolioPage = window.location.pathname.includes('portfolio.html');
+      function isPortfolioView() {
+        if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
+          return window.Portfolio.router.getCurrentView() === 'portfolio';
+        }
+        return window.location.pathname.includes('portfolio.html') || window.location.search.includes('view=portfolio');
+      }
 
       let currentActiveId = null;
       let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
@@ -138,21 +150,26 @@
         let activeSection = null;
         let activeSectionProgress = 0;
 
-        // Check if user has reached the bottom of the page
-        const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
-
-        if (isAtBottom) {
-          activeSection = sectionElements[sectionElements.length - 1];
-          activeSectionProgress = 1;
+        if (isPortfolioView()) {
+          activeSection = { id: 'portfolio', element: document.getElementById('portfolioArchive') || document.getElementById('portfolio') };
+          activeSectionProgress = 0;
         } else {
-          for (let i = 0; i < sectionElements.length; i++) {
-            const sec = sectionElements[i];
-            const top = sec.element.offsetTop;
-            const height = sec.element.offsetHeight;
-            if (triggerPoint >= top && triggerPoint < top + height) {
-              activeSection = sec;
-              activeSectionProgress = Math.min(1, Math.max(0, (triggerPoint - top) / height));
-              break;
+          // Check if user has reached the bottom of the page
+          const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
+
+          if (isAtBottom) {
+            activeSection = sectionElements[sectionElements.length - 1];
+            activeSectionProgress = 1;
+          } else {
+            for (let i = 0; i < sectionElements.length; i++) {
+              const sec = sectionElements[i];
+              const top = sec.element.offsetTop;
+              const height = sec.element.offsetHeight;
+              if (triggerPoint >= top && triggerPoint < top + height) {
+                activeSection = sec;
+                activeSectionProgress = Math.min(1, Math.max(0, (triggerPoint - top) / height));
+                break;
+              }
             }
           }
         }
@@ -166,7 +183,7 @@
           const href = link.getAttribute('href') || '';
           const isMatch =
             (newActiveId && (href === `#${newActiveId}` || href.endsWith(`#${newActiveId}`))) ||
-            (isPortfolioPage && newActiveId === 'portfolio' && (href === '#portfolio' || href.includes('portfolio')));
+            (isPortfolioView() && (href === '#portfolio' || href.includes('portfolio')));
 
           if (isMatch) {
             link.classList.add('is-active');
@@ -285,6 +302,9 @@
         }
       });
 
+      // Expose to SPA router
+      window.Portfolio.navigation.syncActiveState = updateActiveNav;
+
       // Initial check on load
       updateActiveNav();
     }
@@ -293,6 +313,7 @@
   }
 
   window.Portfolio.navigation = {
-    initNavigation
+    initNavigation,
+    syncActiveState: () => {}
   };
 })(window, document);

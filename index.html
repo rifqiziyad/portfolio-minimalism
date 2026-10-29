@@ -60,10 +60,14 @@
     </div>
   </header>
 
-  <main>
+  <main id="mainContent">
     <!-- ═══════════════════════════════════════ -->
-    <!-- HERO / EDITORIAL SECTION (FRONTEND • DEVELOPER) -->
+    <!-- VIEW 1: HOME (Landing Page)             -->
     <!-- ═══════════════════════════════════════ -->
+    <div id="viewHome" class="spa-view is-active">
+      <!-- ═══════════════════════════════════════ -->
+      <!-- HERO / EDITORIAL SECTION (FRONTEND • DEVELOPER) -->
+      <!-- ═══════════════════════════════════════ -->
     <section class="section section-hero" id="hero">
       <div class="container hero-container">
         <div class="hero-wrapper">
@@ -115,7 +119,7 @@
 
         <!-- Explore All Projects Link -->
         <div class="portfolio-explore-wrap reveal reveal-fade">
-          <a href="portfolio.html" class="portfolio-explore-link">
+          <a href="portfolio.html" class="portfolio-explore-link" data-spa-link="portfolio">
             <span>EXPLORE ALL PROJECTS</span>
             <span class="arrow">↗</span>
           </a>
@@ -246,6 +250,27 @@
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- VIEW 2: ALL PROJECTS (Portfolio Archive)-->
+  <!-- ═══════════════════════════════════════ -->
+  <div id="viewPortfolio" class="spa-view">
+    <section class="section section-portfolio section-portfolio-page" id="portfolioArchive">
+      <div class="bg-outline-text bg-text-projects" data-parallax="0.2" aria-hidden="true">PROJECTS</div>
+
+      <div class="container portfolio-container">
+        <div class="section-header reveal reveal-fade">
+          <div class="section-title-wrap">
+            <h1 class="section-main-title">ALL PROJECTS</h1>
+          </div>
+        </div>
+
+        <!-- Dynamic Full Portfolio List rendered from data/portfolio-data.js (All items) -->
+        <div class="portfolio-list" id="portfolioFullList"></div>
+      </div>
+    </section>
+  </div>
   </main>
 
   <!-- ═══════════════════════════════════════ -->
@@ -334,6 +359,7 @@
   <script defer src="js/animations/timeline.js"></script>
   <script defer src="js/animations/skills.js"></script>
   <script defer src="js/animations/contact.js"></script>
+  <script defer src="js/core/router.js"></script>
   <script defer src="js/main.js"></script>
 </body>
 
