@@ -214,12 +214,6 @@
       homeSavedScrollY = getScrollY();
     }
 
-    // Freeze momentum scroll ticks during transition
-    const lenis = getLenis();
-    if (lenis && typeof lenis.stop === 'function') {
-      lenis.stop();
-    }
-
     // Update document title & backToTop
     document.title = TITLES[targetView] || TITLES.home;
     if (backToTop) {
@@ -230,6 +224,8 @@
     if (updateHistory) {
       updateBrowserUrl(targetView, targetAnchor);
     }
+
+    const lenis = getLenis();
 
     // GSAP Kinetic Brutalist Transition
     if (typeof gsap !== 'undefined') {
@@ -275,37 +271,36 @@
           }
 
           // 6. Apply destination scroll offset after pristine calibration
-          let targetScrollPos = 0;
           if (!isGoingToPortfolio) {
-            if (targetAnchor) {
+            if (targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#') {
               const cleanId = targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
               const targetEl = document.querySelector(cleanId);
               if (targetEl) {
-                targetScrollPos = Math.max(0, targetEl.offsetTop - 70);
+                if (lenis) {
+                  if (typeof lenis.resize === 'function') lenis.resize();
+                  lenis.scrollTo(targetEl, { offset: -70, immediate: true });
+                  if (typeof lenis.emit === 'function') lenis.emit();
+                } else {
+                  window.scrollTo(0, Math.max(0, targetEl.offsetTop - 70));
+                }
+                if (typeof ScrollTrigger !== 'undefined') {
+                  ScrollTrigger.update();
+                }
               }
             } else if (isPopState && homeSavedScrollY > 0) {
-              targetScrollPos = homeSavedScrollY;
+              if (lenis) {
+                if (typeof lenis.resize === 'function') lenis.resize();
+                lenis.scrollTo(homeSavedScrollY, { immediate: true });
+                if (typeof lenis.emit === 'function') lenis.emit();
+              }
+              window.scrollTo(0, homeSavedScrollY);
+              if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.update();
+              }
             }
           }
 
-          if (targetScrollPos > 0) {
-            if (lenis) {
-              lenis.scrollTo(targetScrollPos, { immediate: true });
-              if (typeof lenis.emit === 'function') lenis.emit();
-            } else {
-              window.scrollTo(0, targetScrollPos);
-            }
-            if (typeof ScrollTrigger !== 'undefined') {
-              ScrollTrigger.update();
-            }
-          }
-
-          // 7. Restart smooth scroller
-          if (lenis && typeof lenis.start === 'function') {
-            lenis.start();
-          }
-
-          // 8. Animate incoming view opacity in cleanly
+          // 7. Animate incoming view opacity in cleanly
           gsap.fromTo(
             toEl,
             { opacity: 0 },
@@ -317,9 +312,15 @@
               onComplete: () => {
                 isTransitioning = false;
 
+                // Ensure accurate position when a specific anchor was requested
+                if (!isGoingToPortfolio && targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#') {
+                  scrollToAnchor(targetAnchor, true);
+                }
+
                 // Sync active navigation link and indicator
                 if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
-                  window.Portfolio.navigation.syncActiveState();
+                  const sectionId = typeof targetAnchor === 'string' ? targetAnchor.replace('#', '') : null;
+                  window.Portfolio.navigation.syncActiveState(sectionId);
                 }
 
                 // Check for any uncompleted images
@@ -346,6 +347,10 @@
       window.scrollTo(0, 0);
       if (targetAnchor) {
         scrollToAnchor(targetAnchor, true);
+        if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
+          const sectionId = typeof targetAnchor === 'string' ? targetAnchor.replace('#', '') : null;
+          window.Portfolio.navigation.syncActiveState(sectionId);
+        }
       }
     }
   }
@@ -357,18 +362,27 @@
     if (!targetEl) return;
 
     const scrollService = window.Portfolio.scroll;
-    if (scrollService && !immediate) {
-      scrollService.scrollTo(targetEl, { offset: -70, duration: 1.2 });
-    } else {
-      const top = Math.max(0, targetEl.offsetTop - 70);
-      const lenis = getLenis();
+    const lenis = getLenis();
+
+    if (immediate) {
       if (lenis) {
-        lenis.scrollTo(top, { immediate: immediate });
-        if (immediate && typeof lenis.emit === 'function') {
-          lenis.emit();
-        }
+        if (typeof lenis.resize === 'function') lenis.resize();
+        lenis.scrollTo(targetEl, { offset: -70, immediate: true });
+        if (typeof lenis.emit === 'function') lenis.emit();
       } else {
-        window.scrollTo({ top, behavior: immediate ? 'auto' : 'smooth' });
+        window.scrollTo(0, Math.max(0, targetEl.offsetTop - 70));
+      }
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.update();
+      }
+    } else {
+      if (scrollService && typeof scrollService.scrollTo === 'function') {
+        scrollService.scrollTo(targetEl, { offset: -70, duration: 1.2 });
+      } else {
+        window.scrollTo({
+          top: Math.max(0, targetEl.offsetTop - 70),
+          behavior: 'smooth'
+        });
       }
     }
   }
@@ -531,6 +545,17 @@
       } catch (e) {}
 
       ensureImagesLoadedAndCalibrated(viewHome);
+
+      // If landing directly on home with an anchor hash (e.g. index.html#skills)
+      if (window.location.hash && window.location.hash !== '#hero' && window.location.hash !== '#' && window.location.hash !== '#all-project') {
+        setTimeout(() => {
+          scrollToAnchor(window.location.hash, true);
+          if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
+            const sectionId = window.location.hash.replace('#', '');
+            window.Portfolio.navigation.syncActiveState(sectionId);
+          }
+        }, 50);
+      }
     }
 
     if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {

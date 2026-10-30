@@ -72,7 +72,9 @@
               e.preventDefault();
               return;
             }
-            // For other anchors (e.g. #timeline, #skills, etc.), let router handle view transition
+            // For other anchors (e.g. #timeline, #skills, etc.), navigate to home view and scroll to anchor
+            e.preventDefault();
+            window.Portfolio.router.navigateTo('home', targetId, true);
             return;
           }
         }
@@ -146,7 +148,7 @@
         return { x: targetX, width: targetW };
       }
 
-      function updateActiveNav() {
+      function updateActiveNav(forcedSectionId) {
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
         const triggerPoint = scrollY + viewportHeight * 0.35;
@@ -160,6 +162,13 @@
         if (isPortfolioView()) {
           activeSection = { id: 'portfolio', element: document.getElementById('portfolioArchive') || document.getElementById('portfolio') };
           activeSectionProgress = 0;
+        } else if (typeof forcedSectionId === 'string' && forcedSectionId !== 'hero' && forcedSectionId !== '#hero') {
+          const forcedClean = forcedSectionId.replace('#', '');
+          const forcedEl = document.getElementById(forcedClean);
+          if (forcedEl) {
+            activeSection = { id: forcedClean, element: forcedEl };
+            activeSectionProgress = 0;
+          }
         } else {
           // Check if user has reached the bottom of the page
           const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
@@ -288,14 +297,14 @@
       }
 
       if (lenis) {
-        lenis.on('scroll', updateActiveNav);
+        lenis.on('scroll', () => updateActiveNav());
       } else {
-        window.addEventListener('scroll', updateActiveNav, { passive: true });
+        window.addEventListener('scroll', () => updateActiveNav(), { passive: true });
       }
 
       // Sync with ScrollTrigger refresh if available
       if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.addEventListener('refresh', updateActiveNav);
+        ScrollTrigger.addEventListener('refresh', () => updateActiveNav());
       }
 
       // Window resize handler
