@@ -248,6 +248,7 @@
           toEl.style.display = 'block';
           toEl.classList.add('is-active');
           currentViewId = targetView;
+          void toEl.offsetHeight; // Force synchronous reflow so all child elements have valid dimensions and boxes
 
           // 3. ZERO-BASELINE RESET: Force scroll position to 0 before calculating triggers!
           window.scrollTo(0, 0);
@@ -321,6 +322,10 @@
                 if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
                   const sectionId = typeof targetAnchor === 'string' ? targetAnchor.replace('#', '') : null;
                   window.Portfolio.navigation.syncActiveState(sectionId);
+                }
+
+                if (typeof ScrollTrigger !== 'undefined') {
+                  ScrollTrigger.refresh();
                 }
 
                 // Check for any uncompleted images

@@ -18,7 +18,7 @@
       const outlineTexts = scope.querySelectorAll('.bg-outline-text');
       outlineTexts.forEach((text) => {
         const parent = text.closest('section') || text.parentElement;
-        if (!parent || parent.offsetParent === null) return;
+        if (!parent) return;
 
         const speed = parseFloat(text.getAttribute('data-parallax')) || 0.2;
 
@@ -42,7 +42,6 @@
       // 2. THE ARCHIVE PROJECT IMAGES ZOOM + VERTICAL PARALLAX
       const projectItems = scope.querySelectorAll('.project-item');
       projectItems.forEach((item) => {
-        if (item.offsetParent === null) return;
         const img = item.querySelector('.project-img');
         if (img) {
           gsap.fromTo(
@@ -70,9 +69,7 @@
       });
 
       // 3. SCROLL REVEAL VIA GSAP BATCH
-      const revealTargets = Array.from(scope.querySelectorAll('.reveal:not(.revealed)')).filter(
-        (el) => el.offsetParent !== null
-      );
+      const revealTargets = Array.from(scope.querySelectorAll('.reveal:not(.revealed)'));
       if (revealTargets.length) {
         ScrollTrigger.batch(revealTargets, {
           start: 'top 88%',
