@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIFQI ZIYAD IMTINAN — Frontend Developer</title>
+  <script>
+    (function () {
+      var pathname = window.location.pathname;
+      if (pathname.includes('all-project') || pathname.includes('portfolio')) {
+        sessionStorage.setItem('spa_redirect', '/all-project');
+      }
+      var target = './';
+      if (pathname.endsWith('/all-project') || pathname.endsWith('/portfolio')) {
+        target = pathname.replace(/\/(all-project|portfolio).*$/, '/');
+      }
+      window.location.replace(target || './');
+    })();
+  </script>
+</head>
+<body>
+</body>
+</html>
+

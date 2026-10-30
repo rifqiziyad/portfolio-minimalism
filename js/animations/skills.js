@@ -313,12 +313,15 @@
       });
     }
 
-    shardEls.forEach((el, idx) => {
-      el.addEventListener('mouseenter', () => handleShardHover(idx));
-      el.addEventListener('mouseleave', () => resetAllShardsHover());
-    });
+    if (!stage.dataset.hoverBound) {
+      stage.dataset.hoverBound = 'true';
+      shardEls.forEach((el, idx) => {
+        el.addEventListener('mouseenter', () => handleShardHover(idx));
+        el.addEventListener('mouseleave', () => resetAllShardsHover());
+      });
 
-    stage.addEventListener('mouseleave', resetAllShardsHover);
+      stage.addEventListener('mouseleave', resetAllShardsHover);
+    }
   }
 
   window.Portfolio.skills = {

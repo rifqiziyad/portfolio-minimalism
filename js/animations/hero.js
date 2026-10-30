@@ -71,6 +71,15 @@
       }
     );
 
+    // Clean up any lingering first scroll listener from previous mount
+    if (window._heroFirstScrollListener) {
+      window.removeEventListener('scroll', window._heroFirstScrollListener);
+      const scrollService = window.Portfolio.scroll;
+      const lenis = scrollService ? scrollService.getLenis() : null;
+      if (lenis) lenis.off('scroll', window._heroFirstScrollListener);
+      window._heroFirstScrollListener = null;
+    }
+
     // 2. ENTRANCE TRANSITION: ONLY WHEN PAGE IS FIRST OPENED AT THE TOP
     // Operates on the inner elements (#heroFrontendInner, #heroDeveloperInner, #heroImageBox)
     // so it never interferes with or delays the scroll parallax!
@@ -130,16 +139,18 @@
         if (lenis) {
           lenis.off('scroll', onFirstScroll);
         }
+        window._heroFirstScrollListener = null;
       };
+      window._heroFirstScrollListener = onFirstScroll;
       window.addEventListener('scroll', onFirstScroll, { passive: true, once: true });
       if (lenis) {
         lenis.on('scroll', onFirstScroll);
       }
     } else {
-      // If already scrolled down, ensure inner elements are fully visible and neutral
-      gsap.set('#heroImageBox', { scale: 1.0, opacity: 1 });
-      gsap.set('#heroFrontendInner', { xPercent: 0, opacity: 1 });
-      gsap.set('#heroDeveloperInner', { xPercent: 0, opacity: 1 });
+      // If already scrolled down or skipIntro, ensure inner elements are fully visible and neutral
+      gsap.set('#heroImageBox', { scale: 1.0, opacity: 1, clearProps: 'transform,opacity' });
+      gsap.set('#heroFrontendInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
+      gsap.set('#heroDeveloperInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
     }
   }
 

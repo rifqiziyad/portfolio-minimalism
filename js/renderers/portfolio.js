@@ -71,8 +71,9 @@
           </div>
         `;
 
+        const itemId = container.id === 'portfolioFullList' ? `archive-${item.id}` : item.id;
         return `
-          <article class="project-item ${layoutClass}" id="${item.id}">
+          <article class="project-item ${layoutClass}" id="${itemId}">
             ${isReversed ? visualMarkup + infoMarkup : infoMarkup + visualMarkup}
           </article>
         `;

@@ -46,7 +46,7 @@ body {
   width: 100%;
   min-height: 100vh;
   position: relative;
-  will-change: opacity, transform;
+  will-change: opacity;
 }
 
 .spa-view:not(.is-active) {

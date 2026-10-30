@@ -64,9 +64,15 @@
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
 
-        // If currently in portfolio view and anchor targets a home section, let router switch views
+        // If currently in portfolio view
         if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
-          if (window.Portfolio.router.getCurrentView() === 'portfolio' && targetId !== '#portfolio') {
+          if (window.Portfolio.router.getCurrentView() === 'portfolio') {
+            if (targetId === '#portfolio') {
+              // When user is on /all-project and clicks "PORTFOLIO", stay without changing scroll
+              e.preventDefault();
+              return;
+            }
+            // For other anchors (e.g. #timeline, #skills, etc.), let router handle view transition
             return;
           }
         }
@@ -113,7 +119,8 @@
         if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
           return window.Portfolio.router.getCurrentView() === 'portfolio';
         }
-        return window.location.pathname.includes('portfolio.html') || window.location.search.includes('view=portfolio');
+        const path = window.location.pathname;
+        return path.includes('all-project') || path.includes('portfolio.html') || window.location.search.includes('view=portfolio');
       }
 
       let currentActiveId = null;
@@ -183,7 +190,7 @@
           const href = link.getAttribute('href') || '';
           const isMatch =
             (newActiveId && (href === `#${newActiveId}` || href.endsWith(`#${newActiveId}`))) ||
-            (isPortfolioView() && (href === '#portfolio' || href.includes('portfolio')));
+            (isPortfolioView() && (href === '#portfolio' || href.includes('portfolio') || href.includes('all-project')));
 
           if (isMatch) {
             link.classList.add('is-active');

@@ -1,8 +1,14 @@
 /**
  * CLIENT-SIDE SPA ROUTER MODULE (React-like Navigation with Vanilla JS & History API)
  * Module: js/core/router.js
- * Enables seamless view swapping between Landing Page (Home) and Archive (All Projects)
- * without full page reloads, accompanied by 60fps kinetic GSAP transitions.
+ * Routes:
+ *   /              -> Home Landing Page (#viewHome)
+ *   /all-project   -> Portfolio Archive (#viewPortfolio)
+ * Features:
+ *   - Clean path resolution with fallback for file:// protocol and static servers
+ *   - Zero-baseline ScrollTrigger calibration protocol to guarantee 100% stable parallax
+ *   - Precise scroll restoration on browser Back button
+ *   - Isolated GSAP contexts (homeContext & portfolioContext) without memory leaks
  */
 
 (function (window, document) {
@@ -32,6 +38,52 @@
       return lenis.scroll;
     }
     return window.pageYOffset || document.documentElement.scrollTop || 0;
+  }
+
+  function getBasePath() {
+    const path = window.location.pathname;
+    if (path.endsWith('/index.html') || path.endsWith('/portfolio.html')) {
+      const lastSlash = path.lastIndexOf('/');
+      return path.substring(0, lastSlash);
+    }
+    if (path.includes('/all-project')) {
+      return path.substring(0, path.indexOf('/all-project'));
+    }
+    if (path.length > 1 && path.endsWith('/')) {
+      return path.slice(0, -1);
+    }
+    return path === '/' ? '' : path;
+  }
+
+  function getRouteUrl(view, targetAnchor) {
+    const isFileProtocol = window.location.protocol === 'file:';
+    if (isFileProtocol) {
+      return view === 'portfolio' ? '#all-project' : (targetAnchor || '#home');
+    }
+
+    const base = getBasePath();
+    if (view === 'portfolio') {
+      return (base ? base : '') + '/all-project';
+    } else {
+      let url = (base ? base : '') + '/';
+      if (targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#' && targetAnchor !== '#home') {
+        url += targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
+      }
+      return url;
+    }
+  }
+
+  function isPortfolioRoute() {
+    const pathname = window.location.pathname;
+    const search = window.location.search;
+    const hash = window.location.hash;
+    return pathname.includes('all-project') ||
+      pathname.includes('portfolio.html') ||
+      search.includes('view=portfolio') ||
+      search.includes('route=all-project') ||
+      hash === '#all-project' ||
+      hash === '#portfolio' ||
+      hash === '#portfolio-archive';
   }
 
   function mountHomeAnimations(skipHeroIntro = false) {
@@ -97,36 +149,39 @@
 
   function updateBrowserUrl(view, targetAnchor) {
     try {
-      const isFileProtocol = window.location.protocol === 'file:';
-      let targetUrl = '';
-
-      if (isFileProtocol) {
-        // When opened directly via file://, origin is null.
-        // Changing hash is universally allowed and updates browser history without SecurityError!
-        targetUrl = view === 'portfolio' ? '#portfolio' : (targetAnchor || '#home');
-      } else {
-        if (view === 'portfolio') {
-          targetUrl = 'portfolio.html';
-        } else {
-          targetUrl = 'index.html';
-          if (targetAnchor && targetAnchor !== '#hero' && targetAnchor !== '#') {
-            targetUrl += targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
-          }
-        }
-      }
-
+      const targetUrl = getRouteUrl(view, targetAnchor);
       window.history.pushState({ view, targetAnchor: targetAnchor || null }, TITLES[view] || document.title, targetUrl);
     } catch (err) {
-      // Fallback: update state without changing URL to prevent console noise
       try {
         window.history.pushState({ view, targetAnchor: targetAnchor || null }, TITLES[view] || document.title, null);
       } catch (innerErr) {
-        // Silent
+        // Silent fallback
       }
     }
   }
 
-  function switchView(targetView, targetAnchor, updateHistory = true) {
+  function ensureImagesLoadedAndCalibrated(container) {
+    if (!container) return;
+    const images = Array.from(container.querySelectorAll('img'));
+    let pending = 0;
+    images.forEach((img) => {
+      if (!img.complete && img.getAttribute('loading') !== 'lazy') {
+        pending++;
+        const onDone = () => {
+          pending--;
+          if (pending === 0 && !isTransitioning) {
+            const lenis = getLenis();
+            if (lenis && typeof lenis.resize === 'function') lenis.resize();
+            if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+          }
+        };
+        img.addEventListener('load', onDone, { once: true });
+        img.addEventListener('error', onDone, { once: true });
+      }
+    });
+  }
+
+  function switchView(targetView, targetAnchor, updateHistory = true, isPopState = false) {
     if (isTransitioning) return;
 
     const viewHome = document.getElementById('viewHome');
@@ -137,6 +192,10 @@
 
     // If already in target view
     if (currentViewId === targetView) {
+      if (targetView === 'portfolio') {
+        // Stay on /all-project without changing scroll position (as requested)
+        return;
+      }
       if (targetAnchor) {
         scrollToAnchor(targetAnchor);
       }
@@ -150,15 +209,19 @@
 
     // Save scroll position when leaving home view
     if (!isGoingToPortfolio) {
-      // Coming back to home
+      // Returning to home
     } else {
       homeSavedScrollY = getScrollY();
     }
 
-    // Update document title
-    document.title = TITLES[targetView] || TITLES.home;
+    // Freeze momentum scroll ticks during transition
+    const lenis = getLenis();
+    if (lenis && typeof lenis.stop === 'function') {
+      lenis.stop();
+    }
 
-    // Update Back to Top target
+    // Update document title & backToTop
+    document.title = TITLES[targetView] || TITLES.home;
     if (backToTop) {
       backToTop.setAttribute('href', isGoingToPortfolio ? '#portfolio' : '#hero');
     }
@@ -168,16 +231,14 @@
       updateBrowserUrl(targetView, targetAnchor);
     }
 
-    const lenis = getLenis();
-
-    // GSAP Kinetic Brutalist Fade Transition
+    // GSAP Kinetic Brutalist Transition
     if (typeof gsap !== 'undefined') {
       gsap.to(fromEl, {
         opacity: 0,
-        duration: 0.22,
+        duration: 0.18,
         ease: 'power2.inOut',
         onComplete: () => {
-          // 1. Unmount outgoing view animations
+          // 1. Unmount outgoing view animations & revert context
           if (isGoingToPortfolio) {
             unmountHomeAnimations();
           } else {
@@ -192,66 +253,77 @@
           toEl.classList.add('is-active');
           currentViewId = targetView;
 
-          // 3. Inform Lenis about the new scroll height
-          if (lenis && typeof lenis.resize === 'function') {
-            lenis.resize();
+          // 3. ZERO-BASELINE RESET: Force scroll position to 0 before calculating triggers!
+          window.scrollTo(0, 0);
+          if (lenis) {
+            lenis.scrollTo(0, { immediate: true });
+            if (typeof lenis.resize === 'function') lenis.resize();
+            if (typeof lenis.emit === 'function') lenis.emit();
           }
 
-          // 4. Restore scroll offset BEFORE mounting triggers so ScrollTrigger calculates at destination
+          // 4. Mount incoming view animations in fresh context AT SCROLL = 0
           if (isGoingToPortfolio) {
-            if (lenis) {
-              lenis.scrollTo(0, { immediate: true });
-              if (typeof lenis.emit === 'function') lenis.emit();
-            } else {
-              window.scrollTo(0, 0);
-            }
             mountPortfolioAnimations();
           } else {
-            const targetPos = targetAnchor ? null : (homeSavedScrollY > 0 ? homeSavedScrollY : 0);
-            if (targetAnchor) {
-              scrollToAnchor(targetAnchor, true);
-            } else {
-              if (lenis) {
-                lenis.scrollTo(targetPos, { immediate: true });
-                if (typeof lenis.emit === 'function') lenis.emit();
-              } else {
-                window.scrollTo(0, targetPos);
-              }
-            }
             mountHomeAnimations(true);
           }
 
-          // 5. Recalibrate dimensions & triggers after scroll restored
-          if (lenis && typeof lenis.resize === 'function') {
-            lenis.resize();
-          }
+          // 5. Sort & refresh ScrollTrigger instances at baseline 0
           if (typeof ScrollTrigger !== 'undefined') {
-            ScrollTrigger.refresh();
+            ScrollTrigger.sort();
+            ScrollTrigger.refresh(true);
           }
 
-          // 6. Animate incoming view opacity in cleanly
+          // 6. Apply destination scroll offset after pristine calibration
+          let targetScrollPos = 0;
+          if (!isGoingToPortfolio) {
+            if (targetAnchor) {
+              const cleanId = targetAnchor.startsWith('#') ? targetAnchor : '#' + targetAnchor;
+              const targetEl = document.querySelector(cleanId);
+              if (targetEl) {
+                targetScrollPos = Math.max(0, targetEl.offsetTop - 70);
+              }
+            } else if (isPopState && homeSavedScrollY > 0) {
+              targetScrollPos = homeSavedScrollY;
+            }
+          }
+
+          if (targetScrollPos > 0) {
+            if (lenis) {
+              lenis.scrollTo(targetScrollPos, { immediate: true });
+              if (typeof lenis.emit === 'function') lenis.emit();
+            } else {
+              window.scrollTo(0, targetScrollPos);
+            }
+            if (typeof ScrollTrigger !== 'undefined') {
+              ScrollTrigger.update();
+            }
+          }
+
+          // 7. Restart smooth scroller
+          if (lenis && typeof lenis.start === 'function') {
+            lenis.start();
+          }
+
+          // 8. Animate incoming view opacity in cleanly
           gsap.fromTo(
             toEl,
             { opacity: 0 },
             {
               opacity: 1,
-              duration: 0.32,
+              duration: 0.28,
               ease: 'power2.out',
               clearProps: 'opacity',
               onComplete: () => {
                 isTransitioning = false;
 
-                if (lenis && typeof lenis.resize === 'function') {
-                  lenis.resize();
-                }
-                if (typeof ScrollTrigger !== 'undefined') {
-                  ScrollTrigger.refresh();
-                }
-
-                // Notify navigation controller to refresh active nav links
+                // Sync active navigation link and indicator
                 if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
                   window.Portfolio.navigation.syncActiveState();
                 }
+
+                // Check for any uncompleted images
+                ensureImagesLoadedAndCalibrated(toEl);
               }
             }
           );
@@ -270,9 +342,9 @@
       toEl.classList.add('is-active');
       currentViewId = targetView;
       isTransitioning = false;
-      if (isGoingToPortfolio) {
-        window.scrollTo(0, 0);
-      } else if (targetAnchor) {
+
+      window.scrollTo(0, 0);
+      if (targetAnchor) {
         scrollToAnchor(targetAnchor, true);
       }
     }
@@ -288,7 +360,7 @@
     if (scrollService && !immediate) {
       scrollService.scrollTo(targetEl, { offset: -70, duration: 1.2 });
     } else {
-      const top = targetEl.getBoundingClientRect().top + getScrollY() - 70;
+      const top = Math.max(0, targetEl.offsetTop - 70);
       const lenis = getLenis();
       if (lenis) {
         lenis.scrollTo(top, { immediate: immediate });
@@ -304,7 +376,6 @@
   // Intercept navigation link clicks across the entire document
   function setupLinkInterception() {
     document.addEventListener('click', (e) => {
-      // Find nearest anchor tag
       const link = e.target.closest('a');
       if (!link) return;
 
@@ -316,16 +387,17 @@
         return;
       }
 
-      // 1. Click to All Projects Archive (e.g. "EXPLORE ALL PROJECTS ↗" or nav link)
-      if (link.hasAttribute('data-spa-link') && link.getAttribute('data-spa-link') === 'portfolio') {
+      // 1. Click to All Projects Archive (EXPLORE ALL PROJECTS ↗ or nav link)
+      if (
+        (link.hasAttribute('data-spa-link') && link.getAttribute('data-spa-link') === 'portfolio') ||
+        href === '/all-project' ||
+        href === 'all-project' ||
+        href.endsWith('/all-project') ||
+        href === 'portfolio.html' ||
+        href.endsWith('/portfolio.html')
+      ) {
         e.preventDefault();
-        switchView('portfolio', null, true);
-        return;
-      }
-
-      if (href === 'portfolio.html' || href.endsWith('/portfolio.html')) {
-        e.preventDefault();
-        switchView('portfolio', null, true);
+        switchView('portfolio', null, true, false);
         return;
       }
 
@@ -333,34 +405,32 @@
       if (link.classList.contains('nav-brand')) {
         if (currentViewId === 'portfolio') {
           e.preventDefault();
-          switchView('home', '#hero', true);
+          switchView('home', null, true, false);
           return;
         }
       }
 
-      // 3. Click to Home sections from Portfolio view (e.g. href="index.html#timeline" or href="#timeline")
+      // 3. Handling navigation links when currently in All Projects view
       if (currentViewId === 'portfolio') {
-        if (href.includes('index.html#') || href.startsWith('#')) {
-          const hashIndex = href.indexOf('#');
-          const anchor = hashIndex !== -1 ? href.slice(hashIndex) : '#hero';
-
-          if (anchor === '#portfolio') {
-            // Stay in portfolio view, scroll to top of archive
-            e.preventDefault();
-            const lenis = getLenis();
-            if (lenis) lenis.scrollTo(0, { duration: 1 });
-            else window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-          }
-
+        // If clicking PORTFOLIO in navbar while on /all-project: stay without changing scroll
+        if (href === '#portfolio' || href === '#portfolioArchive' || href.endsWith('#portfolio')) {
           e.preventDefault();
-          switchView('home', anchor, true);
           return;
         }
 
-        if (href === 'index.html' || href === '/' || href === './') {
+        // If clicking other home sections (#timeline, #skills, #education, #contact)
+        if (href.includes('#') || href.startsWith('#')) {
+          const hashIndex = href.indexOf('#');
+          const anchor = hashIndex !== -1 ? href.slice(hashIndex) : '#hero';
           e.preventDefault();
-          switchView('home', '#hero', true);
+          switchView('home', anchor, true, false);
+          return;
+        }
+
+        // If clicking home root links
+        if (href === '/' || href === './' || href === 'index.html' || href.endsWith('/index.html')) {
+          e.preventDefault();
+          switchView('home', null, true, false);
           return;
         }
       }
@@ -372,21 +442,20 @@
     window.addEventListener('popstate', (e) => {
       const state = e.state;
       if (state && state.view) {
-        switchView(state.view, state.targetAnchor || null, false);
+        switchView(state.view, state.targetAnchor || null, false, true);
       } else {
-        // Derive from URL
-        const isPortfolioUrl = window.location.pathname.includes('portfolio.html') ||
-          window.location.search.includes('view=portfolio') ||
-          window.location.hash === '#portfolio' ||
-          window.location.hash === '#portfolio-archive';
-
-        switchView(isPortfolioUrl ? 'portfolio' : 'home', window.location.hash || null, false);
+        const isPortfolio = isPortfolioRoute();
+        switchView(isPortfolio ? 'portfolio' : 'home', window.location.hash || null, false, true);
       }
     });
   }
 
   // Initial routing detection on page load
   function initRouter() {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+
     setupLinkInterception();
     setupPopstateListener();
 
@@ -395,17 +464,16 @@
     if (!viewHome || !viewPortfolio) return;
 
     // Check if user landed on portfolio view via URL params, pathname, or sessionStorage redirect
-    const urlParams = new URLSearchParams(window.location.search);
-    const hasViewPortfolioParam = urlParams.get('view') === 'portfolio';
-    const isPortfolioPath = window.location.pathname.includes('portfolio.html');
-    const hasPortfolioHash = window.location.hash === '#portfolio' || window.location.hash === '#portfolio-archive';
-    const hasSessionRedirect = sessionStorage.getItem('spa_redirect') === 'portfolio';
+    const hasSessionRedirect = sessionStorage.getItem('spa_redirect') === '/all-project' ||
+      sessionStorage.getItem('spa_redirect') === 'portfolio';
 
     if (hasSessionRedirect) {
       sessionStorage.removeItem('spa_redirect');
     }
 
-    if (hasViewPortfolioParam || isPortfolioPath || hasPortfolioHash || hasSessionRedirect) {
+    const isInitialPortfolio = hasSessionRedirect || isPortfolioRoute();
+
+    if (isInitialPortfolio) {
       currentViewId = 'portfolio';
       viewHome.style.display = 'none';
       viewHome.classList.remove('is-active');
@@ -418,14 +486,24 @@
       if (backToTop) backToTop.setAttribute('href', '#portfolio');
 
       const lenis = getLenis();
-      if (lenis && typeof lenis.resize === 'function') lenis.resize();
-      mountPortfolioAnimations();
+      window.scrollTo(0, 0);
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+        if (typeof lenis.resize === 'function') lenis.resize();
+      }
 
-      // Replace initial history state so back button works reliably
+      mountPortfolioAnimations();
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh(true);
+      }
+
       try {
-        const isFileProtocol = window.location.protocol === 'file:';
-        window.history.replaceState({ view: 'portfolio' }, TITLES.portfolio, isFileProtocol ? null : window.location.href);
+        const targetUrl = getRouteUrl('portfolio', null);
+        window.history.replaceState({ view: 'portfolio', targetAnchor: null }, TITLES.portfolio, targetUrl);
       } catch (e) {}
+
+      ensureImagesLoadedAndCalibrated(viewPortfolio);
     } else {
       currentViewId = 'home';
       viewPortfolio.style.display = 'none';
@@ -435,14 +513,28 @@
       viewHome.classList.add('is-active');
       document.title = TITLES.home;
 
+      const backToTop = document.getElementById('backToTop');
+      if (backToTop) backToTop.setAttribute('href', '#hero');
+
       const lenis = getLenis();
       if (lenis && typeof lenis.resize === 'function') lenis.resize();
+
       mountHomeAnimations(false);
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.sort();
+        ScrollTrigger.refresh(true);
+      }
 
       try {
-        const isFileProtocol = window.location.protocol === 'file:';
-        window.history.replaceState({ view: 'home' }, TITLES.home, isFileProtocol ? null : window.location.href);
+        const targetUrl = getRouteUrl('home', window.location.hash || null);
+        window.history.replaceState({ view: 'home', targetAnchor: window.location.hash || null }, TITLES.home, targetUrl);
       } catch (e) {}
+
+      ensureImagesLoadedAndCalibrated(viewHome);
+    }
+
+    if (window.Portfolio.navigation && typeof window.Portfolio.navigation.syncActiveState === 'function') {
+      window.Portfolio.navigation.syncActiveState();
     }
   }
 
@@ -452,4 +544,3 @@
     getCurrentView: () => currentViewId
   };
 })(window, document);
-
