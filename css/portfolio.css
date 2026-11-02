@@ -263,12 +263,12 @@
   user-select: none;
 }
 
-/* ─── 1. 4-Column Architectural Hairline Grid Overlay ─── */
+/* ─── 1. Architectural Hairline Grid Overlay (Fixed Center + Dynamic Right Line) ─── */
 .santal-grid-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 4;
 }
 
 .santal-grid-vline {
@@ -276,21 +276,16 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  background-color: rgba(255, 255, 255, 0.075);
+  background-color: rgba(255, 255, 255, 0.12);
 }
 
-.santal-vline-1 {
-  left: 25%;
-}
-
-.santal-vline-2 {
+.santal-vline-center {
   left: 50%;
-  background-color: rgba(255, 255, 255, 0.12);
 }
 
-.santal-vline-3 {
+.santal-vline-right {
   left: 75%;
-  background-color: rgba(255, 255, 255, 0.12);
+  will-change: left;
 }
 
 .santal-grid-hline {
@@ -508,7 +503,7 @@
   transform: translate(3px, -3px);
 }
 
-/* ─── 5. Center-Right Active Project Image Viewport (Column 3 Below Midline) ─── */
+/* ─── 5. Center-Right Active Project Image Viewport (Column 3: 50% to 75% Below Midline) ─── */
 .santal-image-viewport {
   position: absolute;
   left: 50%;
@@ -517,9 +512,9 @@
   height: 50%;
   overflow: hidden;
   z-index: 3;
-  background-color: #0b0b0c;
-  border-left: 1px solid rgba(255, 255, 255, 0.12);
-  border-right: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: transparent;
+  border: none;
+  will-change: clip-path;
 }
 
 .santal-image-viewport .santal-slide-frame {
@@ -529,7 +524,7 @@
   height: 100%;
   aspect-ratio: auto;
   border: none;
-  border-left: 1px solid rgba(255, 255, 255, 0.22);
+  border-left: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: none;
   overflow: hidden;
   pointer-events: none;
@@ -647,13 +642,12 @@
 }
 
 @media (max-width: 768px) {
-  .santal-vline-1,
-  .santal-vline-3 {
-    display: none;
+  .santal-vline-center {
+    left: 28%;
   }
 
-  .santal-vline-2 {
-    left: 28%;
+  .santal-vline-right {
+    left: 92%;
   }
 
   .santal-grid-hline {
@@ -674,20 +668,20 @@
   }
 
   .santal-title-layer-lit {
-    clip-path: inset(0 4% 0 28%);
-    -webkit-clip-path: inset(0 4% 0 28%);
+    clip-path: inset(0 8% 0 28%);
+    -webkit-clip-path: inset(0 8% 0 28%);
   }
 
   .santal-title-item {
-    min-width: 68vw;
+    min-width: 64vw;
     font-size: clamp(1.35rem, 5.4vw, 1.85rem);
   }
 
-  /* On mobile: Image viewport sits on the right column (28% to 96%) below 44% line */
+  /* On mobile: Image viewport sits on the right column (28% to 92%) below 44% line */
   .santal-image-viewport {
     left: 28%;
     top: 44%;
-    width: 68%;
+    width: 64%;
     height: 28%;
   }
 

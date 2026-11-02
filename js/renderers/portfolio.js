@@ -87,11 +87,10 @@
           </div>
         </div>
 
-        <!-- 4-Column Architectural Hairline Grid Overlay -->
+        <!-- Architectural Hairline Grid Overlay (Fixed Center Line + Dynamic Right Spotlight Line) -->
         <div class="santal-grid-overlay" aria-hidden="true">
-          <div class="santal-grid-vline santal-vline-1"></div>
-          <div class="santal-grid-vline santal-vline-2"></div>
-          <div class="santal-grid-vline santal-vline-3"></div>
+          <div class="santal-grid-vline santal-vline-center" id="santalVlineCenter"></div>
+          <div class="santal-grid-vline santal-vline-right" id="santalVlineRight"></div>
           <div class="santal-grid-hline"></div>
         </div>
 
@@ -104,8 +103,8 @@
             </div>
           </div>
 
-          <!-- Layer 2: Lit Pure-White Titles clipped strictly to Spotlight Column (50% - 75%) -->
-          <div class="santal-title-layer santal-title-layer-lit" aria-hidden="true">
+          <!-- Layer 2: Lit Pure-White Titles clipped dynamically to Spotlight Column [50%, rightLine] -->
+          <div class="santal-title-layer santal-title-layer-lit" id="santalLayerLit" aria-hidden="true">
             <div class="santal-title-track" id="santalTrackLit">
               ${buildTitleItemsMarkup(true)}
             </div>
