@@ -284,7 +284,7 @@
 }
 
 .santal-vline-right {
-  left: 75%;
+  left: 100%;
   will-change: left;
 }
 
@@ -647,7 +647,7 @@
   }
 
   .santal-vline-right {
-    left: 92%;
+    left: 100%;
   }
 
   .santal-grid-hline {

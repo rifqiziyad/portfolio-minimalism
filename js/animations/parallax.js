@@ -134,7 +134,7 @@
       const isMobile = vw <= 768;
       const leftColPct = isMobile ? 28 : 50;
       const baseRightColPct = isMobile ? 92 : 75;
-      const startRightColPct = isMobile ? 98 : 96;
+      const startRightColPct = 100;
       const colWidthPct = baseRightColPct - leftColPct; // 25% on desktop, 64% on mobile
 
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
