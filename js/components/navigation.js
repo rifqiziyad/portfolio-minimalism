@@ -67,8 +67,8 @@
         // If currently in portfolio view
         if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
           if (window.Portfolio.router.getCurrentView() === 'portfolio') {
-            if (targetId === '#portfolio') {
-              // When user is on /all-project and clicks "PORTFOLIO", stay without changing scroll
+            if (targetId === '#project' || targetId === '#portfolio') {
+              // When user is on /all-project and clicks "PROJECT" / "PORTFOLIO", stay without changing scroll
               e.preventDefault();
               return;
             }
@@ -92,12 +92,12 @@
 
     // 4. Real-time Scroll Spy for Active Section Navbar Link with Kinetic Indicator Bar
     function initScrollSpy() {
-      const sectionIds = ['portfolio', 'timeline', 'skills', 'education', 'contact'];
+      const sectionIds = ['project', 'portfolio', 'timeline', 'skills', 'education', 'contact'];
       const sectionElements = [];
 
       sectionIds.forEach((id) => {
         const el = document.getElementById(id);
-        if (el) {
+        if (el && !sectionElements.some((s) => s.id === id || s.element === el)) {
           sectionElements.push({ id, element: el });
         }
       });
@@ -148,6 +148,21 @@
         return { x: targetX, width: targetW };
       }
 
+      function getElementAbsoluteMetrics(el) {
+        if (!el) return { top: 0, height: 0 };
+        // If element is wrapped inside a GSAP pin-spacer, use the spacer's absolute position and full runway height
+        const spacer = el.parentElement && el.parentElement.classList.contains('pin-spacer')
+          ? el.parentElement
+          : null;
+        const target = spacer || el;
+        const rect = target.getBoundingClientRect();
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        return {
+          top: rect.top + scrollY,
+          height: target.offsetHeight || rect.height
+        };
+      }
+
       function updateActiveNav(forcedSectionId) {
         const scrollY = window.pageYOffset || document.documentElement.scrollTop;
         const viewportHeight = window.innerHeight;
@@ -160,7 +175,7 @@
         let activeSectionProgress = 0;
 
         if (isPortfolioView()) {
-          activeSection = { id: 'portfolio', element: document.getElementById('portfolioArchive') || document.getElementById('portfolio') };
+          activeSection = { id: 'project', element: document.getElementById('portfolioArchive') || document.getElementById('project') || document.getElementById('portfolio') };
           activeSectionProgress = 0;
         } else if (typeof forcedSectionId === 'string' && forcedSectionId !== 'hero' && forcedSectionId !== '#hero') {
           const forcedClean = forcedSectionId.replace('#', '');
@@ -179,8 +194,9 @@
           } else {
             for (let i = 0; i < sectionElements.length; i++) {
               const sec = sectionElements[i];
-              const top = sec.element.offsetTop;
-              const height = sec.element.offsetHeight;
+              const metrics = getElementAbsoluteMetrics(sec.element);
+              const top = metrics.top;
+              const height = metrics.height;
               if (triggerPoint >= top && triggerPoint < top + height) {
                 activeSection = sec;
                 activeSectionProgress = Math.min(1, Math.max(0, (triggerPoint - top) / height));
@@ -198,8 +214,13 @@
         navLinks.forEach((link) => {
           const href = link.getAttribute('href') || '';
           const isMatch =
-            (newActiveId && (href === `#${newActiveId}` || href.endsWith(`#${newActiveId}`))) ||
-            (isPortfolioView() && (href === '#portfolio' || href.includes('portfolio') || href.includes('all-project')));
+            (newActiveId && (
+              href === `#${newActiveId}` ||
+              href.endsWith(`#${newActiveId}`) ||
+              (newActiveId === 'project' && href.includes('portfolio')) ||
+              (newActiveId === 'portfolio' && href.includes('project'))
+            )) ||
+            (isPortfolioView() && (href === '#project' || href === '#portfolio' || href.includes('portfolio') || href.includes('all-project')));
 
           if (isMatch) {
             link.classList.add('is-active');

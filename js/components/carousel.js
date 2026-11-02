@@ -693,9 +693,14 @@
       );
     }
 
-    // 5. Global Event Delegation on Portfolio List
-    const portfolioContainer = document.getElementById('portfolioList') || document.getElementById('worksList');
-    if (portfolioContainer) {
+    // 5. Global Event Delegation on Both Home (#portfolioList) & Archive (#portfolioFullList)
+    const portfolioContainers = [
+      document.getElementById('portfolioList'),
+      document.getElementById('portfolioFullList'),
+      document.getElementById('worksList')
+    ].filter(Boolean);
+
+    portfolioContainers.forEach((portfolioContainer) => {
       portfolioContainer.addEventListener('click', (e) => {
         const frame = e.target.closest('.project-img-frame');
         if (!frame) return;
@@ -725,7 +730,7 @@
           }
         }
       });
-    }
+    });
 
     // Public API
     window.Portfolio.carousel = {

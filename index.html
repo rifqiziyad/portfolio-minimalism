@@ -44,7 +44,7 @@
       <div class="nav-right">
         <nav class="nav-menu" id="navMenu">
           <ul class="nav-list">
-            <li class="nav-item"><a href="#portfolio" class="nav-link">PORTFOLIO</a></li>
+            <li class="nav-item"><a href="#project" class="nav-link">PROJECT</a></li>
             <li class="nav-item"><a href="#timeline" class="nav-link">TIMELINE</a></li>
             <li class="nav-item"><a href="#skills" class="nav-link">SKILLS</a></li>
             <li class="nav-item"><a href="#education" class="nav-link">EDUCATION</a></li>
@@ -101,29 +101,12 @@
     </section>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- PORTFOLIO SECTION                       -->
+    <!-- PROJECT SECTION (SANTAL HORIZONTAL)     -->
     <!-- ═══════════════════════════════════════ -->
-    <section class="section section-portfolio" id="portfolio">
-      <div class="bg-outline-text bg-text-portfolio" data-parallax="0.2" aria-hidden="true">PORTFOLIO</div>
-
-      <div class="container portfolio-container">
-        <div class="section-header reveal reveal-fade">
-          <div class="section-title-wrap">
-            <h2 class="section-main-title">PORTFOLIO</h2>
-          </div>
-        </div>
-
-        <!-- Dynamic Portfolio List rendered from data/portfolio-data.js (Top 3) -->
-        <div class="portfolio-list" id="portfolioList" data-limit="3"></div>
-
-        <!-- Explore All Projects Link -->
-        <div class="portfolio-explore-wrap reveal reveal-fade">
-          <a href="/all-project" class="portfolio-explore-link" data-spa-link="portfolio">
-            <span>EXPLORE ALL PROJECTS</span>
-            <span class="arrow">↗</span>
-          </a>
-        </div>
-      </div>
+    <section class="section section-portfolio santal-portfolio-section" id="project">
+      <div class="bg-outline-text bg-text-portfolio" data-parallax="0.18" aria-hidden="true">PROJECT</div>
+      <!-- Dynamic Santal Horizontal Showcase rendered from data/portfolio-data.js (All 7 Projects) -->
+      <div class="santal-portfolio-mount" id="portfolioList"></div>
     </section>
 
     <!-- ═══════════════════════════════════════ -->

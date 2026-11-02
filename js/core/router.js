@@ -82,7 +82,6 @@
       search.includes('view=portfolio') ||
       search.includes('route=all-project') ||
       hash === '#all-project' ||
-      hash === '#portfolio' ||
       hash === '#portfolio-archive';
   }
 
@@ -117,6 +116,9 @@
   }
 
   function unmountHomeAnimations() {
+    if (window.Portfolio.parallax && typeof window.Portfolio.parallax.cleanupSantalPortfolio === 'function') {
+      window.Portfolio.parallax.cleanupSantalPortfolio();
+    }
     if (homeContext) {
       homeContext.revert();
       homeContext = null;
@@ -217,7 +219,7 @@
     // Update document title & backToTop
     document.title = TITLES[targetView] || TITLES.home;
     if (backToTop) {
-      backToTop.setAttribute('href', isGoingToPortfolio ? '#portfolio' : '#hero');
+      backToTop.setAttribute('href', isGoingToPortfolio ? '#project' : '#hero');
     }
 
     // Update History state
@@ -431,8 +433,8 @@
 
       // 3. Handling navigation links when currently in All Projects view
       if (currentViewId === 'portfolio') {
-        // If clicking PORTFOLIO in navbar while on /all-project: stay without changing scroll
-        if (href === '#portfolio' || href === '#portfolioArchive' || href.endsWith('#portfolio')) {
+        // If clicking PROJECT or PORTFOLIO in navbar while on /all-project: stay without changing scroll
+        if (href === '#project' || href === '#portfolio' || href === '#portfolioArchive' || href.endsWith('#project') || href.endsWith('#portfolio')) {
           e.preventDefault();
           return;
         }
@@ -502,7 +504,7 @@
       document.title = TITLES.portfolio;
 
       const backToTop = document.getElementById('backToTop');
-      if (backToTop) backToTop.setAttribute('href', '#portfolio');
+      if (backToTop) backToTop.setAttribute('href', '#project');
 
       const lenis = getLenis();
       window.scrollTo(0, 0);
