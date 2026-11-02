@@ -318,20 +318,6 @@
   margin-bottom: 0;
 }
 
-/* Subtle white dot marker above the 50% vertical line (Santal signature detail) */
-.santal-center-dot {
-  position: absolute;
-  left: calc(50% - 1.5rem);
-  top: 31%;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: #ffffff;
-  z-index: 4;
-  pointer-events: none;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
-}
-
 /* ─── 3. Horizontal Sliding Title Band & Dual-Layer Spotlight ─── */
 .santal-title-band {
   position: absolute;
@@ -672,11 +658,6 @@
 
   .santal-grid-hline {
     top: 44%;
-  }
-
-  .santal-center-dot {
-    left: calc(28% - 1rem);
-    top: 28%;
   }
 
   .santal-stage-container {

@@ -95,9 +95,6 @@
           <div class="santal-grid-hline"></div>
         </div>
 
-        <!-- Subtle Architectural Marker Dot above 50% Intersection -->
-        <div class="santal-center-dot" aria-hidden="true"></div>
-
         <!-- Horizontal Sliding Title Band (Above 50% Midline) -->
         <div class="santal-title-band">
           <!-- Layer 1: Dimmed Titles across full viewport -->
