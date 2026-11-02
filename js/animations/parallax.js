@@ -58,6 +58,8 @@
     let spotlightLeftPx = 0;
     let currentActiveIdx = -1;
     let santalScrollTrigger = null;
+    let projectEnterTrigger = null;
+    let santalEnterProgress = typeof ScrollTrigger !== 'undefined' ? 0.0 : 1.0;
 
     function measureMetrics() {
       const vw = window.innerWidth;
@@ -141,7 +143,7 @@
       trackDim.style.transform = trackTransform;
       trackLit.style.transform = trackTransform;
 
-      // Update Stacked Image Slides (Horizontal Wipe + Inner Counter-Parallax Pan)
+      // Update Stacked Image Slides (Horizontal Wipe + Inner Counter-Parallax Pan + Zoom Parallax)
       for (let i = 0; i < slideFrames.length; i++) {
         const frame = slideFrames[i];
         const img = slideImgs[i];
@@ -149,39 +151,50 @@
 
         let frameXPercent = 0;
         let imgXPercent = 0;
+        let imgScale = 1.0;
 
         if (i === 0) {
-          // Base slide (Project 01): stays at 0% before scroll, shifts slightly left as Project 02 covers it
+          // Base slide (Project 01):
+          // Before horizontal scroll (delta >= 0): zoom from large (1.25) to normal (1.00) as user scrolls into #project
           if (delta >= 0) {
             frameXPercent = 0;
             imgXPercent = 0;
+            const enterClamped = Math.max(0, Math.min(1, santalEnterProgress));
+            imgScale = 1.0 + (1 - enterClamped) * 0.25;
           } else if (delta > -1) {
             frameXPercent = delta * 28;
             imgXPercent = -delta * 14;
+            imgScale = 1.0;
           } else {
             frameXPercent = -28;
             imgXPercent = 14;
+            imgScale = 1.0;
           }
         } else {
           // Subsequent slides (Projects 02..07): wipe in from right (100% -> 0%) as delta goes 1 -> 0
           if (delta >= 1) {
             frameXPercent = 100.5;
             imgXPercent = -22;
+            imgScale = 1.25;
           } else if (delta >= 0) {
+            // Parallax entrance: wipes in horizontally while zooming down from 1.25 to 1.00
             frameXPercent = delta * 100;
             imgXPercent = -22 * delta;
+            imgScale = 1.0 + delta * 0.25;
           } else if (delta > -1) {
             frameXPercent = delta * 28;
             imgXPercent = -delta * 14;
+            imgScale = 1.0;
           } else {
             frameXPercent = -28;
             imgXPercent = 14;
+            imgScale = 1.0;
           }
         }
 
         frame.style.transform = `translate3d(${frameXPercent.toFixed(2)}%, 0, 0)`;
         if (img) {
-          img.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(1.16)`;
+          img.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(${imgScale.toFixed(3)})`;
         }
       }
 
@@ -245,8 +258,27 @@
     measureMetrics();
     renderFrame(0);
 
-    // Initialize GSAP ScrollTrigger Pinning
+    // Initialize GSAP ScrollTrigger Entrance (for Slide 0 Zoom Parallax) and Pinning
     if (typeof ScrollTrigger !== 'undefined') {
+      projectEnterTrigger = ScrollTrigger.create({
+        trigger: section,
+        start: 'top bottom',
+        end: 'top top',
+        scrub: 0.8,
+        onUpdate: (self) => {
+          santalEnterProgress = self.progress;
+          if (!santalScrollTrigger || santalScrollTrigger.progress === 0) {
+            renderFrame(0);
+          }
+        },
+        onRefresh: (self) => {
+          santalEnterProgress = self.progress;
+          if (!santalScrollTrigger || santalScrollTrigger.progress === 0) {
+            renderFrame(0);
+          }
+        }
+      });
+
       santalScrollTrigger = ScrollTrigger.create({
         trigger: section,
         start: 'top top',
@@ -277,6 +309,8 @@
       measureMetrics();
       if (santalScrollTrigger) {
         renderFrame(santalScrollTrigger.progress);
+      } else {
+        renderFrame(0);
       }
     };
 
@@ -288,6 +322,10 @@
         elGalleryBtn.removeEventListener('click', openActiveGallery);
       }
       window.removeEventListener('resize', onResize);
+      if (projectEnterTrigger) {
+        projectEnterTrigger.kill(true);
+        projectEnterTrigger = null;
+      }
       if (santalScrollTrigger) {
         santalScrollTrigger.kill(true);
         santalScrollTrigger = null;
@@ -362,14 +400,14 @@
           gsap.fromTo(
             img,
             {
-              yPercent: -12,
-              scale: 1.0,
-              transformOrigin: 'left top'
+              yPercent: -10,
+              scale: 1.25,
+              transformOrigin: 'center center'
             },
             {
-              yPercent: 4,
-              scale: 1.14,
-              transformOrigin: 'left top',
+              yPercent: 6,
+              scale: 1.0,
+              transformOrigin: 'center center',
               ease: 'none',
               scrollTrigger: {
                 trigger: item,

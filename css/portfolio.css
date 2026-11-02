@@ -139,6 +139,7 @@
   height: 100%;
   object-fit: cover;
   object-position: left top;
+  transform-origin: center center;
   will-change: transform;
   filter: grayscale(20%) brightness(0.95);
 }
@@ -543,7 +544,7 @@
   aspect-ratio: auto;
   border: none;
   border-left: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: -18px 0 40px rgba(0, 0, 0, 0.65);
+  box-shadow: none;
   overflow: hidden;
   pointer-events: none;
   will-change: transform;
@@ -559,6 +560,7 @@
   height: 100%;
   object-fit: cover;
   object-position: center center;
+  transform-origin: center center;
   filter: grayscale(10%) contrast(1.03);
   will-change: transform;
   transition: filter 0.35s ease;
