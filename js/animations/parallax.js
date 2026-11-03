@@ -60,6 +60,7 @@
     let itemOffsets = [];
     let spotlightLeftPx = 0;
     let currentActiveIdx = -1;
+    let projectPinTrigger = null;
     let projectScrollTrigger = null;
 
     const fMin = -1;
@@ -143,21 +144,19 @@
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
 
       // Continuous project index f in [fMin, fMax] where:
-      // f = -1.0 is Start (right line at 100%, Title 01 outside),
-      // f = -0.45..0.0 is Entry into [33%, 88%] (right line at 88%, Title 01 & Slide 01 wipe to 33%),
-      // f = 0..total-1 is Showcase,
-      // f = total-1..total is End (right line closes from 88% to 33%)
+      // f = -1.0..0.0 is Entry (starts at 50% vertical scroll before sticky, finishes after sticky at 33% spotlight),
+      // f = 0..total-1 is Showcase transitions (each 1.0 unit),
+      // f = total-1..total is Exit (right line closes from 88% to 33%)
       const f = fMin + progress * fRange;
-      const startSplit = -0.45;
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
       let rightLinePct = baseRightColPct;
       let viewportRightClipPct = 0;
 
-      if (f < startSplit) {
-        // Sub-phase A1 (f in [-1.0, -0.45]): right line moves from 100% -> 88%
-        const subT1 = Math.max(0, Math.min(1, (f - (-1.0)) / (startSplit - (-1.0))));
-        rightLinePct = startRightColPct - subT1 * (startRightColPct - baseRightColPct);
+      if (f < 0) {
+        // Smooth linear entry of right hairline from 100% to base right column (88%)
+        const entryT = Math.max(0, Math.min(1, f + 1.0));
+        rightLinePct = startRightColPct - entryT * (startRightColPct - baseRightColPct);
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
         // Phase C (f in [total - 1, total]): right line closes from 88% -> 33%
@@ -188,19 +187,17 @@
 
       // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
       let trackX = 0;
+      let trackEntryAlpha = 1;
       const firstOffset = itemOffsets[0] || 0;
       const lastOffset = itemOffsets[total - 1] || firstOffset;
 
       if (f < 0) {
-        let title0ScreenPct = leftColPct;
-        if (f < startSplit) {
-          title0ScreenPct = rightLinePct;
-        } else {
-          const subT2 = Math.max(0, Math.min(1, (f - startSplit) / (0 - startSplit)));
-          title0ScreenPct = baseRightColPct - subT2 * colWidthPct;
-        }
+        // Title 01 glides gradually across stage in lockstep with Slide 01 over full 1.0 scroll unit
+        const entryT = Math.max(0, Math.min(1, f + 1.0));
+        const title0ScreenPct = baseRightColPct - entryT * colWidthPct;
         const title0ScreenPx = (title0ScreenPct / 100) * vw;
         trackX = title0ScreenPx - firstOffset;
+        trackEntryAlpha = Math.max(0, Math.min(1, entryT * 3.5));
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         const lastTitleEl = dimItems[total - 1];
@@ -219,8 +216,13 @@
       }
 
       const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
-      if (trackDim) trackDim.style.transform = trackTransform;
-      if (trackLit) trackLit.style.transform = trackTransform;
+      if (trackDim) {
+        trackDim.style.transform = trackTransform;
+        trackDim.style.opacity = trackEntryAlpha.toFixed(3);
+      }
+      if (trackLit) {
+        trackLit.style.transform = trackTransform;
+      }
 
       // Smoothly illuminate ONLY the title of is-current-frame:
       // Titles before and after is-current-frame remain in their dimmed color
@@ -234,61 +236,55 @@
       for (let i = 0; i < slideFrames.length; i++) {
         const frame = slideFrames[i];
         const img = slideImgs[i];
-        const delta = i - f; // delta = 0 when project i is centered at 50%
+        const delta = i - f; // delta = 0 when project i is centered in active viewport
 
         let frameXPercent = 0;
         let imgXPercent = 0;
         let imgScale = 1.0;
+        let frameOpacity = 1.0;
 
-        if (i === 0 && f < 0) {
-          // Slide 01 Entry: stays hidden >100% until f >= startSplit, then wipes 100% -> 0% in lockstep with Title 01
-          if (f < startSplit) {
-            frameXPercent = 100.5;
-            imgXPercent = -22;
-            imgScale = 1.25;
-          } else {
-            const subT2 = Math.max(0, Math.min(1, (f - startSplit) / (0 - startSplit)));
-            const entryDelta = 1 - subT2; // 1 -> 0
-            frameXPercent = entryDelta * 100;
-            imgXPercent = -22 * entryDelta;
-            imgScale = 1.0 + entryDelta * 0.25;
-          }
-        } else if (i === total - 1 && delta < 0) {
-          // Last Slide (07) Exit: stays anchored inside [50%, rightLinePct] with subtle counter-drift
-          // while the right hairline (rightLinePct) & viewport clip-path close from 75% to 50% (Image 3 -> Image 1)
+        if (i === total - 1 && delta < 0) {
+          // Last Slide (07) Exit: stays anchored inside [33%, rightLinePct] with subtle counter-drift
+          // while the right hairline (rightLinePct) & viewport clip-path close from 88% to 33%
           const exitT = Math.max(0, Math.min(1, -delta));
           frameXPercent = -exitT * 14;
           imgXPercent = exitT * 8;
           imgScale = 1.0;
+          frameOpacity = 1.0;
         } else {
-          // Standard slide transition
+          // Standard slide transition (applies uniformly to Slide 0 and all subsequent slides)
           if (delta >= 1) {
             frameXPercent = 100.5;
             imgXPercent = -22;
             imgScale = 1.25;
+            frameOpacity = 0;
           } else if (delta >= 0) {
             frameXPercent = delta * 100;
             imgXPercent = -22 * delta;
             imgScale = 1.0 + delta * 0.25;
+            frameOpacity = Math.min(1, (1 - delta) * 2.5);
           } else if (delta > -1) {
             frameXPercent = delta * 28;
             imgXPercent = -delta * 14;
             imgScale = 1.0;
+            frameOpacity = 1.0;
           } else {
             frameXPercent = -28;
             imgXPercent = 14;
             imgScale = 1.0;
+            frameOpacity = 1.0;
           }
         }
 
         frame.style.transform = `translate3d(${frameXPercent.toFixed(2)}%, 0, 0)`;
+        frame.style.opacity = frameOpacity.toFixed(3);
         if (img) {
           img.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(${imgScale.toFixed(3)})`;
         }
       }
 
       // ─── 4. Active Current Frame State & Info Panel / Bottom Status Visibility ───
-      const isEntering = f < startSplit;
+      const isEntering = f < -0.35;
       const isExiting = f > (total - 1) + 0.72;
       const nearestIdx = Math.max(0, Math.min(total - 1, Math.round(f)));
 
@@ -297,26 +293,20 @@
         el.classList.toggle('is-current-frame', isCurrent);
       });
 
-      // Match Image 2 (hidden before 75%), Image 4 (visible once entering 75%),
-      // Image 3 (visible during initial exit), Image 1 (hidden once title passed left of 50%)
       let stageAlpha = 1.0;
       let stageY = 0;
 
-      if (f < startSplit) {
-        stageAlpha = 0;
-        stageY = 14;
-      } else if (f < 0) {
-        const subT2 = Math.max(0, Math.min(1, (f - startSplit) / (0 - startSplit)));
-        stageAlpha = Math.min(1, subT2 * 3.2); // Quickly reaches 1.0 by Image 4 (subT2 ≈ 0.25)
-        stageY = (1 - stageAlpha) * 14;
+      if (f < 0) {
+        // Gradual fade and float-in for info panel & status bar during Slide 0 entry
+        const entryT = Math.max(0, Math.min(1, f + 1.0));
+        stageAlpha = Math.min(1, entryT * 1.5);
+        stageY = (1 - stageAlpha) * 16;
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         if (exitT <= 0.65) {
-          // Image 3: still visible while tail of last title is in spotlight
           stageAlpha = 1.0;
           stageY = 0;
         } else {
-          // Image 1: fades out cleanly before right line closes at 50%
           const fadeOutT = Math.min(1, (exitT - 0.65) / 0.22);
           stageAlpha = 1 - fadeOutT;
           stageY = -fadeOutT * 12;
@@ -395,16 +385,32 @@
     // Target the 100vh horizontal stage so pinning activates after the header scrolls out of view
     const stage = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
 
-    // Initialize GSAP ScrollTrigger Pinning for Smooth Horizontal Showcase with Entry & Exit
+    // Initialize GSAP ScrollTrigger:
+    // 1. Separate Pin Trigger (locks stage into sticky strictly when reaching top 0%)
+    // 2. Parallax Scrub Trigger (starts at 50% vertical scroll before sticky, continues seamlessly through sticky)
     if (typeof ScrollTrigger !== 'undefined') {
-      projectScrollTrigger = ScrollTrigger.create({
+      const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
+      const getPrePinPx = () => window.innerHeight * 0.5;
+      const getStepPx = () => window.innerHeight * 0.75;
+      const getTotalScrollPx = () => (total + 1) * getStepPx();
+      const getPinDurationPx = () => Math.max(window.innerHeight, getTotalScrollPx() - getPrePinPx());
+
+      projectPinTrigger = ScrollTrigger.create({
         trigger: stage,
         start: 'top top',
-        end: () => `+=${window.innerHeight * (total + 1) * 0.75}`,
+        end: () => `+=${getPinDurationPx()}`,
         pin: true,
         pinSpacing: true,
         anticipatePin: 1,
+        invalidateOnRefresh: true
+      });
+
+      projectScrollTrigger = ScrollTrigger.create({
+        trigger: stage,
+        start: () => Math.max(0, getPinStart() - getPrePinPx()),
+        end: () => (projectPinTrigger ? projectPinTrigger.end : getPinStart() + getPinDurationPx()),
         scrub: 0.8,
+        invalidateOnRefresh: true,
         onUpdate: (self) => {
           renderFrame(self.progress);
         },
@@ -437,6 +443,10 @@
       if (projectScrollTrigger) {
         projectScrollTrigger.kill(true);
         projectScrollTrigger = null;
+      }
+      if (projectPinTrigger) {
+        projectPinTrigger.kill(true);
+        projectPinTrigger = null;
       }
     };
   }
