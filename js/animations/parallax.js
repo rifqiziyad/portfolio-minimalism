@@ -392,13 +392,6 @@
     measureMetrics();
     renderFrame(0);
 
-    // Snap points for each centered project, plus 0 (entry start) and 1 (exit end)
-    const snapPoints = [0];
-    for (let k = 0; k < total; k++) {
-      snapPoints.push(Number(((k - fMin) / fRange).toFixed(4)));
-    }
-    snapPoints.push(1);
-
     // Target the 100vh horizontal stage so pinning activates after the header scrolls out of view
     const stage = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
 
@@ -412,12 +405,6 @@
         pinSpacing: true,
         anticipatePin: 1,
         scrub: 0.8,
-        snap: {
-          snapTo: snapPoints,
-          duration: { min: 0.25, max: 0.5 },
-          delay: 0.12,
-          ease: 'power1.inOut'
-        },
         onUpdate: (self) => {
           renderFrame(self.progress);
         },
