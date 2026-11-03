@@ -34,11 +34,18 @@
       parentSection.style.setProperty('--portfolio-count', String(total));
     }
 
-    // Build Title Track Items (Single unified track: strictly 1 title at a time)
-    const buildTitleItemsMarkup = () =>
+    // Build Title Track Items (used identically in Dim and Lit layers)
+    const buildTitleItemsMarkup = (isLitLayer) =>
       items
         .map((item, idx) => {
           const activeClass = idx === 0 ? ' is-active' : '';
+          if (isLitLayer) {
+            return `
+              <div class="santal-title-item${activeClass}" data-index="${idx}" aria-hidden="true">
+                <span class="santal-title-text">${item.title}</span>
+              </div>
+            `;
+          }
           return `
             <button type="button" class="santal-title-item santal-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${item.title}">
               <span class="santal-title-text">${item.title}</span>
@@ -78,10 +85,20 @@
           <div class="santal-grid-hline"></div>
         </div>
 
-        <!-- Horizontal Sliding Title Band (Aligned directly above 55% image viewport: Strictly 1 Title) -->
+        <!-- Horizontal Sliding Title Band (Above 32% Midline: Full Stage Width with Dim Overflow & Lit Current Title) -->
         <div class="santal-title-band" id="santalTitleBand">
-          <div class="santal-title-track" id="santalTrackLit">
-            ${buildTitleItemsMarkup()}
+          <!-- Layer 1: Dimmed Titles across full stage (visible in overflow before & after current frame) -->
+          <div class="santal-title-layer santal-title-layer-dim">
+            <div class="santal-title-track" id="santalTrackDim">
+              ${buildTitleItemsMarkup(false)}
+            </div>
+          </div>
+
+          <!-- Layer 2: Lit Pure-White Titles (Illuminates strictly is-current-frame) -->
+          <div class="santal-title-layer santal-title-layer-lit" id="santalLayerLit" aria-hidden="true">
+            <div class="santal-title-track" id="santalTrackLit">
+              ${buildTitleItemsMarkup(true)}
+            </div>
           </div>
         </div>
 

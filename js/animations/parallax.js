@@ -28,13 +28,13 @@
     const section = (scope || document).querySelector('#project.santal-portfolio-section, #portfolio.santal-portfolio-section');
     if (!section) return;
 
-    const trackLit = section.querySelector('#santalTrackLit') || section.querySelector('.santal-title-track');
-    const trackDim = section.querySelector('#santalTrackDim') || trackLit;
+    const trackDim = section.querySelector('#santalTrackDim');
+    const trackLit = section.querySelector('#santalTrackLit');
     const layerLit = section.querySelector('#santalLayerLit') || section.querySelector('.santal-title-layer-lit');
     const vlineRight = section.querySelector('#santalVlineRight') || section.querySelector('.santal-vline-right');
     const imageViewport = section.querySelector('#santalImageViewport') || section.querySelector('.santal-image-viewport');
-    const dimItems = Array.from(section.querySelectorAll('.santal-title-item'));
-    const litItems = dimItems;
+    const dimItems = Array.from(section.querySelectorAll('#santalTrackDim .santal-title-item'));
+    const litItems = Array.from(section.querySelectorAll('#santalTrackLit .santal-title-item'));
     const slideFrames = Array.from(section.querySelectorAll('.santal-slide-frame'));
     const slideImgs = slideFrames.map((frame) => frame.querySelector('.project-img'));
 
@@ -55,7 +55,7 @@
     const projects = (data && (data.portfolio || data.works)) || [];
     const total = projects.length;
 
-    if (!trackLit || total === 0) return;
+    if (!trackDim || !trackLit || total === 0) return;
 
     let itemOffsets = [];
     let spotlightLeftPx = 0;
@@ -70,11 +70,14 @@
       const vw = window.innerWidth;
       const isMobile = vw <= 768;
 
-      // Spotlight column left boundary: 42% on desktop/tablet, 28% on mobile
-      spotlightLeftPx = vw * (isMobile ? 0.28 : 0.42);
+      // Spotlight column left boundary: 33% on desktop/tablet, 28% on mobile
+      spotlightLeftPx = vw * (isMobile ? 0.28 : 0.33);
 
-      // Record offsetLeft of each title item inside the track
-      itemOffsets = dimItems.map((el) => el.offsetLeft);
+      // Column width matches .santal-image-viewport (55vw on desktop, 68vw on mobile)
+      const colWidthPx = vw * (isMobile ? 0.68 : 0.55);
+
+      // Record exact anchor offset of each title item to stay strictly in line (sebaris) with slide frames
+      itemOffsets = dimItems.map((el, idx) => idx * colWidthPx);
     }
 
     function updateActiveProjectInfo(newIdx) {
@@ -132,18 +135,18 @@
 
       const vw = window.innerWidth;
       const isMobile = vw <= 768;
-      const leftColPct = isMobile ? 28 : 42;
-      const baseRightColPct = isMobile ? 96 : 97;
+      const leftColPct = isMobile ? 28 : 33;
+      const baseRightColPct = isMobile ? 96 : 88;
       const startRightColPct = 100;
-      const colWidthPct = baseRightColPct - leftColPct; // 55% on desktop (97 - 42 = 55), 68% on mobile
+      const colWidthPct = baseRightColPct - leftColPct; // 55% on desktop (88 - 33 = 55), 68% on mobile
 
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
 
       // Continuous project index f in [fMin, fMax] where:
       // f = -1.0 is Start (right line at 100%, Title 01 outside),
-      // f = -0.45..0.0 is Entry into [42%, 97%] (right line at 97%, Title 01 & Slide 01 wipe into view),
-      // f = 0..total-1 is Showcase (strictly 1 Title at a time, aligned with 55% Viewport),
-      // f = total-1..total is End (right line closes from 97% to 42%)
+      // f = -0.45..0.0 is Entry into [33%, 88%] (right line at 88%, Title 01 & Slide 01 wipe to 33%),
+      // f = 0..total-1 is Showcase,
+      // f = total-1..total is End (right line closes from 88% to 33%)
       const f = fMin + progress * fRange;
       const startSplit = -0.45;
 
@@ -152,12 +155,12 @@
       let viewportRightClipPct = 0;
 
       if (f < startSplit) {
-        // Sub-phase A1 (f in [-1.0, -0.45]): right line moves from 100% -> 97%
+        // Sub-phase A1 (f in [-1.0, -0.45]): right line moves from 100% -> 88%
         const subT1 = Math.max(0, Math.min(1, (f - (-1.0)) / (startSplit - (-1.0))));
         rightLinePct = startRightColPct - subT1 * (startRightColPct - baseRightColPct);
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
-        // Phase C (f in [total - 1, total]): right line closes from 97% -> 42%
+        // Phase C (f in [total - 1, total]): right line closes from 88% -> 33%
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         rightLinePct = baseRightColPct - exitT * colWidthPct;
         viewportRightClipPct = exitT * 100;
@@ -183,26 +186,49 @@
         imageViewport.style.webkitClipPath = vpClip;
       }
 
-      // ─── 2. Title Track Glide: Strictly 1 Title Visible, Synchronized with Slide Frames ───
-      let trackXPercent = 0;
+      // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
+      let trackX = 0;
+      const firstOffset = itemOffsets[0] || 0;
+      const lastOffset = itemOffsets[total - 1] || firstOffset;
 
       if (f < 0) {
+        let title0ScreenPct = leftColPct;
         if (f < startSplit) {
-          trackXPercent = 100.5;
+          title0ScreenPct = rightLinePct;
         } else {
           const subT2 = Math.max(0, Math.min(1, (f - startSplit) / (0 - startSplit)));
-          trackXPercent = (1 - subT2) * 100;
+          title0ScreenPct = baseRightColPct - subT2 * colWidthPct;
         }
+        const title0ScreenPx = (title0ScreenPct / 100) * vw;
+        trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
-        trackXPercent = -(total - 1) * 100 - exitT * 18;
+        const lastTitleEl = dimItems[total - 1];
+        const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.santal-title-text') : null;
+        const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
+        const exitShiftPx = exitT * (textWidth * 1.28);
+        trackX = spotlightLeftPx - lastOffset - exitShiftPx;
       } else {
-        trackXPercent = -f * 100;
+        const lowerIdx = Math.floor(f);
+        const upperIdx = Math.min(total - 1, lowerIdx + 1);
+        const t = f - lowerIdx;
+        const offsetA = itemOffsets[lowerIdx] !== undefined ? itemOffsets[lowerIdx] : firstOffset;
+        const offsetB = itemOffsets[upperIdx] !== undefined ? itemOffsets[upperIdx] : offsetA;
+        const currentAnchorOffset = offsetA + (offsetB - offsetA) * t;
+        trackX = spotlightLeftPx - currentAnchorOffset;
       }
 
-      const trackTransform = `translate3d(${trackXPercent.toFixed(2)}%, 0, 0)`;
+      const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
+      if (trackDim) trackDim.style.transform = trackTransform;
       if (trackLit) trackLit.style.transform = trackTransform;
-      if (trackDim && trackDim !== trackLit) trackDim.style.transform = trackTransform;
+
+      // Smoothly illuminate ONLY the title of is-current-frame:
+      // Titles before and after is-current-frame remain in their dimmed color
+      for (let k = 0; k < litItems.length; k++) {
+        const dist = Math.abs(k - f);
+        const litAlpha = Math.max(0, Math.min(1, 1 - dist * 1.6));
+        litItems[k].style.opacity = litAlpha.toFixed(3);
+      }
 
       // ─── 3. Stacked Image Slides (Synchronized Entry Wipe, Zoom Parallax & Aperture Exit) ───
       for (let i = 0; i < slideFrames.length; i++) {

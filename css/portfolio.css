@@ -299,7 +299,7 @@
 }
 
 .santal-vline-center {
-  left: 42%;
+  left: 33%;
 }
 
 .santal-vline-right {
@@ -316,50 +316,85 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ─── 2. Horizontal Sliding Title Band (Aligned directly above 55% Image Viewport) ─── */
+/* ─── 2. Horizontal Sliding Title Band & Dual-Layer Spotlight ─── */
 .santal-title-band {
   position: absolute;
-  left: 42%;
-  width: 55%;
+  left: 0;
+  right: 0;
   bottom: 68%;
-  height: clamp(3.5rem, 6.5vh, 5.5rem);
-  overflow: hidden;
+  height: clamp(4.25rem, 8vw, 7rem);
   z-index: 5;
+  pointer-events: none;
+}
+
+.santal-title-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: clamp(0.85rem, 1.8vh, 1.45rem);
+  overflow: visible;
+}
+
+.santal-title-layer-dim {
+  pointer-events: auto;
+}
+
+/* Spotlight Clip-Path: bounds pure white illuminates strictly within active Column [33% to 88%] */
+.santal-title-layer-lit {
+  pointer-events: none;
+  clip-path: inset(0 12% 0 33%);
+  -webkit-clip-path: inset(0 12% 0 33%);
 }
 
 .santal-title-track {
   display: flex;
-  align-items: flex-end;
-  width: 100%;
-  height: 100%;
-  padding-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+  align-items: baseline;
+  gap: 0;
   will-change: transform;
+  white-space: nowrap;
 }
 
 .santal-title-item {
-  flex: 0 0 100%;
-  width: 100%;
-  max-width: 100%;
+  flex: 0 0 55vw;
+  width: 55vw;
+  min-width: 55vw;
   box-sizing: border-box;
+  padding-right: clamp(1.5rem, 3vw, 3.5rem);
   background: none;
   border: none;
   text-align: left;
   font-family: var(--font-sans);
-  font-size: clamp(1.4rem, 2.1vw, 2.75rem);
-  font-weight: 500;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: #ffffff;
+  font-size: clamp(1.6rem, 2.8vw, 3.6rem);
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   cursor: pointer;
-  padding: 0;
+  padding-left: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease, color 0.25s ease;
 }
 
-.santal-title-item:hover {
-  opacity: 0.85;
+/* Dimmed titles: stay visible when overflowing before and after is-current-frame */
+.santal-title-layer-dim .santal-title-item {
+  color: rgba(255, 255, 255, 0.18);
+}
+
+.santal-title-layer-dim .santal-title-item:hover {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Lit titles: pure white only for the active item corresponding to is-current-frame */
+.santal-title-layer-lit .santal-title-item {
+  color: #ffffff;
+  opacity: 0;
+  will-change: opacity;
+}
+
+.santal-title-layer-lit .santal-title-item.is-active {
+  opacity: 1;
 }
 
 /* ─── 4. Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) ─── */
@@ -367,9 +402,9 @@
   position: absolute;
   top: 32%;
   left: 0;
-  width: 42%;
+  width: 33%;
   height: 60%;
-  padding: clamp(1.25rem, 2.5vh, 2.2rem) clamp(1.25rem, 2.5vw, 2.8rem);
+  padding: clamp(1rem, 2vh, 1.8rem) clamp(1rem, 2vw, 2.2rem);
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -486,10 +521,10 @@
   transform: translate(3px, -3px);
 }
 
-/* ─── 5. Center-Right Active Project Image Viewport (Column: 42% to 97% Below 32% Midline) ─── */
+/* ─── 5. Center-Right Active Project Image Viewport (Column: 33% to 88% Below 32% Midline) ─── */
 .santal-image-viewport {
   position: absolute;
-  left: 42%;
+  left: 33%;
   top: 32%;
   width: 55%;
   height: 60%;
@@ -644,15 +679,22 @@
   }
 
   .santal-title-band {
-    left: 28%;
-    width: 68%;
+    left: 0;
+    right: 0;
     bottom: 62%;
     height: 4.25rem;
-    overflow: hidden;
+  }
+
+  .santal-title-layer-lit {
+    clip-path: inset(0 4% 0 28%);
+    -webkit-clip-path: inset(0 4% 0 28%);
   }
 
   .santal-title-item {
-    font-size: clamp(1.2rem, 4.5vw, 1.65rem);
+    flex: 0 0 68vw;
+    width: 68vw;
+    min-width: 68vw;
+    font-size: clamp(1.35rem, 5.4vw, 1.85rem);
   }
 
   /* On mobile: Image viewport sits on the right column (28% to 96%) below 38% line */
