@@ -226,10 +226,10 @@
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   SANTAL-INSPIRED HORIZONTAL SCROLL PORTFOLIO SHOWCASE (HOME #portfolio)
+   HORIZONTAL SCROLL PORTFOLIO SHOWCASE (HOME #portfolio)
    ═══════════════════════════════════════════════════════════════════════════ */
 
-.santal-portfolio-section {
+.project-showcase-section {
   --portfolio-count: 7;
   position: relative;
   width: 100%;
@@ -242,7 +242,7 @@
 }
 
 /* ─── Dedicated Vertical Header Area: PROJECT Title & Giant Outline Text ─── */
-.santal-project-header-area {
+.project-header-area {
   position: relative;
   min-height: 55vh;
   display: flex;
@@ -252,28 +252,28 @@
   z-index: 2;
 }
 
-.santal-project-header-container {
+.project-header-container {
   width: 100%;
   position: relative;
   z-index: 3;
 }
 
-.santal-project-header-area .section-header {
+.project-header-area .section-header {
   margin-bottom: 0;
 }
 
-.santal-project-header-area .bg-outline-text {
+.project-header-area .bg-outline-text {
   z-index: 1;
   pointer-events: none;
   opacity: 0.65;
 }
 
-.santal-portfolio-mount {
+.project-showcase-mount {
   position: relative;
   width: 100%;
 }
 
-.santal-sticky-stage {
+.project-sticky-stage {
   position: relative;
   width: 100%;
   height: 100vh;
@@ -283,14 +283,14 @@
 }
 
 /* ─── 1. Architectural Hairline Grid Overlay (Fixed Center + Dynamic Right Line) ─── */
-.santal-grid-overlay {
+.project-grid-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 4;
 }
 
-.santal-grid-vline {
+.project-grid-vline {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -298,16 +298,16 @@
   background-color: rgba(255, 255, 255, 0.12);
 }
 
-.santal-vline-center {
+.project-vline-center {
   left: 33%;
 }
 
-.santal-vline-right {
+.project-vline-right {
   left: 100%;
   will-change: left;
 }
 
-.santal-grid-hline {
+.project-grid-hline {
   position: absolute;
   left: 0;
   right: 0;
@@ -317,7 +317,7 @@
 }
 
 /* ─── 2. Horizontal Sliding Title Band & Dual-Layer Spotlight ─── */
-.santal-title-band {
+.project-title-band {
   position: absolute;
   left: 0;
   right: 0;
@@ -327,7 +327,7 @@
   pointer-events: none;
 }
 
-.santal-title-layer {
+.project-title-layer {
   position: absolute;
   inset: 0;
   display: flex;
@@ -336,18 +336,18 @@
   overflow: visible;
 }
 
-.santal-title-layer-dim {
+.project-title-layer-dim {
   pointer-events: auto;
 }
 
 /* Spotlight Clip-Path: bounds pure white illuminates strictly within active Column [33% to 88%] */
-.santal-title-layer-lit {
+.project-title-layer-lit {
   pointer-events: none;
   clip-path: inset(0 12% 0 33%);
   -webkit-clip-path: inset(0 12% 0 33%);
 }
 
-.santal-title-track {
+.project-title-track {
   display: flex;
   align-items: baseline;
   gap: 0;
@@ -355,7 +355,7 @@
   white-space: nowrap;
 }
 
-.santal-title-item {
+.project-title-item {
   flex: 0 0 55vw;
   width: 55vw;
   min-width: 55vw;
@@ -378,27 +378,27 @@
 }
 
 /* Dimmed titles: stay visible when overflowing before and after is-current-frame */
-.santal-title-layer-dim .santal-title-item {
+.project-title-layer-dim .project-title-item {
   color: rgba(255, 255, 255, 0.18);
 }
 
-.santal-title-layer-dim .santal-title-item:hover {
+.project-title-layer-dim .project-title-item:hover {
   color: rgba(255, 255, 255, 0.45);
 }
 
 /* Lit titles: pure white only for the active item corresponding to is-current-frame */
-.santal-title-layer-lit .santal-title-item {
+.project-title-layer-lit .project-title-item {
   color: #ffffff;
   opacity: 0;
   will-change: opacity;
 }
 
-.santal-title-layer-lit .santal-title-item.is-active {
+.project-title-layer-lit .project-title-item.is-active {
   opacity: 1;
 }
 
 /* ─── 4. Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) ─── */
-.santal-info-panel {
+.project-info-panel {
   position: absolute;
   top: 32%;
   left: 0;
@@ -411,18 +411,18 @@
   justify-content: flex-start;
 }
 
-.santal-info-inner {
+.project-info-inner {
   max-width: 32rem;
   width: 100%;
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-.santal-info-inner.is-switching {
+.project-info-inner.is-switching {
   opacity: 0.25;
   transform: translateY(4px);
 }
 
-.santal-info-meta {
+.project-info-meta {
   display: flex;
   align-items: center;
   gap: 0.85rem;
@@ -433,16 +433,16 @@
   text-transform: uppercase;
 }
 
-.santal-info-index {
+.project-info-index {
   color: rgba(255, 255, 255, 0.45);
 }
 
-.santal-info-category {
+.project-info-category {
   color: var(--accent-orange);
   font-weight: 700;
 }
 
-.santal-info-desc {
+.project-info-desc {
   font-family: var(--font-sans);
   font-size: clamp(0.92rem, 1.05vw, 1.12rem);
   font-weight: 400;
@@ -452,7 +452,7 @@
   max-width: 42ch;
 }
 
-.santal-info-specs {
+.project-info-specs {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem 2.5rem;
@@ -461,33 +461,33 @@
   border-top: 1px solid rgba(255, 255, 255, 0.09);
 }
 
-.santal-spec-item {
+.project-spec-item {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
   font-family: var(--font-mono);
 }
 
-.santal-spec-label {
+.project-spec-label {
   font-size: 0.65rem;
   letter-spacing: 0.14em;
   color: rgba(255, 255, 255, 0.4);
 }
 
-.santal-spec-val {
+.project-spec-val {
   font-size: 0.78rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
 }
 
-.santal-info-actions {
+.project-info-actions {
   display: flex;
   align-items: center;
   gap: 1.5rem;
 }
 
-.santal-gallery-trigger,
-.santal-live-link {
+.project-gallery-trigger,
+.project-live-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -505,24 +505,24 @@
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.santal-gallery-trigger:hover,
-.santal-live-link:hover {
+.project-gallery-trigger:hover,
+.project-live-link:hover {
   color: var(--accent-orange);
   border-bottom-color: var(--accent-orange);
 }
 
-.santal-gallery-trigger .arrow,
-.santal-live-link .arrow {
+.project-gallery-trigger .arrow,
+.project-live-link .arrow {
   transition: transform 0.2s ease;
 }
 
-.santal-gallery-trigger:hover .arrow,
-.santal-live-link:hover .arrow {
+.project-gallery-trigger:hover .arrow,
+.project-live-link:hover .arrow {
   transform: translate(3px, -3px);
 }
 
 /* ─── 5. Center-Right Active Project Image Viewport (Column: 33% to 88% Below 32% Midline) ─── */
-.santal-image-viewport {
+.project-image-viewport {
   position: absolute;
   left: 33%;
   top: 32%;
@@ -535,7 +535,7 @@
   will-change: clip-path;
 }
 
-.santal-image-viewport .santal-slide-frame {
+.project-image-viewport .project-slide-frame {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -550,11 +550,11 @@
   cursor: pointer;
 }
 
-.santal-image-viewport .santal-slide-frame.is-current-frame {
+.project-image-viewport .project-slide-frame.is-current-frame {
   pointer-events: auto;
 }
 
-.santal-image-viewport .santal-slide-frame .project-img {
+.project-image-viewport .project-slide-frame .project-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -565,12 +565,12 @@
   transition: filter 0.35s ease;
 }
 
-.santal-image-viewport .santal-slide-frame:hover .project-img {
+.project-image-viewport .project-slide-frame:hover .project-img {
   filter: grayscale(0%) contrast(1.06);
 }
 
 /* ─── 6. Bottom Architectural Status Bar (Bottom 8% of Stage) ─── */
-.santal-bottom-bar {
+.project-bottom-bar {
   position: absolute;
   left: 0;
   right: 0;
@@ -584,12 +584,12 @@
   pointer-events: none;
 }
 
-.santal-bottom-left,
-.santal-bottom-right {
+.project-bottom-left,
+.project-bottom-right {
   pointer-events: auto;
 }
 
-.santal-explore-link {
+.project-explore-link {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
@@ -604,21 +604,21 @@
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
-.santal-explore-link .arrow {
+.project-explore-link .arrow {
   color: var(--accent-orange);
   transition: transform 0.2s ease;
 }
 
-.santal-explore-link:hover {
+.project-explore-link:hover {
   color: #ffffff;
   border-bottom-color: var(--accent-orange);
 }
 
-.santal-explore-link:hover .arrow {
+.project-explore-link:hover .arrow {
   transform: translate(3px, -3px);
 }
 
-.santal-bottom-right {
+.project-bottom-right {
   display: flex;
   align-items: center;
   gap: 1.35rem;
@@ -627,12 +627,12 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-.santal-bottom-title {
+.project-bottom-title {
   color: rgba(255, 255, 255, 0.75);
   letter-spacing: -0.01em;
 }
 
-.santal-bottom-counter {
+.project-bottom-counter {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -640,57 +640,57 @@
   font-size: 0.75rem;
 }
 
-.santal-bottom-counter strong {
+.project-bottom-counter strong {
   color: #ffffff;
   font-weight: 700;
 }
 
-.santal-counter-sep {
+.project-counter-sep {
   color: rgba(255, 255, 255, 0.3);
 }
 
 /* ─── 7. Responsive Adaptation (< 1024px & < 768px) ─── */
 @media (max-width: 1024px) {
-  .santal-title-item {
+  .project-title-item {
     font-size: clamp(1.2rem, 2.2vw, 1.75rem);
   }
 
-  .santal-info-panel {
+  .project-info-panel {
     padding: 1.25rem 1.75rem;
   }
 }
 
 @media (max-width: 768px) {
-  .santal-vline-center {
+  .project-vline-center {
     left: 28%;
   }
 
-  .santal-vline-right {
+  .project-vline-right {
     left: 100%;
   }
 
-  .santal-grid-hline {
+  .project-grid-hline {
     top: 38%;
   }
 
-  .santal-project-header-area {
+  .project-header-area {
     min-height: 45vh;
     padding: clamp(3.5rem, 8vh, 5.5rem) 0 clamp(2rem, 4vh, 3rem);
   }
 
-  .santal-title-band {
+  .project-title-band {
     left: 0;
     right: 0;
     bottom: 62%;
     height: 4.25rem;
   }
 
-  .santal-title-layer-lit {
+  .project-title-layer-lit {
     clip-path: inset(0 4% 0 28%);
     -webkit-clip-path: inset(0 4% 0 28%);
   }
 
-  .santal-title-item {
+  .project-title-item {
     flex: 0 0 68vw;
     width: 68vw;
     min-width: 68vw;
@@ -698,7 +698,7 @@
   }
 
   /* On mobile: Image viewport sits on the right column (28% to 96%) below 38% line */
-  .santal-image-viewport {
+  .project-image-viewport {
     left: 28%;
     top: 38%;
     width: 68%;
@@ -706,7 +706,7 @@
   }
 
   /* Info panel sits below the image viewport for clean readability */
-  .santal-info-panel {
+  .project-info-panel {
     left: 0;
     top: 72%;
     width: 100%;
@@ -716,7 +716,7 @@
     border-top: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .santal-info-desc {
+  .project-info-desc {
     font-size: 0.82rem;
     line-height: 1.45;
     margin-bottom: 0.55rem;
@@ -726,17 +726,17 @@
     overflow: hidden;
   }
 
-  .santal-info-specs {
+  .project-info-specs {
     padding-top: 0.45rem;
     margin-bottom: 0.5rem;
     gap: 0.65rem 1.5rem;
   }
 
-  .santal-bottom-bar {
+  .project-bottom-bar {
     padding: 0.75rem 1.25rem;
   }
 
-  .santal-bottom-title {
+  .project-bottom-title {
     display: none;
   }
 }

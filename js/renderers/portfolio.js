@@ -1,7 +1,7 @@
 /**
  * FEATURED PORTFOLIO DOM RENDERER
  * Module: js/renderers/portfolio.js
- * Injects Santal-inspired horizontal showcase into #portfolioList (Home)
+ * Injects horizontal showcase into #portfolioList (Home)
  * and vertical archive cards into #portfolioFullList (/all-project).
  */
 
@@ -16,9 +16,9 @@
   }
 
   /**
-   * Render Santal-inspired Horizontal Scroll Showcase into #portfolioList (Home)
+   * Render Horizontal Scroll Showcase into #portfolioList (Home)
    */
-  function renderSantalHorizontalTo(container, projects) {
+  function renderProjectShowcaseTo(container, projects) {
     if (!container || !Array.isArray(projects) || projects.length === 0) return;
 
     const items = projects.map((item, idx) =>
@@ -29,7 +29,7 @@
 
     const total = items.length;
     const first = items[0];
-    const parentSection = container.closest('.santal-portfolio-section');
+    const parentSection = container.closest('.project-showcase-section');
     if (parentSection) {
       parentSection.style.setProperty('--portfolio-count', String(total));
     }
@@ -41,14 +41,14 @@
           const activeClass = idx === 0 ? ' is-active' : '';
           if (isLitLayer) {
             return `
-              <div class="santal-title-item${activeClass}" data-index="${idx}" aria-hidden="true">
-                <span class="santal-title-text">${item.title}</span>
+              <div class="project-title-item${activeClass}" data-index="${idx}" aria-hidden="true">
+                <span class="project-title-text">${item.title}</span>
               </div>
             `;
           }
           return `
-            <button type="button" class="santal-title-item santal-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${item.title}">
-              <span class="santal-title-text">${item.title}</span>
+            <button type="button" class="project-title-item project-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${item.title}">
+              <span class="project-title-text">${item.title}</span>
             </button>
           `;
         })
@@ -59,7 +59,7 @@
       .map((item, idx) => {
         const currentClass = idx === 0 ? ' is-current-frame' : '';
         return `
-          <div class="santal-slide-frame project-img-frame${currentClass}"
+          <div class="project-slide-frame project-img-frame${currentClass}"
                data-slide-index="${idx}"
                data-gallery-project="${item.originalIndex}"
                style="z-index: ${idx + 1};"
@@ -77,60 +77,60 @@
       .join('');
 
     container.innerHTML = `
-      <div class="santal-sticky-stage" id="santalStickyStage">
+      <div class="project-sticky-stage" id="projectStickyStage">
         <!-- Architectural Hairline Grid Overlay (Fixed Center Line + Dynamic Right Spotlight Line) -->
-        <div class="santal-grid-overlay" aria-hidden="true">
-          <div class="santal-grid-vline santal-vline-center" id="santalVlineCenter"></div>
-          <div class="santal-grid-vline santal-vline-right" id="santalVlineRight"></div>
-          <div class="santal-grid-hline"></div>
+        <div class="project-grid-overlay" aria-hidden="true">
+          <div class="project-grid-vline project-vline-center" id="projectVlineCenter"></div>
+          <div class="project-grid-vline project-vline-right" id="projectVlineRight"></div>
+          <div class="project-grid-hline"></div>
         </div>
 
         <!-- Horizontal Sliding Title Band (Above 32% Midline: Full Stage Width with Dim Overflow & Lit Current Title) -->
-        <div class="santal-title-band" id="santalTitleBand">
+        <div class="project-title-band" id="projectTitleBand">
           <!-- Layer 1: Dimmed Titles across full stage (visible in overflow before & after current frame) -->
-          <div class="santal-title-layer santal-title-layer-dim">
-            <div class="santal-title-track" id="santalTrackDim">
+          <div class="project-title-layer project-title-layer-dim">
+            <div class="project-title-track" id="projectTrackDim">
               ${buildTitleItemsMarkup(false)}
             </div>
           </div>
 
           <!-- Layer 2: Lit Pure-White Titles (Illuminates strictly is-current-frame) -->
-          <div class="santal-title-layer santal-title-layer-lit" id="santalLayerLit" aria-hidden="true">
-            <div class="santal-title-track" id="santalTrackLit">
+          <div class="project-title-layer project-title-layer-lit" id="projectLayerLit" aria-hidden="true">
+            <div class="project-title-track" id="projectTrackLit">
               ${buildTitleItemsMarkup(true)}
             </div>
           </div>
         </div>
 
         <!-- Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) -->
-        <div class="santal-info-panel">
-          <div class="santal-info-inner" id="santalInfoInner">
-            <div class="santal-info-meta">
-              <span class="santal-info-index" id="santalActiveIndex">01 // ${formatIndex(total)}</span>
-              <span class="santal-info-category" id="santalActiveCategory">${first.category}</span>
+        <div class="project-info-panel">
+          <div class="project-info-inner" id="projectInfoInner">
+            <div class="project-info-meta">
+              <span class="project-info-index" id="projectActiveIndex">01 // ${formatIndex(total)}</span>
+              <span class="project-info-category" id="projectActiveCategory">${first.category}</span>
             </div>
-            <p class="santal-info-desc" id="santalActiveDesc">${first.description}</p>
-            <div class="santal-info-specs">
-              <div class="santal-spec-item">
-                <span class="santal-spec-label">YEAR</span>
-                <span class="santal-spec-val" id="santalActiveYear">${first.year}</span>
+            <p class="project-info-desc" id="projectActiveDesc">${first.description}</p>
+            <div class="project-info-specs">
+              <div class="project-spec-item">
+                <span class="project-spec-label">YEAR</span>
+                <span class="project-spec-val" id="projectActiveYear">${first.year}</span>
               </div>
-              <div class="santal-spec-item">
-                <span class="santal-spec-label">STACK</span>
-                <span class="santal-spec-val" id="santalActiveStack">${first.stack}</span>
+              <div class="project-spec-item">
+                <span class="project-spec-label">STACK</span>
+                <span class="project-spec-val" id="projectActiveStack">${first.stack}</span>
               </div>
             </div>
-            <div class="santal-info-actions">
-              <button type="button" class="santal-gallery-trigger" id="santalGalleryTrigger">
+            <div class="project-info-actions">
+              <button type="button" class="project-gallery-trigger" id="projectGalleryTrigger">
                 <span>INSPECT GALLERY</span>
                 <span class="arrow">↗</span>
               </button>
               <a href="${first.linkUrl || '#'}"
-                 class="santal-live-link"
-                 id="santalActiveLink"
+                 class="project-live-link"
+                 id="projectActiveLink"
                  ${first.linkUrl ? '' : 'style="display:none;"'}
                  ${first.linkUrl && first.linkUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
-                <span id="santalActiveLinkText">${first.linkText || 'Live Demo'}</span>
+                <span id="projectActiveLinkText">${first.linkText || 'Live Demo'}</span>
                 <span class="arrow">↗</span>
               </a>
             </div>
@@ -138,24 +138,24 @@
         </div>
 
         <!-- Center-Right Active Project Image Viewport (Column 3: 50% to 75%, Below 50% Midline) -->
-        <div class="santal-image-viewport" id="santalImageViewport">
+        <div class="project-image-viewport" id="projectImageViewport">
           ${slidesMarkup}
         </div>
 
         <!-- Bottom Architectural Status Bar -->
-        <div class="santal-bottom-bar">
-          <div class="santal-bottom-left">
-            <a href="/all-project" class="santal-explore-link" data-spa-link="portfolio">
+        <div class="project-bottom-bar">
+          <div class="project-bottom-left">
+            <a href="/all-project" class="project-explore-link" data-spa-link="portfolio">
               <span>EXPLORE ALL PROJECTS</span>
               <span class="arrow">↗</span>
             </a>
           </div>
-          <div class="santal-bottom-right">
-            <span class="santal-bottom-title" id="santalBottomTitle">${first.title}</span>
-            <span class="santal-bottom-counter" id="santalBottomCounter">
-              <strong id="santalCounterCurrent">01</strong>
-              <span class="santal-counter-sep">|</span>
-              <span id="santalCounterTotal">${formatIndex(total)}</span>
+          <div class="project-bottom-right">
+            <span class="project-bottom-title" id="projectBottomTitle">${first.title}</span>
+            <span class="project-bottom-counter" id="projectBottomCounter">
+              <strong id="projectCounterCurrent">01</strong>
+              <span class="project-counter-sep">|</span>
+              <span id="projectCounterTotal">${formatIndex(total)}</span>
             </span>
           </div>
         </div>
@@ -249,7 +249,7 @@
     const fullContainer = document.getElementById('portfolioFullList');
 
     if (homeContainer) {
-      renderSantalHorizontalTo(homeContainer, projects);
+      renderProjectShowcaseTo(homeContainer, projects);
     }
     if (fullContainer) {
       renderProjectListTo(fullContainer, projects);

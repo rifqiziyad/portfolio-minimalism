@@ -116,8 +116,8 @@
   }
 
   function unmountHomeAnimations() {
-    if (window.Portfolio.parallax && typeof window.Portfolio.parallax.cleanupSantalPortfolio === 'function') {
-      window.Portfolio.parallax.cleanupSantalPortfolio();
+    if (window.Portfolio.parallax && typeof window.Portfolio.parallax.cleanupProjectShowcase === 'function') {
+      window.Portfolio.parallax.cleanupProjectShowcase();
     }
     if (homeContext) {
       homeContext.revert();

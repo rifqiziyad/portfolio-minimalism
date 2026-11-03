@@ -1,5 +1,5 @@
 /**
- * GLOBAL PARALLAX, SCROLL REVEALS & SANTAL HORIZONTAL PORTFOLIO CONTROLLER
+ * GLOBAL PARALLAX, SCROLL REVEALS & HORIZONTAL PORTFOLIO CONTROLLER
  * Module: js/animations/parallax.js
  * Powered by GSAP ScrollTrigger Pinning for True Sticky Horizontal Showcase
  */
@@ -9,47 +9,47 @@
 
   window.Portfolio = window.Portfolio || {};
 
-  let cleanupSantalController = null;
+  let cleanupProjectShowcaseController = null;
 
   function formatIndex(num) {
     return num < 10 ? `0${num}` : `${num}`;
   }
 
   /**
-   * Santal-inspired Horizontal Scroll + Image Wipe Parallax Controller for Home #portfolio
+   * Horizontal Scroll + Image Wipe Parallax Controller for Home #portfolio
    * Uses GSAP ScrollTrigger Pinning (pin: true) so vertical scroll is captured until horizontal completes.
    */
-  function initSantalPortfolioScroll(scope) {
-    if (cleanupSantalController) {
-      cleanupSantalController();
-      cleanupSantalController = null;
+  function initProjectShowcaseScroll(scope) {
+    if (cleanupProjectShowcaseController) {
+      cleanupProjectShowcaseController();
+      cleanupProjectShowcaseController = null;
     }
 
-    const section = (scope || document).querySelector('#project.santal-portfolio-section, #portfolio.santal-portfolio-section');
+    const section = (scope || document).querySelector('#project.project-showcase-section, #portfolio.project-showcase-section');
     if (!section) return;
 
-    const trackDim = section.querySelector('#santalTrackDim');
-    const trackLit = section.querySelector('#santalTrackLit');
-    const layerLit = section.querySelector('#santalLayerLit') || section.querySelector('.santal-title-layer-lit');
-    const vlineRight = section.querySelector('#santalVlineRight') || section.querySelector('.santal-vline-right');
-    const imageViewport = section.querySelector('#santalImageViewport') || section.querySelector('.santal-image-viewport');
-    const dimItems = Array.from(section.querySelectorAll('#santalTrackDim .santal-title-item'));
-    const litItems = Array.from(section.querySelectorAll('#santalTrackLit .santal-title-item'));
-    const slideFrames = Array.from(section.querySelectorAll('.santal-slide-frame'));
+    const trackDim = section.querySelector('#projectTrackDim');
+    const trackLit = section.querySelector('#projectTrackLit');
+    const layerLit = section.querySelector('#projectLayerLit') || section.querySelector('.project-title-layer-lit');
+    const vlineRight = section.querySelector('#projectVlineRight') || section.querySelector('.project-vline-right');
+    const imageViewport = section.querySelector('#projectImageViewport') || section.querySelector('.project-image-viewport');
+    const dimItems = Array.from(section.querySelectorAll('#projectTrackDim .project-title-item'));
+    const litItems = Array.from(section.querySelectorAll('#projectTrackLit .project-title-item'));
+    const slideFrames = Array.from(section.querySelectorAll('.project-slide-frame'));
     const slideImgs = slideFrames.map((frame) => frame.querySelector('.project-img'));
 
     // Left Info Panel & Bottom Bar DOM nodes
-    const infoInner = section.querySelector('#santalInfoInner');
-    const elIndex = section.querySelector('#santalActiveIndex');
-    const elCategory = section.querySelector('#santalActiveCategory');
-    const elDesc = section.querySelector('#santalActiveDesc');
-    const elYear = section.querySelector('#santalActiveYear');
-    const elStack = section.querySelector('#santalActiveStack');
-    const elLink = section.querySelector('#santalActiveLink');
-    const elLinkText = section.querySelector('#santalActiveLinkText');
-    const elGalleryBtn = section.querySelector('#santalGalleryTrigger');
-    const elBottomTitle = section.querySelector('#santalBottomTitle');
-    const elCounterCurrent = section.querySelector('#santalCounterCurrent');
+    const infoInner = section.querySelector('#projectInfoInner');
+    const elIndex = section.querySelector('#projectActiveIndex');
+    const elCategory = section.querySelector('#projectActiveCategory');
+    const elDesc = section.querySelector('#projectActiveDesc');
+    const elYear = section.querySelector('#projectActiveYear');
+    const elStack = section.querySelector('#projectActiveStack');
+    const elLink = section.querySelector('#projectActiveLink');
+    const elLinkText = section.querySelector('#projectActiveLinkText');
+    const elGalleryBtn = section.querySelector('#projectGalleryTrigger');
+    const elBottomTitle = section.querySelector('#projectBottomTitle');
+    const elCounterCurrent = section.querySelector('#projectCounterCurrent');
 
     const data = window.PortfolioData;
     const projects = (data && (data.portfolio || data.works)) || [];
@@ -60,7 +60,7 @@
     let itemOffsets = [];
     let spotlightLeftPx = 0;
     let currentActiveIdx = -1;
-    let santalScrollTrigger = null;
+    let projectScrollTrigger = null;
 
     const fMin = -1;
     const fMax = total;
@@ -73,7 +73,7 @@
       // Spotlight column left boundary: 33% on desktop/tablet, 28% on mobile
       spotlightLeftPx = vw * (isMobile ? 0.28 : 0.33);
 
-      // Column width matches .santal-image-viewport (55vw on desktop, 68vw on mobile)
+      // Column width matches .project-image-viewport (55vw on desktop, 68vw on mobile)
       const colWidthPx = vw * (isMobile ? 0.68 : 0.55);
 
       // Record exact anchor offset of each title item to stay strictly in line (sebaris) with slide frames
@@ -204,7 +204,7 @@
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         const lastTitleEl = dimItems[total - 1];
-        const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.santal-title-text') : null;
+        const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
         const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
         const exitShiftPx = exitT * (textWidth * 1.28);
         trackX = spotlightLeftPx - lastOffset - exitShiftPx;
@@ -328,7 +328,7 @@
         infoInner.style.transform = `translate3d(0, ${stageY.toFixed(1)}px, 0)`;
       }
 
-      const elBottomRight = section.querySelector('.santal-bottom-right');
+      const elBottomRight = section.querySelector('.project-bottom-right');
       if (elBottomRight) {
         elBottomRight.style.opacity = stageAlpha.toFixed(2);
       }
@@ -342,8 +342,8 @@
       const ratio = (targetIdx - fMin) / fRange;
       let targetY = 0;
 
-      if (santalScrollTrigger) {
-        targetY = santalScrollTrigger.start + ratio * (santalScrollTrigger.end - santalScrollTrigger.start);
+      if (projectScrollTrigger) {
+        targetY = projectScrollTrigger.start + ratio * (projectScrollTrigger.end - projectScrollTrigger.start);
       } else {
         const rect = section.getBoundingClientRect();
         const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -370,7 +370,7 @@
 
     // Click handler on Title Track Buttons
     function onSectionClick(e) {
-      const titleBtn = e.target.closest('.santal-title-btn');
+      const titleBtn = e.target.closest('.project-title-btn');
       if (titleBtn) {
         const idx = parseInt(titleBtn.getAttribute('data-index'), 10);
         if (!isNaN(idx)) {
@@ -400,11 +400,11 @@
     snapPoints.push(1);
 
     // Target the 100vh horizontal stage so pinning activates after the header scrolls out of view
-    const stage = section.querySelector('#santalStickyStage') || section.querySelector('#portfolioList') || section;
+    const stage = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
 
     // Initialize GSAP ScrollTrigger Pinning for Smooth Horizontal Showcase with Entry & Exit
     if (typeof ScrollTrigger !== 'undefined') {
-      santalScrollTrigger = ScrollTrigger.create({
+      projectScrollTrigger = ScrollTrigger.create({
         trigger: stage,
         start: 'top top',
         end: () => `+=${window.innerHeight * (total + 1) * 0.75}`,
@@ -423,8 +423,8 @@
         },
         onRefresh: () => {
           measureMetrics();
-          if (santalScrollTrigger) {
-            renderFrame(santalScrollTrigger.progress);
+          if (projectScrollTrigger) {
+            renderFrame(projectScrollTrigger.progress);
           }
         }
       });
@@ -432,8 +432,8 @@
 
     const onResize = () => {
       measureMetrics();
-      if (santalScrollTrigger) {
-        renderFrame(santalScrollTrigger.progress);
+      if (projectScrollTrigger) {
+        renderFrame(projectScrollTrigger.progress);
       } else {
         renderFrame(0);
       }
@@ -441,15 +441,15 @@
 
     window.addEventListener('resize', onResize, { passive: true });
 
-    cleanupSantalController = () => {
+    cleanupProjectShowcaseController = () => {
       section.removeEventListener('click', onSectionClick);
       if (elGalleryBtn) {
         elGalleryBtn.removeEventListener('click', openActiveGallery);
       }
       window.removeEventListener('resize', onResize);
-      if (santalScrollTrigger) {
-        santalScrollTrigger.kill(true);
-        santalScrollTrigger = null;
+      if (projectScrollTrigger) {
+        projectScrollTrigger.kill(true);
+        projectScrollTrigger = null;
       }
     };
   }
@@ -457,9 +457,9 @@
   function initParallaxAnimations(container) {
     const scope = container || document;
 
-    // Initialize Santal Horizontal Showcase if #project or #portfolio is inside scope
-    if (scope === document || scope.id === 'viewHome' || scope.querySelector('#project.santal-portfolio-section, #portfolio.santal-portfolio-section')) {
-      initSantalPortfolioScroll(scope);
+    // Initialize Horizontal Showcase if #project or #portfolio is inside scope
+    if (scope === document || scope.id === 'viewHome' || scope.querySelector('#project.project-showcase-section, #portfolio.project-showcase-section')) {
+      initProjectShowcaseScroll(scope);
     }
 
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
@@ -471,11 +471,11 @@
         const parent = text.closest('section') || text.parentElement;
         if (!parent) return;
 
-        const isProjectSection = parent.id === 'project' || parent.classList.contains('santal-portfolio-section');
+        const isProjectSection = parent.id === 'project' || parent.classList.contains('project-showcase-section');
 
         if (isProjectSection) {
           // Dedicated parallax for Project header area: settles behind 'PROJECT' title and moves naturally with header scroll
-          const headerArea = parent.querySelector('.santal-project-header-area') || parent;
+          const headerArea = parent.querySelector('.project-header-area') || parent;
           const startY = window.innerWidth <= 768 ? -50 : -90;
           gsap.fromTo(
             text,
@@ -583,10 +583,10 @@
 
   window.Portfolio.parallax = {
     initParallaxAnimations,
-    cleanupSantalPortfolio: () => {
-      if (cleanupSantalController) {
-        cleanupSantalController();
-        cleanupSantalController = null;
+    cleanupProjectShowcase: () => {
+      if (cleanupProjectShowcaseController) {
+        cleanupProjectShowcaseController();
+        cleanupProjectShowcaseController = null;
       }
     }
   };
