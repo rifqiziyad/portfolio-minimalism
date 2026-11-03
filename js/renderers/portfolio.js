@@ -34,18 +34,11 @@
       parentSection.style.setProperty('--portfolio-count', String(total));
     }
 
-    // Build Title Track Items (used identically in both Dim and Lit layers)
-    const buildTitleItemsMarkup = (isLitLayer) =>
+    // Build Title Track Items (Single unified track: strictly 1 title at a time)
+    const buildTitleItemsMarkup = () =>
       items
         .map((item, idx) => {
           const activeClass = idx === 0 ? ' is-active' : '';
-          if (isLitLayer) {
-            return `
-              <div class="santal-title-item${activeClass}" data-index="${idx}" aria-hidden="true">
-                <span class="santal-title-text">${item.title}</span>
-              </div>
-            `;
-          }
           return `
             <button type="button" class="santal-title-item santal-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${item.title}">
               <span class="santal-title-text">${item.title}</span>
@@ -78,15 +71,6 @@
 
     container.innerHTML = `
       <div class="santal-sticky-stage" id="santalStickyStage">
-        <!-- Section Header: PROJECT (Standard Container & Section Header identical to Timeline/Skills/Education) -->
-        <div class="container portfolio-container santal-stage-container">
-          <div class="section-header reveal reveal-fade">
-            <div class="section-title-wrap">
-              <h2 class="section-main-title">PROJECT</h2>
-            </div>
-          </div>
-        </div>
-
         <!-- Architectural Hairline Grid Overlay (Fixed Center Line + Dynamic Right Spotlight Line) -->
         <div class="santal-grid-overlay" aria-hidden="true">
           <div class="santal-grid-vline santal-vline-center" id="santalVlineCenter"></div>
@@ -94,24 +78,14 @@
           <div class="santal-grid-hline"></div>
         </div>
 
-        <!-- Horizontal Sliding Title Band (Above 50% Midline) -->
-        <div class="santal-title-band">
-          <!-- Layer 1: Dimmed Titles across full viewport -->
-          <div class="santal-title-layer santal-title-layer-dim">
-            <div class="santal-title-track" id="santalTrackDim">
-              ${buildTitleItemsMarkup(false)}
-            </div>
-          </div>
-
-          <!-- Layer 2: Lit Pure-White Titles clipped dynamically to Spotlight Column [50%, rightLine] -->
-          <div class="santal-title-layer santal-title-layer-lit" id="santalLayerLit" aria-hidden="true">
-            <div class="santal-title-track" id="santalTrackLit">
-              ${buildTitleItemsMarkup(true)}
-            </div>
+        <!-- Horizontal Sliding Title Band (Aligned directly above 55% image viewport: Strictly 1 Title) -->
+        <div class="santal-title-band" id="santalTitleBand">
+          <div class="santal-title-track" id="santalTrackLit">
+            ${buildTitleItemsMarkup()}
           </div>
         </div>
 
-        <!-- Left Metadata & Description Panel (Columns 1-2, Below 50% Midline) -->
+        <!-- Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) -->
         <div class="santal-info-panel">
           <div class="santal-info-inner" id="santalInfoInner">
             <div class="santal-info-meta">

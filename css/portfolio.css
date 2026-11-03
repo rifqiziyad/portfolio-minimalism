@@ -233,7 +233,6 @@
   --portfolio-count: 7;
   position: relative;
   width: 100%;
-  height: 100vh;
   overflow: visible !important;
   padding: 0 !important;
   margin: 0;
@@ -242,8 +241,29 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.santal-portfolio-section .bg-outline-text {
-  z-index: 0;
+/* ─── Dedicated Vertical Header Area: PROJECT Title & Giant Outline Text ─── */
+.santal-project-header-area {
+  position: relative;
+  min-height: 55vh;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(5rem, 11vh, 8.5rem) 0 clamp(2.5rem, 5vh, 4rem);
+  overflow: hidden;
+  z-index: 2;
+}
+
+.santal-project-header-container {
+  width: 100%;
+  position: relative;
+  z-index: 3;
+}
+
+.santal-project-header-area .section-header {
+  margin-bottom: 0;
+}
+
+.santal-project-header-area .bg-outline-text {
+  z-index: 1;
   pointer-events: none;
   opacity: 0.65;
 }
@@ -251,7 +271,6 @@
 .santal-portfolio-mount {
   position: relative;
   width: 100%;
-  height: 100%;
 }
 
 .santal-sticky-stage {
@@ -280,7 +299,7 @@
 }
 
 .santal-vline-center {
-  left: 50%;
+  left: 42%;
 }
 
 .santal-vline-right {
@@ -292,102 +311,65 @@
   position: absolute;
   left: 0;
   right: 0;
-  top: 50%;
+  top: 32%;
   height: 1px;
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* ─── 2. Top Section Header: PROJECT (Matches Timeline/Skills/Education) ─── */
-.santal-stage-container {
-  position: absolute;
-  top: clamp(4rem, 7.5vh, 6rem);
-  left: 0;
-  right: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-
-.santal-stage-container .section-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  padding-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
-  margin-bottom: 0;
-}
-
-/* ─── 3. Horizontal Sliding Title Band & Dual-Layer Spotlight ─── */
+/* ─── 2. Horizontal Sliding Title Band (Aligned directly above 55% Image Viewport) ─── */
 .santal-title-band {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 50%;
-  height: clamp(4.25rem, 8vw, 7rem);
-  z-index: 5;
-}
-
-.santal-title-layer {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: clamp(0.85rem, 1.8vh, 1.45rem);
+  left: 42%;
+  width: 55%;
+  bottom: 68%;
+  height: clamp(3.5rem, 6.5vh, 5.5rem);
   overflow: hidden;
-}
-
-.santal-title-layer-dim {
-  pointer-events: auto;
-}
-
-/* Spotlight Clip-Path: strictly illuminates Column 3 (50% to 75%) in pure white */
-.santal-title-layer-lit {
-  pointer-events: none;
-  clip-path: inset(0 25% 0 50%);
-  -webkit-clip-path: inset(0 25% 0 50%);
+  z-index: 5;
 }
 
 .santal-title-track {
   display: flex;
-  align-items: baseline;
-  gap: clamp(4rem, 7vw, 8.5rem);
+  align-items: flex-end;
+  width: 100%;
+  height: 100%;
+  padding-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
   will-change: transform;
-  white-space: nowrap;
 }
 
 .santal-title-item {
-  flex: 0 0 auto;
-  min-width: 25vw;
-  padding-right: 1.5vw;
+  flex: 0 0 100%;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: none;
   border: none;
   text-align: left;
   font-family: var(--font-sans);
-  font-size: clamp(1.35rem, 1.82vw, 2.55rem);
-  font-weight: 400;
-  line-height: 1.08;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.4rem, 2.1vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
   cursor: pointer;
-  padding-left: 0;
+  padding: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: opacity 0.25s ease;
 }
 
-.santal-title-layer-dim .santal-title-item {
-  color: rgba(255, 255, 255, 0.16);
+.santal-title-item:hover {
+  opacity: 0.85;
 }
 
-.santal-title-layer-dim .santal-title-item:hover {
-  color: rgba(255, 255, 255, 0.34);
-}
-
-.santal-title-layer-lit .santal-title-item {
-  color: #ffffff;
-}
-
-/* ─── 4. Left Metadata & Description Panel (Columns 1-2, Below 50% Midline) ─── */
+/* ─── 4. Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) ─── */
 .santal-info-panel {
   position: absolute;
-  top: 50%;
+  top: 32%;
   left: 0;
-  width: 50%;
-  height: 38%;
-  padding: clamp(1.5rem, 3.2vh, 2.6rem) clamp(1.5rem, 3.5vw, 3.5rem);
+  width: 42%;
+  height: 60%;
+  padding: clamp(1.25rem, 2.5vh, 2.2rem) clamp(1.25rem, 2.5vw, 2.8rem);
   z-index: 4;
   display: flex;
   flex-direction: column;
@@ -395,7 +377,8 @@
 }
 
 .santal-info-inner {
-  max-width: 34rem;
+  max-width: 32rem;
+  width: 100%;
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
@@ -503,13 +486,13 @@
   transform: translate(3px, -3px);
 }
 
-/* ─── 5. Center-Right Active Project Image Viewport (Column 3: 50% to 75% Below Midline) ─── */
+/* ─── 5. Center-Right Active Project Image Viewport (Column: 42% to 97% Below 32% Midline) ─── */
 .santal-image-viewport {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 25%;
-  height: 50%;
+  left: 42%;
+  top: 32%;
+  width: 55%;
+  height: 60%;
   overflow: hidden;
   z-index: 3;
   background-color: transparent;
@@ -551,16 +534,17 @@
   filter: grayscale(0%) contrast(1.06);
 }
 
-/* ─── 6. Bottom Architectural Status Bar ─── */
+/* ─── 6. Bottom Architectural Status Bar (Bottom 8% of Stage) ─── */
 .santal-bottom-bar {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  height: 8%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.1rem clamp(1.5rem, 3.5vw, 3.5rem);
+  padding: 0 clamp(1.5rem, 3.5vw, 3.5rem);
   z-index: 6;
   pointer-events: none;
 }
@@ -651,38 +635,32 @@
   }
 
   .santal-grid-hline {
-    top: 44%;
+    top: 38%;
   }
 
-  .santal-stage-container {
-    top: clamp(1.25rem, 3vh, 2.25rem);
-  }
-
-  .santal-stage-container .section-main-title {
-    font-size: clamp(2rem, 6.5vw, 2.85rem);
+  .santal-project-header-area {
+    min-height: 45vh;
+    padding: clamp(3.5rem, 8vh, 5.5rem) 0 clamp(2rem, 4vh, 3rem);
   }
 
   .santal-title-band {
-    bottom: 56%;
+    left: 28%;
+    width: 68%;
+    bottom: 62%;
     height: 4.25rem;
-  }
-
-  .santal-title-layer-lit {
-    clip-path: inset(0 8% 0 28%);
-    -webkit-clip-path: inset(0 8% 0 28%);
+    overflow: hidden;
   }
 
   .santal-title-item {
-    min-width: 64vw;
-    font-size: clamp(1.35rem, 5.4vw, 1.85rem);
+    font-size: clamp(1.2rem, 4.5vw, 1.65rem);
   }
 
-  /* On mobile: Image viewport sits on the right column (28% to 92%) below 44% line */
+  /* On mobile: Image viewport sits on the right column (28% to 96%) below 38% line */
   .santal-image-viewport {
     left: 28%;
-    top: 44%;
-    width: 64%;
-    height: 28%;
+    top: 38%;
+    width: 68%;
+    height: 34%;
   }
 
   /* Info panel sits below the image viewport for clean readability */

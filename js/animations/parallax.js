@@ -28,13 +28,13 @@
     const section = (scope || document).querySelector('#project.santal-portfolio-section, #portfolio.santal-portfolio-section');
     if (!section) return;
 
-    const trackDim = section.querySelector('#santalTrackDim');
-    const trackLit = section.querySelector('#santalTrackLit');
+    const trackLit = section.querySelector('#santalTrackLit') || section.querySelector('.santal-title-track');
+    const trackDim = section.querySelector('#santalTrackDim') || trackLit;
     const layerLit = section.querySelector('#santalLayerLit') || section.querySelector('.santal-title-layer-lit');
     const vlineRight = section.querySelector('#santalVlineRight') || section.querySelector('.santal-vline-right');
     const imageViewport = section.querySelector('#santalImageViewport') || section.querySelector('.santal-image-viewport');
-    const dimItems = Array.from(section.querySelectorAll('#santalTrackDim .santal-title-item'));
-    const litItems = Array.from(section.querySelectorAll('#santalTrackLit .santal-title-item'));
+    const dimItems = Array.from(section.querySelectorAll('.santal-title-item'));
+    const litItems = dimItems;
     const slideFrames = Array.from(section.querySelectorAll('.santal-slide-frame'));
     const slideImgs = slideFrames.map((frame) => frame.querySelector('.project-img'));
 
@@ -55,7 +55,7 @@
     const projects = (data && (data.portfolio || data.works)) || [];
     const total = projects.length;
 
-    if (!trackDim || !trackLit || total === 0) return;
+    if (!trackLit || total === 0) return;
 
     let itemOffsets = [];
     let spotlightLeftPx = 0;
@@ -70,8 +70,8 @@
       const vw = window.innerWidth;
       const isMobile = vw <= 768;
 
-      // Spotlight column left boundary: 50% on desktop/tablet, 28% on mobile
-      spotlightLeftPx = vw * (isMobile ? 0.28 : 0.5);
+      // Spotlight column left boundary: 42% on desktop/tablet, 28% on mobile
+      spotlightLeftPx = vw * (isMobile ? 0.28 : 0.42);
 
       // Record offsetLeft of each title item inside the track
       itemOffsets = dimItems.map((el) => el.offsetLeft);
@@ -132,18 +132,18 @@
 
       const vw = window.innerWidth;
       const isMobile = vw <= 768;
-      const leftColPct = isMobile ? 28 : 50;
-      const baseRightColPct = isMobile ? 92 : 75;
+      const leftColPct = isMobile ? 28 : 42;
+      const baseRightColPct = isMobile ? 96 : 97;
       const startRightColPct = 100;
-      const colWidthPct = baseRightColPct - leftColPct; // 25% on desktop, 64% on mobile
+      const colWidthPct = baseRightColPct - leftColPct; // 55% on desktop (97 - 42 = 55), 68% on mobile
 
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
 
       // Continuous project index f in [fMin, fMax] where:
-      // f = -1.0 is Start (Image 2: right line at 96%, Title 01 peeking at right edge),
-      // f = -0.45..0.0 is Entry into [50%, 75%] (Image 4: right line at 75%, Title 01 & Slide 01 wipe to 50%),
-      // f = 0..total-1 is Showcase,
-      // f = total-1..total is End (Image 3 -> Image 1: right line closes from 75% to 50%)
+      // f = -1.0 is Start (right line at 100%, Title 01 outside),
+      // f = -0.45..0.0 is Entry into [42%, 97%] (right line at 97%, Title 01 & Slide 01 wipe into view),
+      // f = 0..total-1 is Showcase (strictly 1 Title at a time, aligned with 55% Viewport),
+      // f = total-1..total is End (right line closes from 97% to 42%)
       const f = fMin + progress * fRange;
       const startSplit = -0.45;
 
@@ -152,12 +152,12 @@
       let viewportRightClipPct = 0;
 
       if (f < startSplit) {
-        // Sub-phase A1 (f in [-1.0, -0.45]): right line moves from 96% -> 75%
+        // Sub-phase A1 (f in [-1.0, -0.45]): right line moves from 100% -> 97%
         const subT1 = Math.max(0, Math.min(1, (f - (-1.0)) / (startSplit - (-1.0))));
         rightLinePct = startRightColPct - subT1 * (startRightColPct - baseRightColPct);
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
-        // Phase C (f in [total - 1, total]): right line closes from 75% -> 50%
+        // Phase C (f in [total - 1, total]): right line closes from 97% -> 42%
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         rightLinePct = baseRightColPct - exitT * colWidthPct;
         viewportRightClipPct = exitT * 100;
@@ -183,46 +183,26 @@
         imageViewport.style.webkitClipPath = vpClip;
       }
 
-      // ─── 2. Title Track Glide (Synchronized with Right Line & Slide 01 Entry) ───
-      let trackX = 0;
-      const firstOffset = itemOffsets[0] || 0;
-      const lastOffset = itemOffsets[total - 1] || firstOffset;
+      // ─── 2. Title Track Glide: Strictly 1 Title Visible, Synchronized with Slide Frames ───
+      let trackXPercent = 0;
 
       if (f < 0) {
-        let title0ScreenPct = leftColPct;
         if (f < startSplit) {
-          // Image 2 -> Image 4: Title 01 sits right at rightLinePct (96% -> 75%)
-          title0ScreenPct = rightLinePct;
+          trackXPercent = 100.5;
         } else {
-          // Image 4 -> Centered: Title 01 moves from 75% -> 50% in lockstep with Slide 01
           const subT2 = Math.max(0, Math.min(1, (f - startSplit) / (0 - startSplit)));
-          title0ScreenPct = baseRightColPct - subT2 * colWidthPct;
+          trackXPercent = (1 - subT2) * 100;
         }
-        const title0ScreenPx = (title0ScreenPct / 100) * vw;
-        trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
-        // Exit phase (Image 3 -> Image 1): Title 07 glides left past 50% so only tail letter is lit at ~0.55,
-        // and completely dimmed to the left of 50% by ~0.85
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
-        const lastTitleEl = dimItems[total - 1];
-        const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.santal-title-text') : null;
-        const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
-        const exitShiftPx = exitT * (textWidth * 1.28);
-        trackX = spotlightLeftPx - lastOffset - exitShiftPx;
+        trackXPercent = -(total - 1) * 100 - exitT * 18;
       } else {
-        // Normal showcase: piecewise linear interpolation aligning each title with spotlightLeftPx (50%)
-        const lowerIdx = Math.floor(f);
-        const upperIdx = Math.min(total - 1, lowerIdx + 1);
-        const t = f - lowerIdx;
-        const offsetA = itemOffsets[lowerIdx] !== undefined ? itemOffsets[lowerIdx] : firstOffset;
-        const offsetB = itemOffsets[upperIdx] !== undefined ? itemOffsets[upperIdx] : offsetA;
-        const currentAnchorOffset = offsetA + (offsetB - offsetA) * t;
-        trackX = spotlightLeftPx - currentAnchorOffset;
+        trackXPercent = -f * 100;
       }
 
-      const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
-      trackDim.style.transform = trackTransform;
-      trackLit.style.transform = trackTransform;
+      const trackTransform = `translate3d(${trackXPercent.toFixed(2)}%, 0, 0)`;
+      if (trackLit) trackLit.style.transform = trackTransform;
+      if (trackDim && trackDim !== trackLit) trackDim.style.transform = trackTransform;
 
       // ─── 3. Stacked Image Slides (Synchronized Entry Wipe, Zoom Parallax & Aperture Exit) ───
       for (let i = 0; i < slideFrames.length; i++) {
@@ -393,10 +373,13 @@
     }
     snapPoints.push(1);
 
+    // Target the 100vh horizontal stage so pinning activates after the header scrolls out of view
+    const stage = section.querySelector('#santalStickyStage') || section.querySelector('#portfolioList') || section;
+
     // Initialize GSAP ScrollTrigger Pinning for Smooth Horizontal Showcase with Entry & Exit
     if (typeof ScrollTrigger !== 'undefined') {
       santalScrollTrigger = ScrollTrigger.create({
-        trigger: section,
+        trigger: stage,
         start: 'top top',
         end: () => `+=${window.innerHeight * (total + 1) * 0.75}`,
         pin: true,
@@ -465,19 +448,19 @@
         const isProjectSection = parent.id === 'project' || parent.classList.contains('santal-portfolio-section');
 
         if (isProjectSection) {
-          // Dedicated parallax for Project: starts higher up so as user scrolls down,
-          // it settles perfectly behind the 'PROJECT' title header (y: 0) without clashing with the portfolio list
-          const startY = window.innerWidth <= 768 ? -70 : -130;
+          // Dedicated parallax for Project header area: settles behind 'PROJECT' title and moves naturally with header scroll
+          const headerArea = parent.querySelector('.santal-project-header-area') || parent;
+          const startY = window.innerWidth <= 768 ? -50 : -90;
           gsap.fromTo(
             text,
             { y: startY },
             {
-              y: 0, // Lands right behind the 'PROJECT' title header when reaching top top
+              y: 40,
               ease: 'none',
               scrollTrigger: {
-                trigger: parent,
+                trigger: headerArea,
                 start: 'top bottom',
-                end: 'top top',
+                end: 'bottom top',
                 scrub: 0.8,
                 invalidateOnRefresh: true
               }

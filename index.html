@@ -102,8 +102,19 @@
     <!-- PROJECT SECTION (SANTAL HORIZONTAL)     -->
     <!-- ═══════════════════════════════════════ -->
     <section class="section section-portfolio santal-portfolio-section" id="project">
-      <div class="bg-outline-text bg-text-portfolio" data-parallax="0.18" aria-hidden="true">PROJECT</div>
-      <!-- Dynamic Santal Horizontal Showcase rendered from data/portfolio-data.js (All 7 Projects) -->
+      <!-- Dedicated Vertical Header Area (Scrolls out of view before horizontal stage pins) -->
+      <div class="santal-project-header-area" id="santalProjectHeader">
+        <div class="bg-outline-text bg-text-portfolio" data-parallax="0.18" aria-hidden="true">PROJECT</div>
+        <div class="container portfolio-container santal-project-header-container">
+          <div class="section-header reveal reveal-fade">
+            <div class="section-title-wrap">
+              <h2 class="section-main-title">PROJECT</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Santal Horizontal Showcase (Sticky 100vh Stage) -->
       <div class="santal-portfolio-mount" id="portfolioList"></div>
     </section>
 
