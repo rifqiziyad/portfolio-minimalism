@@ -30,6 +30,7 @@
 
     const trackDim = section.querySelector('#projectTrackDim');
     const trackLit = section.querySelector('#projectTrackLit');
+    const titleBand = section.querySelector('.project-title-band');
     const layerLit = section.querySelector('#projectLayerLit') || section.querySelector('.project-title-layer-lit');
     const vlineRight = section.querySelector('#projectVlineRight') || section.querySelector('.project-vline-right');
     const imageViewport = section.querySelector('#projectImageViewport') || section.querySelector('.project-image-viewport');
@@ -62,6 +63,8 @@
     let currentActiveIdx = -1;
     let projectPinTrigger = null;
     let projectScrollTrigger = null;
+    let projectScrubTween = null;
+    const playhead = { progress: 0 };
 
     const fMin = -1;
     const fMax = total;
@@ -147,7 +150,27 @@
       // f = -1.0..0.0 is Entry (starts at 50% vertical scroll before sticky, finishes after sticky at 33% spotlight),
       // f = 0..total-1 is Showcase transitions (each 1.0 unit),
       // f = total-1..total is Exit (right line closes from 88% to 33%)
-      const f = fMin + progress * fRange;
+      const rawF = fMin + progress * fRange;
+
+      // C1-Continuous Hermite Easing at Entry & Exit so horizontal velocity
+      // accelerates gently from vertical scroll and matches slope 1.000 at f = 0 and f = total - 1
+      let f = rawF;
+      let cushionY = 0;
+
+      if (rawF < 0) {
+        const u = Math.max(0, Math.min(1, rawF + 1.0));
+        const easedU = -0.6 * u * u * u + 1.2 * u * u + 0.4 * u;
+        f = -1.0 + easedU;
+        // Soft vertical landing cushion across the top 0% pin boundary
+        cushionY = Math.pow(1 - u, 2) * 26;
+      } else if (rawF > total - 1) {
+        const v = Math.max(0, Math.min(1, rawF - (total - 1)));
+        const inv = 1 - v;
+        const easedV = 1 - (-0.6 * inv * inv * inv + 1.2 * inv * inv + 0.4 * inv);
+        f = (total - 1) + easedV;
+        // Soft vertical release cushion before unpinning to next section
+        cushionY = -Math.pow(v, 2) * 22;
+      }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
       let rightLinePct = baseRightColPct;
@@ -183,6 +206,11 @@
         const vpClip = `inset(0 ${viewportRightClipPct.toFixed(2)}% 0 0)`;
         imageViewport.style.clipPath = vpClip;
         imageViewport.style.webkitClipPath = vpClip;
+        imageViewport.style.transform = `translate3d(0, ${cushionY.toFixed(2)}px, 0)`;
+      }
+
+      if (titleBand) {
+        titleBand.style.transform = `translate3d(0, ${(cushionY * 0.65).toFixed(2)}px, 0)`;
       }
 
       // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
@@ -386,12 +414,12 @@
     const stage = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
 
     // Initialize GSAP ScrollTrigger:
-    // 1. Separate Pin Trigger (locks stage into sticky strictly when reaching top 0%)
-    // 2. Parallax Scrub Trigger (starts at 50% vertical scroll before sticky, continues seamlessly through sticky)
-    if (typeof ScrollTrigger !== 'undefined') {
+    // 1. Separate Pin Trigger (locks stage into sticky strictly when reaching top 0%, anticipatePin: 0 to avoid Lenis snap)
+    // 2. Scrubbed Playhead Tween (starts at 50% vertical scroll before sticky, continues seamlessly through sticky)
+    if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
       const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
-      const getPrePinPx = () => window.innerHeight * 0.5;
-      const getStepPx = () => window.innerHeight * 0.75;
+      const getPrePinPx = () => window.innerHeight * 0.55;
+      const getStepPx = () => window.innerHeight * 0.78;
       const getTotalScrollPx = () => (total + 1) * getStepPx();
       const getPinDurationPx = () => Math.max(window.innerHeight, getTotalScrollPx() - getPrePinPx());
 
@@ -401,32 +429,39 @@
         end: () => `+=${getPinDurationPx()}`,
         pin: true,
         pinSpacing: true,
-        anticipatePin: 1,
+        anticipatePin: 0,
+        refreshPriority: 1,
         invalidateOnRefresh: true
       });
 
-      projectScrollTrigger = ScrollTrigger.create({
-        trigger: stage,
-        start: () => Math.max(0, getPinStart() - getPrePinPx()),
-        end: () => (projectPinTrigger ? projectPinTrigger.end : getPinStart() + getPinDurationPx()),
-        scrub: 0.8,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          renderFrame(self.progress);
+      projectScrubTween = gsap.to(playhead, {
+        progress: 1,
+        ease: 'none',
+        onUpdate: () => {
+          renderFrame(playhead.progress);
         },
-        onRefresh: () => {
-          measureMetrics();
-          if (projectScrollTrigger) {
-            renderFrame(projectScrollTrigger.progress);
+        scrollTrigger: {
+          trigger: stage,
+          start: () => Math.max(0, getPinStart() - getPrePinPx()),
+          end: () => (projectPinTrigger ? projectPinTrigger.end : getPinStart() + getPinDurationPx()),
+          scrub: 0.65,
+          refreshPriority: 0,
+          invalidateOnRefresh: true,
+          onRefresh: (self) => {
+            measureMetrics();
+            playhead.progress = self.progress;
+            renderFrame(playhead.progress);
           }
         }
       });
+
+      projectScrollTrigger = projectScrubTween.scrollTrigger;
     }
 
     const onResize = () => {
       measureMetrics();
       if (projectScrollTrigger) {
-        renderFrame(projectScrollTrigger.progress);
+        renderFrame(playhead.progress);
       } else {
         renderFrame(0);
       }
@@ -440,6 +475,10 @@
         elGalleryBtn.removeEventListener('click', openActiveGallery);
       }
       window.removeEventListener('resize', onResize);
+      if (projectScrubTween) {
+        projectScrubTween.kill();
+        projectScrubTween = null;
+      }
       if (projectScrollTrigger) {
         projectScrollTrigger.kill(true);
         projectScrollTrigger = null;
@@ -447,6 +486,12 @@
       if (projectPinTrigger) {
         projectPinTrigger.kill(true);
         projectPinTrigger = null;
+      }
+      if (imageViewport) {
+        imageViewport.style.transform = '';
+      }
+      if (titleBand) {
+        titleBand.style.transform = '';
       }
     };
   }
