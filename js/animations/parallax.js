@@ -141,7 +141,6 @@
       const isMobile = vw <= 768;
       const leftColPct = isMobile ? 28 : 33;
       const baseRightColPct = isMobile ? 96 : 88;
-      const startRightColPct = 100;
       const colWidthPct = baseRightColPct - leftColPct; // 55% on desktop (88 - 33 = 55), 68% on mobile
 
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
@@ -173,16 +172,19 @@
       }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
+      const entryT = f < 0 ? Math.max(0, Math.min(1, f + 1.0)) : 1;
+      const title0ScreenPct = f < 0 ? 100 - entryT * (100 - leftColPct) : leftColPct;
+
       let rightLinePct = baseRightColPct;
       let viewportRightClipPct = 0;
 
       if (f < 0) {
-        // Smooth linear entry of right hairline from 100% to base right column (88%)
-        const entryT = Math.max(0, Math.min(1, f + 1.0));
-        rightLinePct = startRightColPct - entryT * (startRightColPct - baseRightColPct);
+        // Phase A1 (100% -> 88%): rightLinePct moves in lockstep with Title 0 left edge (ref1 -> ref2)
+        // Phase A2 (88% -> 33%): rightLinePct locks at baseRightColPct (88%) while Title 0 & Slide 0 cross inside (ref3)
+        rightLinePct = Math.max(baseRightColPct, title0ScreenPct);
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
-        // Phase C (f in [total - 1, total]): right line closes from 88% -> 33%
+        // Phase C: closes from 88% -> 33%
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         rightLinePct = baseRightColPct - exitT * colWidthPct;
         viewportRightClipPct = exitT * 100;
@@ -193,6 +195,7 @@
 
       if (vlineRight) {
         vlineRight.style.left = `${rightLinePct.toFixed(2)}%`;
+        vlineRight.style.opacity = '1';
       }
 
       if (layerLit) {
@@ -219,9 +222,7 @@
       const lastOffset = itemOffsets[total - 1] || firstOffset;
 
       if (f < 0) {
-        // Title 01 glides gradually across stage in lockstep with Slide 01 over full 1.0 scroll unit
-        const entryT = Math.max(0, Math.min(1, f + 1.0));
-        const title0ScreenPct = baseRightColPct - entryT * colWidthPct;
+        // Title 01 starts from 100% (offscreen) and glides to 33% (spotlight)
         const title0ScreenPx = (title0ScreenPct / 100) * vw;
         trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
@@ -262,11 +263,35 @@
         const img = slideImgs[i];
         const delta = i - f; // delta = 0 when project i is centered in active viewport
 
+        // Determine if slide is visible:
+        // - During Entry (f < 0): ONLY Slide 0 is allowed on stage. Future slides (1..total-1) remain completely hidden!
+        // - During Showcase (f >= 0): Only active transitioning slides (|delta| < 1.15) are visible.
+        // Prevents future slides (e.g. Kasumi with higher z-index) from leaking or overlapping Slide 0.
+        let isVisible = false;
+        if (f < 0) {
+          isVisible = (i === 0);
+        } else {
+          isVisible = Math.abs(delta) < 1.15;
+        }
+
+        if (!isVisible) {
+          frame.style.display = 'none';
+          continue;
+        }
+        frame.style.display = '';
+
         let frameXPercent = 0;
         let imgXPercent = 0;
         let imgScale = 1.0;
 
-        if (i === total - 1 && delta < 0) {
+        if (i === 0 && f < 0) {
+          // Slide 0 left edge stays 100% locked to Title 0 left edge (title0ScreenPct),
+          // while its right edge is clipped at baseRightColPct (88%) by .project-image-viewport (ref3)
+          frameXPercent = ((title0ScreenPct - leftColPct) / colWidthPct) * 100;
+          const visibleEntryDelta = Math.max(0, Math.min(1, frameXPercent / 100));
+          imgXPercent = -22 * visibleEntryDelta;
+          imgScale = 1.0 + visibleEntryDelta * 0.25;
+        } else if (i === total - 1 && delta < 0) {
           // Last Slide (07) Exit: stays anchored inside [33%, rightLinePct] with subtle counter-drift
           // while the right hairline (rightLinePct) & viewport clip-path close from 88% to 33%
           const exitT = Math.max(0, Math.min(1, -delta));
@@ -315,9 +340,10 @@
       let stageY = 0;
 
       if (f < 0) {
-        // Gradual fade and float-in for info panel & status bar during Slide 0 entry
-        const entryT = Math.max(0, Math.min(1, f + 1.0));
-        stageAlpha = Math.min(1, entryT * 1.5);
+        // Left info panel & status bar stay hidden while Title 0 is in [88%, 100%] (ref1, ref2),
+        // then fade in smoothly as Title 0 & Slide 0 cross 88% into the spotlight column (ref3)
+        const revealProgress = Math.max(0, Math.min(1, (baseRightColPct - title0ScreenPct) / colWidthPct));
+        stageAlpha = Math.min(1, revealProgress * 1.6);
         stageY = (1 - stageAlpha) * 16;
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
@@ -482,6 +508,12 @@
       }
       if (titleBand) {
         titleBand.style.transform = '';
+      }
+      slideFrames.forEach((frame) => {
+        frame.style.display = '';
+      });
+      if (vlineRight) {
+        vlineRight.style.opacity = '';
       }
     };
   }
