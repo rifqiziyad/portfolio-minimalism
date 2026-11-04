@@ -374,7 +374,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: opacity 0.25s ease, color 0.25s ease;
+  transition: color 0.25s ease;
 }
 
 /* Dimmed titles: stay visible when overflowing before and after is-current-frame */
@@ -386,11 +386,10 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
-/* Lit titles: pure white only for the active item corresponding to is-current-frame */
+/* Lit titles: pure white inside spotlight clip-path with constant opacity */
 .project-title-layer-lit .project-title-item {
   color: #ffffff;
-  opacity: 0;
-  will-change: opacity;
+  opacity: 1;
 }
 
 .project-title-layer-lit .project-title-item.is-active {

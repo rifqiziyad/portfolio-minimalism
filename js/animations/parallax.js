@@ -215,7 +215,6 @@
 
       // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
       let trackX = 0;
-      let trackEntryAlpha = 1;
       const firstOffset = itemOffsets[0] || 0;
       const lastOffset = itemOffsets[total - 1] || firstOffset;
 
@@ -225,7 +224,6 @@
         const title0ScreenPct = baseRightColPct - entryT * colWidthPct;
         const title0ScreenPx = (title0ScreenPct / 100) * vw;
         trackX = title0ScreenPx - firstOffset;
-        trackEntryAlpha = Math.max(0, Math.min(1, entryT * 3.5));
       } else if (f > total - 1) {
         const exitT = Math.max(0, Math.min(1, f - (total - 1)));
         const lastTitleEl = dimItems[total - 1];
@@ -246,18 +244,16 @@
       const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
       if (trackDim) {
         trackDim.style.transform = trackTransform;
-        trackDim.style.opacity = trackEntryAlpha.toFixed(3);
+        trackDim.style.opacity = '1';
       }
       if (trackLit) {
         trackLit.style.transform = trackTransform;
+        trackLit.style.opacity = '1';
       }
 
-      // Smoothly illuminate ONLY the title of is-current-frame:
-      // Titles before and after is-current-frame remain in their dimmed color
+      // Keep title items at constant opacity 1 without 0 -> 1 fade
       for (let k = 0; k < litItems.length; k++) {
-        const dist = Math.abs(k - f);
-        const litAlpha = Math.max(0, Math.min(1, 1 - dist * 1.6));
-        litItems[k].style.opacity = litAlpha.toFixed(3);
+        litItems[k].style.opacity = '1';
       }
 
       // ─── 3. Stacked Image Slides (Synchronized Entry Wipe, Zoom Parallax & Aperture Exit) ───
@@ -269,7 +265,6 @@
         let frameXPercent = 0;
         let imgXPercent = 0;
         let imgScale = 1.0;
-        let frameOpacity = 1.0;
 
         if (i === total - 1 && delta < 0) {
           // Last Slide (07) Exit: stays anchored inside [33%, rightLinePct] with subtle counter-drift
@@ -278,34 +273,29 @@
           frameXPercent = -exitT * 14;
           imgXPercent = exitT * 8;
           imgScale = 1.0;
-          frameOpacity = 1.0;
         } else {
           // Standard slide transition (applies uniformly to Slide 0 and all subsequent slides)
           if (delta >= 1) {
             frameXPercent = 100.5;
             imgXPercent = -22;
             imgScale = 1.25;
-            frameOpacity = 0;
           } else if (delta >= 0) {
             frameXPercent = delta * 100;
             imgXPercent = -22 * delta;
             imgScale = 1.0 + delta * 0.25;
-            frameOpacity = Math.min(1, (1 - delta) * 2.5);
           } else if (delta > -1) {
             frameXPercent = delta * 28;
             imgXPercent = -delta * 14;
             imgScale = 1.0;
-            frameOpacity = 1.0;
           } else {
             frameXPercent = -28;
             imgXPercent = 14;
             imgScale = 1.0;
-            frameOpacity = 1.0;
           }
         }
 
         frame.style.transform = `translate3d(${frameXPercent.toFixed(2)}%, 0, 0)`;
-        frame.style.opacity = frameOpacity.toFixed(3);
+        frame.style.opacity = '1';
         if (img) {
           img.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(${imgScale.toFixed(3)})`;
         }
