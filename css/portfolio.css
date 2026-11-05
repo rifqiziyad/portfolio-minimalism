@@ -414,14 +414,20 @@
 }
 
 .project-info-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
+  display: block;
+  overflow: hidden;
   margin-bottom: 0.85rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  padding-bottom: 2px;
+}
+
+.project-info-meta-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
 }
 
 .project-info-index {
@@ -455,8 +461,8 @@
   will-change: transform, opacity;
 }
 
-.text-line-mask + .text-line-mask {
-  margin-top: 0.35rem;
+.project-info-desc .text-line-mask + .text-line-mask {
+  margin-top: 0.18rem;
 }
 
 .project-info-specs {
@@ -469,10 +475,16 @@
 }
 
 .project-spec-item {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 2px;
+  font-family: var(--font-mono);
+}
+
+.project-spec-inner {
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  font-family: var(--font-mono);
 }
 
 .project-spec-label {
@@ -488,6 +500,12 @@
 }
 
 .project-info-actions {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+
+.project-actions-inner {
   display: flex;
   align-items: center;
   gap: 1.5rem;

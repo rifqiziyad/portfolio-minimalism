@@ -87,13 +87,51 @@
 
     let infoSwitchTween = null;
 
-    function formatSentenceMasks(text) {
-      if (!text) return '';
-      const sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [text];
-      return sentences
-        .map((s) => s.trim())
-        .filter(Boolean)
-        .map((s) => `<span class="text-line-mask"><span class="text-line-inner">${s}</span></span>`)
+    function formatTextLines(containerEl, text) {
+      if (!containerEl) return;
+      if (!text) {
+        containerEl.innerHTML = '';
+        return;
+      }
+
+      // 1. Temporarily place words in DOM to measure exact client-rendered line wrapping
+      const words = text.trim().split(/\s+/);
+      containerEl.innerHTML = words
+        .map((w) => `<span class="temp-word">${w}</span>`)
+        .join(' ');
+
+      const wordEls = containerEl.querySelectorAll('.temp-word');
+      const lines = [];
+      let currentWords = [];
+      let currentTop = -1;
+
+      wordEls.forEach((el) => {
+        const top = el.offsetTop;
+        if (currentTop !== -1 && Math.abs(top - currentTop) > 4) {
+          if (currentWords.length) lines.push(currentWords.join(' '));
+          currentWords = [];
+        }
+        currentWords.push(el.textContent);
+        currentTop = top;
+      });
+      if (currentWords.length) {
+        lines.push(currentWords.join(' '));
+      }
+
+      // Fallback if offsetTop is not measurable (e.g. 0 height before layout)
+      if (lines.length <= 1 && text.length > 70) {
+        const fallbackLines = text.match(/[^,;:.!?]+[,;:.!?]+(\s|$)|[^,;:.!?]+$/g) || [text];
+        containerEl.innerHTML = fallbackLines
+          .map((l) => l.trim())
+          .filter(Boolean)
+          .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
+          .join('');
+        return;
+      }
+
+      // Wrap each visual line into an overflow-hidden mask and inner reveal span
+      containerEl.innerHTML = lines
+        .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
         .join('');
     }
 
@@ -101,7 +139,7 @@
       if (!item) return;
       if (elIndex) elIndex.textContent = `${formatIndex(newIdx + 1)} // ${formatIndex(total)}`;
       if (elCategory) elCategory.textContent = item.category || '';
-      if (elDesc) elDesc.innerHTML = formatSentenceMasks(item.description);
+      if (elDesc) formatTextLines(elDesc, item.description);
       if (elYear) elYear.textContent = item.year || '';
       if (elStack) elStack.textContent = item.stack || '';
 
@@ -142,82 +180,46 @@
         return;
       }
 
-      // Staggered Line / Sentence Reveal Animation (GSAP)
+      // Staggered Line Reveal Animation (GSAP)
+      // Cascades sequentially from top to bottom: Meta -> Desc Lines -> Specs -> Actions
       if (typeof gsap !== 'undefined') {
         if (infoSwitchTween) infoSwitchTween.kill();
         gsap.killTweensOf(infoInner.querySelectorAll('.text-line-inner'));
 
-        const metaEl = infoInner.querySelector('.project-info-meta');
-        const specsEl = infoInner.querySelector('.project-info-specs');
-        const actionsEl = infoInner.querySelector('.project-info-actions');
-        if (metaEl) gsap.killTweensOf(metaEl);
-        if (specsEl) gsap.killTweensOf(specsEl);
-        if (actionsEl) gsap.killTweensOf(actionsEl);
-
-        const oldSentenceInners = infoInner.querySelectorAll('.text-line-inner');
+        const oldInners = infoInner.querySelectorAll('.text-line-inner');
 
         infoSwitchTween = gsap.timeline();
 
-        // 1. Exit: Outgoing sentences slide up and fade out through line masks
-        if (oldSentenceInners.length) {
-          infoSwitchTween.to(oldSentenceInners, {
-            yPercent: -100,
+        // 1. Exit: Outgoing lines slide up and fade out through masks
+        if (oldInners.length) {
+          infoSwitchTween.to(oldInners, {
+            yPercent: -105,
             opacity: 0,
-            duration: 0.14,
-            stagger: 0.03,
+            duration: 0.16,
+            stagger: 0.02,
             ease: 'power2.in'
           }, 0);
         }
-        infoSwitchTween.to([metaEl, specsEl, actionsEl], {
-          opacity: 0,
-          y: -4,
-          duration: 0.14,
-          stagger: 0.02,
-          ease: 'power1.out'
-        }, 0);
 
-        // 2. On exit complete: swap content into DOM and animate incoming elements directly
+        // 2. On exit complete: swap content into DOM and reveal one by one from top to bottom
         infoSwitchTween.call(() => {
           applyProjectInfoContent(item, newIdx);
 
-          const newSentenceInners = infoInner.querySelectorAll('.text-line-inner');
+          const newInners = infoInner.querySelectorAll('.text-line-inner');
 
-          gsap.fromTo(
-            metaEl,
-            { opacity: 0, y: 5 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.22,
-              ease: 'power2.out'
-            }
-          );
-
-          if (newSentenceInners.length) {
+          if (newInners.length) {
             gsap.fromTo(
-              newSentenceInners,
-              { yPercent: 105, opacity: 0 },
+              newInners,
+              { yPercent: 110, opacity: 0 },
               {
                 yPercent: 0,
                 opacity: 1,
-                duration: 0.32,
-                stagger: 0.08,
+                duration: 0.38,
+                stagger: 0.065, // Reveal satu persatu dari atas ke bawah
                 ease: 'power3.out'
               }
             );
           }
-
-          gsap.fromTo(
-            [specsEl, actionsEl],
-            { opacity: 0, y: 5 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.24,
-              stagger: 0.04,
-              ease: 'power2.out'
-            }
-          );
         });
       } else {
         infoInner.style.transition = 'opacity 0.14s ease, transform 0.14s ease';
@@ -579,6 +581,9 @@
 
     const onResize = () => {
       measureMetrics();
+      if (currentActiveIdx >= 0 && projects[currentActiveIdx] && elDesc) {
+        formatTextLines(elDesc, projects[currentActiveIdx].description);
+      }
       if (projectScrollTrigger) {
         renderFrame(playhead.progress);
       } else {
@@ -617,7 +622,6 @@
       if (infoInner) {
         if (typeof gsap !== 'undefined') {
           gsap.killTweensOf(infoInner.querySelectorAll('.text-line-inner'));
-          gsap.killTweensOf(infoInner.querySelectorAll('.project-info-meta, .project-info-specs, .project-info-actions'));
         }
         infoInner.style.opacity = '';
         infoInner.style.transform = '';
@@ -626,12 +630,6 @@
           el.style.transform = '';
           el.style.opacity = '';
         });
-        const metaEl = infoInner.querySelector('.project-info-meta');
-        const specsEl = infoInner.querySelector('.project-info-specs');
-        const actionsEl = infoInner.querySelector('.project-info-actions');
-        if (metaEl) { metaEl.style.transform = ''; metaEl.style.opacity = ''; }
-        if (specsEl) { specsEl.style.transform = ''; specsEl.style.opacity = ''; }
-        if (actionsEl) { actionsEl.style.transform = ''; actionsEl.style.opacity = ''; }
       }
       if (imageViewport) {
         imageViewport.style.transform = '';

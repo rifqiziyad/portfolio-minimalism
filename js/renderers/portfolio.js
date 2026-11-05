@@ -115,34 +115,42 @@
         <!-- Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) -->
         <div class="project-info-panel">
           <div class="project-info-inner" id="projectInfoInner">
-            <div class="project-info-meta">
-              <span class="project-info-index" id="projectActiveIndex">01 // ${formatIndex(total)}</span>
-              <span class="project-info-category" id="projectActiveCategory">${first.category}</span>
+            <div class="project-info-meta text-line-mask">
+              <div class="text-line-inner project-info-meta-inner">
+                <span class="project-info-index" id="projectActiveIndex">01 // ${formatIndex(total)}</span>
+                <span class="project-info-category" id="projectActiveCategory">${first.category}</span>
+              </div>
             </div>
             <p class="project-info-desc" id="projectActiveDesc">${formatSentenceMasks(first.description)}</p>
             <div class="project-info-specs">
-              <div class="project-spec-item">
-                <span class="project-spec-label">YEAR</span>
-                <span class="project-spec-val" id="projectActiveYear">${first.year}</span>
+              <div class="project-spec-item text-line-mask">
+                <div class="text-line-inner project-spec-inner">
+                  <span class="project-spec-label">YEAR</span>
+                  <span class="project-spec-val" id="projectActiveYear">${first.year}</span>
+                </div>
               </div>
-              <div class="project-spec-item">
-                <span class="project-spec-label">STACK</span>
-                <span class="project-spec-val" id="projectActiveStack">${first.stack}</span>
+              <div class="project-spec-item text-line-mask">
+                <div class="text-line-inner project-spec-inner">
+                  <span class="project-spec-label">STACK</span>
+                  <span class="project-spec-val" id="projectActiveStack">${first.stack}</span>
+                </div>
               </div>
             </div>
-            <div class="project-info-actions">
-              <button type="button" class="project-gallery-trigger" id="projectGalleryTrigger">
-                <span>INSPECT GALLERY</span>
-                <span class="arrow">↗</span>
-              </button>
-              <a href="${first.linkUrl || '#'}"
-                 class="project-live-link"
-                 id="projectActiveLink"
-                 ${first.linkUrl ? '' : 'style="display:none;"'}
-                 ${first.linkUrl && first.linkUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
-                <span id="projectActiveLinkText">${first.linkText || 'Live Demo'}</span>
-                <span class="arrow">↗</span>
-              </a>
+            <div class="project-info-actions text-line-mask">
+              <div class="text-line-inner project-actions-inner">
+                <button type="button" class="project-gallery-trigger" id="projectGalleryTrigger">
+                  <span>INSPECT GALLERY</span>
+                  <span class="arrow">↗</span>
+                </button>
+                <a href="${first.linkUrl || '#'}"
+                   class="project-live-link"
+                   id="projectActiveLink"
+                   ${first.linkUrl ? '' : 'style="display:none;"'}
+                   ${first.linkUrl && first.linkUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+                  <span id="projectActiveLinkText">${first.linkText || 'Live Demo'}</span>
+                  <span class="arrow">↗</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
