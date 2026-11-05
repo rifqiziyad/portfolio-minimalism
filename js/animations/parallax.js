@@ -68,8 +68,9 @@
     const playhead = { progress: 0 };
 
     const fMin = -1;
-    const fMax = total;
-    const fRange = fMax - fMin; // total + 1
+    const exitSpan = 0.55; // Fast exit: completes 100% image closure without dead scroll
+    const fMax = (total - 1) + exitSpan;
+    const fRange = fMax - fMin; // (total - 1) + 1.0 (entry) + exitSpan = total + exitSpan
 
     function measureMetrics() {
       const vw = window.innerWidth;
@@ -268,12 +269,11 @@
         // Soft vertical landing cushion across the top 0% pin boundary
         cushionY = Math.pow(1 - u, 2) * 26;
       } else if (rawF > total - 1) {
-        const v = Math.max(0, Math.min(1, rawF - (total - 1)));
-        const inv = 1 - v;
-        const easedV = 1 - (-0.6 * inv * inv * inv + 1.2 * inv * inv + 0.4 * inv);
-        f = (total - 1) + easedV;
+        const exitRatio = Math.max(0, Math.min(1, (rawF - (total - 1)) / exitSpan));
+        const easedV = exitRatio * exitRatio * (3 - 2 * exitRatio);
+        f = (total - 1) + easedV * exitSpan;
         // Soft vertical release cushion before unpinning to next section
-        cushionY = -Math.pow(v, 2) * 22;
+        cushionY = -Math.pow(exitRatio, 1.5) * 24;
       }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
@@ -289,10 +289,10 @@
         rightLinePct = Math.max(baseRightColPct, title0ScreenPct);
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
-        // Phase C: closes from 88% -> 33%
-        const exitT = Math.max(0, Math.min(1, f - (total - 1)));
-        rightLinePct = baseRightColPct - exitT * colWidthPct;
-        viewportRightClipPct = exitT * 100;
+        // Exit: closes image completely to 100% (88% -> 33%, ketutup semua)
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
+        rightLinePct = baseRightColPct - exitRatio * colWidthPct;
+        viewportRightClipPct = exitRatio * 100; // 0% -> 100%
       } else {
         rightLinePct = baseRightColPct;
         viewportRightClipPct = 0;
@@ -331,11 +331,11 @@
         const title0ScreenPx = (title0ScreenPct / 100) * vw;
         trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
-        const exitT = Math.max(0, Math.min(1, f - (total - 1)));
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
         const lastTitleEl = dimItems[total - 1];
         const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
         const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
-        const exitShiftPx = exitT * (textWidth * 1.28);
+        const exitShiftPx = exitRatio * (textWidth * 0.55);
         trackX = spotlightLeftPx - lastOffset - exitShiftPx;
       } else {
         const lowerIdx = Math.floor(f);
@@ -398,10 +398,10 @@
           imgScale = 1.0 + visibleEntryDelta * 0.25;
         } else if (i === total - 1 && delta < 0) {
           // Last Slide (07) Exit: stays anchored inside [33%, rightLinePct] with subtle counter-drift
-          // while the right hairline (rightLinePct) & viewport clip-path close from 88% to 33%
-          const exitT = Math.max(0, Math.min(1, -delta));
-          frameXPercent = -exitT * 14;
-          imgXPercent = exitT * 8;
+          // while the right hairline (rightLinePct) & viewport clip-path close completely to 33% (100% closed)
+          const exitRatio = Math.max(0, Math.min(1, -delta / exitSpan));
+          frameXPercent = -exitRatio * 14;
+          imgXPercent = exitRatio * 8;
           imgScale = 1.0;
         } else {
           // Standard slide transition (applies uniformly to Slide 0 and all subsequent slides)
@@ -433,7 +433,7 @@
 
       // ─── 4. Active Current Frame State & Info Panel / Bottom Status Visibility ───
       const isEntering = f < -0.35;
-      const isExiting = f > (total - 1) + 0.72;
+      const isExiting = f > (total - 1) + exitSpan * 0.85;
       const nearestIdx = Math.max(0, Math.min(total - 1, Math.round(f)));
 
       slideFrames.forEach((el, idx) => {
@@ -442,29 +442,23 @@
       });
 
       let stageAlpha = 1.0;
-      let stageY = 0;
 
       if (f < 0) {
         // Left info panel & status bar stay hidden while Title 0 is in [88%, 100%] (ref1, ref2),
         // then fade in smoothly as Title 0 & Slide 0 cross 88% into the spotlight column (ref3)
         const revealProgress = Math.max(0, Math.min(1, (baseRightColPct - title0ScreenPct) / colWidthPct));
         stageAlpha = Math.min(1, revealProgress * 1.6);
-        stageY = (1 - stageAlpha) * 16;
       } else if (f > total - 1) {
-        const exitT = Math.max(0, Math.min(1, f - (total - 1)));
-        if (exitT <= 0.65) {
-          stageAlpha = 1.0;
-          stageY = 0;
-        } else {
-          const fadeOutT = Math.min(1, (exitT - 0.65) / 0.22);
-          stageAlpha = 1 - fadeOutT;
-          stageY = -fadeOutT * 12;
-        }
+        // Pure opacity exit for info panel: fully completes when image reaches 50% closed (exitRatio = 0.5)
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
+        const infoExitRatio = Math.min(1, exitRatio / 0.5);
+        // Reaches 0 opacity when image is 50% closed, without any upward transform
+        stageAlpha = Math.max(0, 1 - Math.pow(infoExitRatio, 1.1));
       }
 
       if (infoPanel) {
         infoPanel.style.opacity = stageAlpha.toFixed(2);
-        infoPanel.style.transform = `translate3d(0, ${stageY.toFixed(1)}px, 0)`;
+        infoPanel.style.transform = '';
       }
 
       const elBottomRight = section.querySelector('.project-bottom-right');
@@ -541,7 +535,7 @@
       const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
       const getPrePinPx = () => window.innerHeight * 0.55;
       const getStepPx = () => window.innerHeight * 0.78;
-      const getTotalScrollPx = () => (total + 1) * getStepPx();
+      const getTotalScrollPx = () => (total + exitSpan) * getStepPx();
       const getPinDurationPx = () => Math.max(window.innerHeight, getTotalScrollPx() - getPrePinPx());
 
       projectPinTrigger = ScrollTrigger.create({
