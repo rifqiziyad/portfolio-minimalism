@@ -51,7 +51,8 @@
     let projectScrubTween = null;
     const playhead = { progress: 0 };
 
-    const fMin = -1;
+    const entrySpan = 0.60; // Clean entry span matching pre-pin scroll
+    const fMin = -entrySpan;
     const pinnedExitSpan = 0.35; // Stage unpins and switches to vertical scroll at exactly 50% image closure
     const verticalExitSpan = 0.35; // While scrolling vertically, image completes remaining 50% to 100% closure
     const totalExitSpan = pinnedExitSpan + verticalExitSpan; // 0.70 total exit span
@@ -86,7 +87,7 @@
       const progress = Math.max(0, Math.min(1, typeof rawProgress === 'number' ? rawProgress : 0));
 
       // Continuous project index f in [fMin, fMax] where:
-      // f = -1.0..0.0 is Entry (starts at 50% vertical scroll before sticky, finishes after sticky at 33% spotlight),
+      // f = -entrySpan..0.0 is Entry (starts before sticky, reaches 0.0 exactly when stage pins at top 0%),
       // f = 0..total-1 is Showcase transitions (each 1.0 unit),
       // f = total-1..total is Exit (right line closes from 88% to 33%)
       const rawF = fMin + progress * fRange;
@@ -94,19 +95,24 @@
       // C1-Continuous Hermite Easing at Entry & Exit so horizontal velocity
       // accelerates gently from vertical scroll and matches slope 1.000 at f = 0 and f = total - 1
       let f = rawF;
+      let cushionY = 0;
 
       if (rawF < 0) {
-        const u = Math.max(0, Math.min(1, rawF + 1.0));
-        const easedU = -0.6 * u * u * u + 1.2 * u * u + 0.4 * u;
-        f = -1.0 + easedU;
+        const u = Math.max(0, Math.min(1, (rawF + entrySpan) / entrySpan));
+        // C1-Continuous smooth acceleration: starts with 0 velocity, ramps gently to 1.0 at f = 0
+        const easedU = 2 * u * u - u * u * u;
+        f = -entrySpan + easedU * entrySpan;
+        // Soft vertical landing cushion across the top 0% pin boundary (decays to 0 at f = 0)
+        cushionY = Math.pow(1 - u, 2.2) * 16;
       } else if (rawF > total - 1) {
         const exitRatio = Math.max(0, Math.min(1, (rawF - (total - 1)) / totalExitSpan));
         const easedV = exitRatio * exitRatio * (3 - 2 * exitRatio);
         f = (total - 1) + easedV * totalExitSpan;
+        cushionY = 0; // Strict zero upward shift on exit to eliminate overflow into title band
       }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
-      const entryT = f < 0 ? Math.max(0, Math.min(1, f + 1.0)) : 1;
+      const entryT = f < 0 ? Math.max(0, Math.min(1, (f + entrySpan) / entrySpan)) : 1;
       const title0ScreenPct = f < 0 ? 100 - entryT * (100 - leftColPct) : leftColPct;
 
       let rightLinePct = baseRightColPct;
@@ -143,11 +149,11 @@
         const vpClip = `inset(0 ${viewportRightClipPct.toFixed(2)}% 0 0)`;
         imageViewport.style.clipPath = vpClip;
         imageViewport.style.webkitClipPath = vpClip;
-        imageViewport.style.transform = '';
+        imageViewport.style.transform = cushionY > 0.2 ? `translate3d(0, ${cushionY.toFixed(1)}px, 0)` : '';
       }
 
       if (titleBand) {
-        titleBand.style.transform = '';
+        titleBand.style.transform = cushionY > 0.2 ? `translate3d(0, ${cushionY.toFixed(1)}px, 0)` : '';
       }
 
       // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
@@ -276,7 +282,7 @@
       }
 
       if (projectInfoCtrl) {
-        projectInfoCtrl.setInfoOpacity(stageAlpha);
+        projectInfoCtrl.setInfoOpacity(stageAlpha, cushionY > 0.2 ? cushionY * 0.75 : 0);
         projectInfoCtrl.updateActiveProjectInfo(nearestIdx);
       }
     }
@@ -341,9 +347,9 @@
 
     if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
       const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
-      const getPrePinPx = () => window.innerHeight * 0.55;
       const getStepPx = () => window.innerHeight * 0.78;
-      const getTotalPinnedScrollPx = () => (total + pinnedExitSpan) * getStepPx();
+      const getPrePinPx = () => entrySpan * getStepPx();
+      const getTotalPinnedScrollPx = () => (entrySpan + (total - 1) + pinnedExitSpan) * getStepPx();
       const getPinDurationPx = () => Math.max(window.innerHeight, getTotalPinnedScrollPx() - getPrePinPx());
       const getPostPinPx = () => verticalExitSpan * getStepPx();
 
@@ -368,7 +374,7 @@
           trigger: stage,
           start: () => Math.max(0, getPinStart() - getPrePinPx()),
           end: () => (projectPinTrigger ? projectPinTrigger.end + getPostPinPx() : getPinStart() + getPinDurationPx() + getPostPinPx()),
-          scrub: 0.65,
+          scrub: 0.25,
           refreshPriority: 0,
           invalidateOnRefresh: true,
           onRefresh: (self) => {

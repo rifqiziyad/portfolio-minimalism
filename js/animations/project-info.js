@@ -183,10 +183,10 @@
       }
     }
 
-    function setInfoOpacity(alpha) {
+    function setInfoOpacity(alpha, cushionY) {
       if (infoPanel) {
         infoPanel.style.opacity = alpha.toFixed(2);
-        infoPanel.style.transform = '';
+        infoPanel.style.transform = cushionY && cushionY > 0.2 ? `translate3d(0, ${cushionY.toFixed(1)}px, 0)` : '';
       }
       const elBottomRight = section.querySelector('.project-bottom-right');
       if (elBottomRight) {
