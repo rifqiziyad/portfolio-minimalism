@@ -413,32 +413,6 @@
   will-change: opacity, transform;
 }
 
-.project-info-meta {
-  display: block;
-  overflow: hidden;
-  margin-bottom: 0.85rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  padding-bottom: 2px;
-}
-
-.project-info-meta-inner {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-.project-info-index {
-  color: rgba(255, 255, 255, 0.45);
-}
-
-.project-info-category {
-  color: var(--accent-orange);
-  font-weight: 700;
-}
-
 .project-info-desc {
   font-family: var(--font-sans);
   font-size: clamp(0.92rem, 1.05vw, 1.12rem);

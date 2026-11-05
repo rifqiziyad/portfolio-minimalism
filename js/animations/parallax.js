@@ -42,8 +42,6 @@
     // Left Info Panel & Bottom Bar DOM nodes
     const infoPanel = section.querySelector('.project-info-panel');
     const infoInner = section.querySelector('#projectInfoInner');
-    const elIndex = section.querySelector('#projectActiveIndex');
-    const elCategory = section.querySelector('#projectActiveCategory');
     const elDesc = section.querySelector('#projectActiveDesc');
     const elYear = section.querySelector('#projectActiveYear');
     const elStack = section.querySelector('#projectActiveStack');
@@ -68,9 +66,11 @@
     const playhead = { progress: 0 };
 
     const fMin = -1;
-    const exitSpan = 0.55; // Fast exit: completes 100% image closure without dead scroll
-    const fMax = (total - 1) + exitSpan;
-    const fRange = fMax - fMin; // (total - 1) + 1.0 (entry) + exitSpan = total + exitSpan
+    const pinnedExitSpan = 0.35; // Stage unpins and switches to vertical scroll at exactly 50% image closure
+    const verticalExitSpan = 0.35; // While scrolling vertically, image completes remaining 50% to 100% closure
+    const totalExitSpan = pinnedExitSpan + verticalExitSpan; // 0.70 total exit span
+    const fMax = (total - 1) + totalExitSpan;
+    const fRange = fMax - fMin;
 
     function measureMetrics() {
       const vw = window.innerWidth;
@@ -138,8 +138,6 @@
 
     function applyProjectInfoContent(item, newIdx) {
       if (!item) return;
-      if (elIndex) elIndex.textContent = `${formatIndex(newIdx + 1)} // ${formatIndex(total)}`;
-      if (elCategory) elCategory.textContent = item.category || '';
       if (elDesc) formatTextLines(elDesc, item.description);
       if (elYear) elYear.textContent = item.year || '';
       if (elStack) elStack.textContent = item.stack || '';
@@ -182,7 +180,7 @@
       }
 
       // Staggered Line Reveal Animation (GSAP)
-      // Cascades sequentially from top to bottom: Meta -> Desc Lines -> Specs -> Actions
+      // Cascades sequentially: Desc Lines -> Specs -> Actions
       if (typeof gsap !== 'undefined') {
         if (infoSwitchTween) infoSwitchTween.kill();
         gsap.killTweensOf(infoInner.querySelectorAll('.text-line-inner'));
@@ -269,11 +267,11 @@
         // Soft vertical landing cushion across the top 0% pin boundary
         cushionY = Math.pow(1 - u, 2) * 26;
       } else if (rawF > total - 1) {
-        const exitRatio = Math.max(0, Math.min(1, (rawF - (total - 1)) / exitSpan));
+        const exitRatio = Math.max(0, Math.min(1, (rawF - (total - 1)) / totalExitSpan));
         const easedV = exitRatio * exitRatio * (3 - 2 * exitRatio);
-        f = (total - 1) + easedV * exitSpan;
-        // Soft vertical release cushion before unpinning to next section
-        cushionY = -Math.pow(exitRatio, 1.5) * 24;
+        f = (total - 1) + easedV * totalExitSpan;
+        // Zero upward shift to prevent image from ever overflowing on top into title band
+        cushionY = 0;
       }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
@@ -290,7 +288,7 @@
         viewportRightClipPct = 0;
       } else if (f > total - 1) {
         // Exit: closes image completely to 100% (88% -> 33%, ketutup semua)
-        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
         rightLinePct = baseRightColPct - exitRatio * colWidthPct;
         viewportRightClipPct = exitRatio * 100; // 0% -> 100%
       } else {
@@ -314,11 +312,11 @@
         const vpClip = `inset(0 ${viewportRightClipPct.toFixed(2)}% 0 0)`;
         imageViewport.style.clipPath = vpClip;
         imageViewport.style.webkitClipPath = vpClip;
-        imageViewport.style.transform = `translate3d(0, ${cushionY.toFixed(2)}px, 0)`;
+        imageViewport.style.transform = '';
       }
 
       if (titleBand) {
-        titleBand.style.transform = `translate3d(0, ${(cushionY * 0.65).toFixed(2)}px, 0)`;
+        titleBand.style.transform = '';
       }
 
       // ─── 2. Title Track Glide: Full Stage Overflow with Lit Current Title ───
@@ -331,7 +329,7 @@
         const title0ScreenPx = (title0ScreenPct / 100) * vw;
         trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
-        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
         const lastTitleEl = dimItems[total - 1];
         const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
         const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
@@ -399,7 +397,7 @@
         } else if (i === total - 1 && delta < 0) {
           // Last Slide (07) Exit: stays anchored inside [33%, rightLinePct] with subtle counter-drift
           // while the right hairline (rightLinePct) & viewport clip-path close completely to 33% (100% closed)
-          const exitRatio = Math.max(0, Math.min(1, -delta / exitSpan));
+          const exitRatio = Math.max(0, Math.min(1, -delta / totalExitSpan));
           frameXPercent = -exitRatio * 14;
           imgXPercent = exitRatio * 8;
           imgScale = 1.0;
@@ -433,7 +431,7 @@
 
       // ─── 4. Active Current Frame State & Info Panel / Bottom Status Visibility ───
       const isEntering = f < -0.35;
-      const isExiting = f > (total - 1) + exitSpan * 0.85;
+      const isExiting = f > (total - 1) + pinnedExitSpan;
       const nearestIdx = Math.max(0, Math.min(total - 1, Math.round(f)));
 
       slideFrames.forEach((el, idx) => {
@@ -450,8 +448,8 @@
         stageAlpha = Math.min(1, revealProgress * 1.6);
       } else if (f > total - 1) {
         // Pure opacity exit for info panel: fully completes when image reaches 50% closed (exitRatio = 0.5)
-        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / exitSpan));
-        const infoExitRatio = Math.min(1, exitRatio / 0.5);
+        const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
+        const infoExitRatio = Math.min(1, exitRatio / (pinnedExitSpan / totalExitSpan));
         // Reaches 0 opacity when image is 50% closed, without any upward transform
         stageAlpha = Math.max(0, 1 - Math.pow(infoExitRatio, 1.1));
       }
@@ -535,8 +533,9 @@
       const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
       const getPrePinPx = () => window.innerHeight * 0.55;
       const getStepPx = () => window.innerHeight * 0.78;
-      const getTotalScrollPx = () => (total + exitSpan) * getStepPx();
-      const getPinDurationPx = () => Math.max(window.innerHeight, getTotalScrollPx() - getPrePinPx());
+      const getTotalPinnedScrollPx = () => (total + pinnedExitSpan) * getStepPx();
+      const getPinDurationPx = () => Math.max(window.innerHeight, getTotalPinnedScrollPx() - getPrePinPx());
+      const getPostPinPx = () => verticalExitSpan * getStepPx();
 
       projectPinTrigger = ScrollTrigger.create({
         trigger: stage,
@@ -558,7 +557,7 @@
         scrollTrigger: {
           trigger: stage,
           start: () => Math.max(0, getPinStart() - getPrePinPx()),
-          end: () => (projectPinTrigger ? projectPinTrigger.end : getPinStart() + getPinDurationPx()),
+          end: () => (projectPinTrigger ? projectPinTrigger.end + getPostPinPx() : getPinStart() + getPinDurationPx() + getPostPinPx()),
           scrub: 0.65,
           refreshPriority: 0,
           invalidateOnRefresh: true,

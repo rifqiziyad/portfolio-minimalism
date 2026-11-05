@@ -77,10 +77,6 @@
                tabindex="0"
                aria-label="View gallery for ${item.title}">
             <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="eager">
-            <div class="project-gallery-badge">
-              <span class="badge-dot"></span>
-              <span>View ↗</span>
-            </div>
           </div>
         `;
       })
@@ -115,12 +111,6 @@
         <!-- Left Metadata & Description Panel (Columns 1-2, Below 32% Midline) -->
         <div class="project-info-panel">
           <div class="project-info-inner" id="projectInfoInner">
-            <div class="project-info-meta text-line-mask">
-              <div class="text-line-inner project-info-meta-inner">
-                <span class="project-info-index" id="projectActiveIndex">01 // ${formatIndex(total)}</span>
-                <span class="project-info-category" id="projectActiveCategory">${first.category}</span>
-              </div>
-            </div>
             <p class="project-info-desc" id="projectActiveDesc">${formatSentenceMasks(first.description)}</p>
             <div class="project-info-specs">
               <div class="project-spec-item text-line-mask">
@@ -242,10 +232,6 @@
           <div class="project-visual reveal reveal-scale">
             <div class="project-img-frame" data-gallery-project="${item.originalIndex}" role="button" tabindex="0" aria-label="View gallery for ${item.title}">
               <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="lazy">
-              <div class="project-gallery-badge">
-                <span class="badge-dot"></span>
-                <span>View ↗</span>
-              </div>
             </div>
           </div>
         `;
