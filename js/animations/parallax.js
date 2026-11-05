@@ -538,14 +538,14 @@
         const isProjectSection = parent.id === 'project' || parent.classList.contains('project-showcase-section');
 
         if (isProjectSection) {
-          // Dedicated parallax for Project header area: settles behind 'PROJECT' title and moves naturally with header scroll
+          // Dedicated parallax for Project header area: settles directly behind 'PROJECT' title like other sections
           const headerArea = parent.querySelector('.project-header-area') || parent;
-          const startY = window.innerWidth <= 768 ? -50 : -90;
+          const speed = parseFloat(text.getAttribute('data-parallax')) || 0.18;
           gsap.fromTo(
             text,
-            { y: startY },
+            { y: 0 },
             {
-              y: 40,
+              y: () => headerArea.offsetHeight * speed,
               ease: 'none',
               scrollTrigger: {
                 trigger: headerArea,

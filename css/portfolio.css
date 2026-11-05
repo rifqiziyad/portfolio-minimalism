@@ -244,10 +244,7 @@
 /* ─── Dedicated Vertical Header Area: PROJECT Title & Giant Outline Text ─── */
 .project-header-area {
   position: relative;
-  min-height: 55vh;
-  display: flex;
-  align-items: flex-end;
-  padding: clamp(5rem, 11vh, 8.5rem) 0 clamp(2.5rem, 5vh, 4rem);
+  padding: clamp(5rem, 12vw, 10rem) 0 clamp(3rem, 6vw, 6rem);
   overflow: hidden;
   z-index: 2;
 }
@@ -263,9 +260,9 @@
 }
 
 .project-header-area .bg-outline-text {
+  top: clamp(1rem, 3vw, 3.5rem);
   z-index: 1;
   pointer-events: none;
-  opacity: 0.65;
 }
 
 .project-showcase-mount {
@@ -673,8 +670,7 @@
   }
 
   .project-header-area {
-    min-height: 45vh;
-    padding: clamp(3.5rem, 8vh, 5.5rem) 0 clamp(2rem, 4vh, 3rem);
+    padding: clamp(4rem, 10vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem);
   }
 
   .project-title-band {
