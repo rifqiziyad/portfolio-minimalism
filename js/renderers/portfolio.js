@@ -152,12 +152,6 @@
 
         <!-- Bottom Architectural Status Bar -->
         <div class="project-bottom-bar">
-          <div class="project-bottom-left">
-            <a href="/all-project" class="project-explore-link" data-spa-link="portfolio">
-              <span>EXPLORE ALL PROJECTS</span>
-              <span class="arrow">↗</span>
-            </a>
-          </div>
           <div class="project-bottom-right">
             <span class="project-bottom-title" id="projectBottomTitle">${first.title}</span>
             <span class="project-bottom-counter" id="projectBottomCounter">
