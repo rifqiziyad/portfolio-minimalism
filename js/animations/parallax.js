@@ -40,6 +40,7 @@
     const slideImgs = slideFrames.map((frame) => frame.querySelector('.project-img'));
 
     // Left Info Panel & Bottom Bar DOM nodes
+    const infoPanel = section.querySelector('.project-info-panel');
     const infoInner = section.querySelector('#projectInfoInner');
     const elIndex = section.querySelector('#projectActiveIndex');
     const elCategory = section.querySelector('#projectActiveCategory');
@@ -84,8 +85,47 @@
       itemOffsets = dimItems.map((el, idx) => idx * colWidthPx);
     }
 
+    let infoSwitchTween = null;
+
+    function formatSentenceMasks(text) {
+      if (!text) return '';
+      const sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [text];
+      return sentences
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((s) => `<span class="text-line-mask"><span class="text-line-inner">${s}</span></span>`)
+        .join('');
+    }
+
+    function applyProjectInfoContent(item, newIdx) {
+      if (!item) return;
+      if (elIndex) elIndex.textContent = `${formatIndex(newIdx + 1)} // ${formatIndex(total)}`;
+      if (elCategory) elCategory.textContent = item.category || '';
+      if (elDesc) elDesc.innerHTML = formatSentenceMasks(item.description);
+      if (elYear) elYear.textContent = item.year || '';
+      if (elStack) elStack.textContent = item.stack || '';
+
+      if (elLink) {
+        if (item.linkUrl) {
+          elLink.style.display = 'inline-flex';
+          elLink.setAttribute('href', item.linkUrl);
+          if (item.linkUrl.startsWith('http')) {
+            elLink.setAttribute('target', '_blank');
+            elLink.setAttribute('rel', 'noopener noreferrer');
+          } else {
+            elLink.removeAttribute('target');
+            elLink.removeAttribute('rel');
+          }
+          if (elLinkText) elLinkText.textContent = item.linkText || 'Live Demo';
+        } else {
+          elLink.style.display = 'none';
+        }
+      }
+    }
+
     function updateActiveProjectInfo(newIdx) {
       if (newIdx === currentActiveIdx || !projects[newIdx]) return;
+      const prevIdx = currentActiveIdx;
       currentActiveIdx = newIdx;
       const item = projects[newIdx];
 
@@ -96,40 +136,103 @@
       if (elCounterCurrent) elCounterCurrent.textContent = formatIndex(newIdx + 1);
       if (elBottomTitle) elBottomTitle.textContent = item.title;
 
-      if (infoInner) {
-        infoInner.classList.add('is-switching');
+      // On initial load, apply content immediately without animation
+      if (prevIdx === -1 || !infoInner) {
+        applyProjectInfoContent(item, newIdx);
+        return;
       }
 
-      const applyText = () => {
-        if (elIndex) elIndex.textContent = `${formatIndex(newIdx + 1)} // ${formatIndex(total)}`;
-        if (elCategory) elCategory.textContent = item.category || '';
-        if (elDesc) elDesc.textContent = item.description || '';
-        if (elYear) elYear.textContent = item.year || '';
-        if (elStack) elStack.textContent = item.stack || '';
+      // Staggered Line / Sentence Reveal Animation (GSAP)
+      if (typeof gsap !== 'undefined') {
+        if (infoSwitchTween) infoSwitchTween.kill();
+        gsap.killTweensOf(infoInner.querySelectorAll('.text-line-inner'));
 
-        if (elLink) {
-          if (item.linkUrl) {
-            elLink.style.display = 'inline-flex';
-            elLink.setAttribute('href', item.linkUrl);
-            if (item.linkUrl.startsWith('http')) {
-              elLink.setAttribute('target', '_blank');
-              elLink.setAttribute('rel', 'noopener noreferrer');
-            } else {
-              elLink.removeAttribute('target');
-              elLink.removeAttribute('rel');
+        const metaEl = infoInner.querySelector('.project-info-meta');
+        const specsEl = infoInner.querySelector('.project-info-specs');
+        const actionsEl = infoInner.querySelector('.project-info-actions');
+        if (metaEl) gsap.killTweensOf(metaEl);
+        if (specsEl) gsap.killTweensOf(specsEl);
+        if (actionsEl) gsap.killTweensOf(actionsEl);
+
+        const oldSentenceInners = infoInner.querySelectorAll('.text-line-inner');
+
+        infoSwitchTween = gsap.timeline();
+
+        // 1. Exit: Outgoing sentences slide up and fade out through line masks
+        if (oldSentenceInners.length) {
+          infoSwitchTween.to(oldSentenceInners, {
+            yPercent: -100,
+            opacity: 0,
+            duration: 0.14,
+            stagger: 0.03,
+            ease: 'power2.in'
+          }, 0);
+        }
+        infoSwitchTween.to([metaEl, specsEl, actionsEl], {
+          opacity: 0,
+          y: -4,
+          duration: 0.14,
+          stagger: 0.02,
+          ease: 'power1.out'
+        }, 0);
+
+        // 2. On exit complete: swap content into DOM and animate incoming elements directly
+        infoSwitchTween.call(() => {
+          applyProjectInfoContent(item, newIdx);
+
+          const newSentenceInners = infoInner.querySelectorAll('.text-line-inner');
+
+          gsap.fromTo(
+            metaEl,
+            { opacity: 0, y: 5 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.22,
+              ease: 'power2.out'
             }
-            if (elLinkText) elLinkText.textContent = item.linkText || 'Live Demo';
-          } else {
-            elLink.style.display = 'none';
+          );
+
+          if (newSentenceInners.length) {
+            gsap.fromTo(
+              newSentenceInners,
+              { yPercent: 105, opacity: 0 },
+              {
+                yPercent: 0,
+                opacity: 1,
+                duration: 0.32,
+                stagger: 0.08,
+                ease: 'power3.out'
+              }
+            );
           }
-        }
 
-        if (infoInner) {
-          infoInner.classList.remove('is-switching');
-        }
-      };
-
-      applyText();
+          gsap.fromTo(
+            [specsEl, actionsEl],
+            { opacity: 0, y: 5 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.24,
+              stagger: 0.04,
+              ease: 'power2.out'
+            }
+          );
+        });
+      } else {
+        infoInner.style.transition = 'opacity 0.14s ease, transform 0.14s ease';
+        infoInner.style.opacity = '0';
+        infoInner.style.transform = 'translate3d(0, -3px, 0)';
+        setTimeout(() => {
+          applyProjectInfoContent(item, newIdx);
+          infoInner.style.transform = 'translate3d(0, 4px, 0)';
+          requestAnimationFrame(() => {
+            infoInner.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+            infoInner.style.opacity = '1';
+            infoInner.style.transform = 'translate3d(0, 0, 0)';
+          });
+        }, 140);
+      }
     }
 
     function renderFrame(rawProgress) {
@@ -357,9 +460,9 @@
         }
       }
 
-      if (infoInner) {
-        infoInner.style.opacity = stageAlpha.toFixed(2);
-        infoInner.style.transform = `translate3d(0, ${stageY.toFixed(1)}px, 0)`;
+      if (infoPanel) {
+        infoPanel.style.opacity = stageAlpha.toFixed(2);
+        infoPanel.style.transform = `translate3d(0, ${stageY.toFixed(1)}px, 0)`;
       }
 
       const elBottomRight = section.querySelector('.project-bottom-right');
@@ -502,6 +605,33 @@
       if (projectPinTrigger) {
         projectPinTrigger.kill(true);
         projectPinTrigger = null;
+      }
+      if (infoSwitchTween) {
+        infoSwitchTween.kill();
+        infoSwitchTween = null;
+      }
+      if (infoPanel) {
+        infoPanel.style.opacity = '';
+        infoPanel.style.transform = '';
+      }
+      if (infoInner) {
+        if (typeof gsap !== 'undefined') {
+          gsap.killTweensOf(infoInner.querySelectorAll('.text-line-inner'));
+          gsap.killTweensOf(infoInner.querySelectorAll('.project-info-meta, .project-info-specs, .project-info-actions'));
+        }
+        infoInner.style.opacity = '';
+        infoInner.style.transform = '';
+        const inners = infoInner.querySelectorAll('.text-line-inner');
+        inners.forEach((el) => {
+          el.style.transform = '';
+          el.style.opacity = '';
+        });
+        const metaEl = infoInner.querySelector('.project-info-meta');
+        const specsEl = infoInner.querySelector('.project-info-specs');
+        const actionsEl = infoInner.querySelector('.project-info-actions');
+        if (metaEl) { metaEl.style.transform = ''; metaEl.style.opacity = ''; }
+        if (specsEl) { specsEl.style.transform = ''; specsEl.style.opacity = ''; }
+        if (actionsEl) { actionsEl.style.transform = ''; actionsEl.style.opacity = ''; }
       }
       if (imageViewport) {
         imageViewport.style.transform = '';

@@ -15,6 +15,16 @@
     return num < 10 ? `0${num}` : `${num}`;
   }
 
+  function formatSentenceMasks(text) {
+    if (!text) return '';
+    const sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [text];
+    return sentences
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((s) => `<span class="text-line-mask"><span class="text-line-inner">${s}</span></span>`)
+      .join('');
+  }
+
   /**
    * Render Horizontal Scroll Showcase into #portfolioList (Home)
    */
@@ -109,7 +119,7 @@
               <span class="project-info-index" id="projectActiveIndex">01 // ${formatIndex(total)}</span>
               <span class="project-info-category" id="projectActiveCategory">${first.category}</span>
             </div>
-            <p class="project-info-desc" id="projectActiveDesc">${first.description}</p>
+            <p class="project-info-desc" id="projectActiveDesc">${formatSentenceMasks(first.description)}</p>
             <div class="project-info-specs">
               <div class="project-spec-item">
                 <span class="project-spec-label">YEAR</span>

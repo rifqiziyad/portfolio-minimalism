@@ -410,12 +410,7 @@
 .project-info-inner {
   max-width: 32rem;
   width: 100%;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-
-.project-info-inner.is-switching {
-  opacity: 0.25;
-  transform: translateY(4px);
+  will-change: opacity, transform;
 }
 
 .project-info-meta {
@@ -446,6 +441,22 @@
   line-height: 1.55;
   margin-bottom: clamp(1.1rem, 2.2vh, 1.75rem);
   max-width: 42ch;
+}
+
+/* Mask container untuk efek Staggered Line / Sentence Reveal */
+.text-line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+
+.text-line-inner {
+  display: block;
+  will-change: transform, opacity;
+}
+
+.text-line-mask + .text-line-mask {
+  margin-top: 0.35rem;
 }
 
 .project-info-specs {
