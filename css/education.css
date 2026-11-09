@@ -8,6 +8,11 @@
   color: #ffffff;
 }
 
+/* ─── Giant Outlined Background Text (Vertically Centered Behind Section Header) ─── */
+.section-education .bg-text-education {
+  top: clamp(-2.25rem, -2.5vw, -1rem);
+}
+
 .education-table {
   display: flex;
   flex-direction: column;
