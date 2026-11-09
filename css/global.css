@@ -141,7 +141,6 @@ ul, ol {
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: clamp(3rem, 6vw, 6rem);
-  border-bottom: 1px solid var(--border-subtle);
   padding-bottom: 1.5rem;
 }
 
