@@ -66,15 +66,15 @@
       .join('');
   }
 
-  function handleEducationResize() {
+  function handleMaskedRowsResize() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      const rows = document.querySelectorAll('.education-row');
+      const rows = document.querySelectorAll('.education-row, .career-row');
       rows.forEach((row) => {
         const isRevealed = row.classList.contains('is-revealed');
-        const schoolEl = row.querySelector('.education-school');
-        const descEl = row.querySelector('.education-desc');
-        if (schoolEl) formatTextLines(schoolEl);
+        const titleEl = row.querySelector('.education-school, .career-company-name');
+        const descEl = row.querySelector('.education-desc, .career-desc');
+        if (titleEl) formatTextLines(titleEl);
         if (descEl) formatTextLines(descEl);
 
         const inners = row.querySelectorAll('.text-line-inner');
@@ -89,21 +89,21 @@
   }
 
   /**
-   * Initializes staggered line-by-line masked reveals for the 3-column Education section
+   * Initializes staggered line-by-line masked reveals for 3-column rows (Career & Education)
    * (identical timing, stagger, and easing to project-info description)
    */
-  function initEducationReveal(scope) {
+  function initThreeColumnRowsReveal(scope, rowSelector, titleSelector, descSelector) {
     const targetScope = scope || document;
-    const rows = Array.from(targetScope.querySelectorAll('.education-row'));
+    const rows = Array.from(targetScope.querySelectorAll(rowSelector));
     if (!rows.length) return;
 
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
 
     rows.forEach((row) => {
-      const schoolEl = row.querySelector('.education-school');
-      const descEl = row.querySelector('.education-desc');
+      const titleEl = row.querySelector(titleSelector);
+      const descEl = row.querySelector(descSelector);
 
-      if (schoolEl) formatTextLines(schoolEl);
+      if (titleEl) formatTextLines(titleEl);
       if (descEl) formatTextLines(descEl);
 
       const inners = Array.from(row.querySelectorAll('.text-line-inner'));
@@ -137,7 +137,7 @@
     });
 
     if (!hasEducationResizeListener) {
-      window.addEventListener('resize', handleEducationResize, { passive: true });
+      window.addEventListener('resize', handleMaskedRowsResize, { passive: true });
       hasEducationResizeListener = true;
     }
   }
@@ -185,13 +185,15 @@
       });
     }
 
-    // 2. Specialized Masked Line-Reveal for 3-Column Education Section
-    initEducationReveal(targetScope);
+    // 2. Specialized Masked Line-Reveal for 3-Column Career & Education Sections
+    initThreeColumnRowsReveal(targetScope, '.career-row', '.career-company-name', '.career-desc');
+    initThreeColumnRowsReveal(targetScope, '.education-row', '.education-school', '.education-desc');
   }
 
   window.Portfolio.scrollReveal = {
     initScrollReveal,
-    initEducationReveal,
+    initCareerReveal: (scope) => initThreeColumnRowsReveal(scope, '.career-row', '.career-company-name', '.career-desc'),
+    initEducationReveal: (scope) => initThreeColumnRowsReveal(scope, '.education-row', '.education-school', '.education-desc'),
     formatTextLines
   };
 })(window, document);

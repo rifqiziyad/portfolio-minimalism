@@ -141,41 +141,37 @@
       }
     ],
 
-    timeline: [
+    career: [
       {
-        id: 'prod-card-1',
-        wrapId: 'timeline-wrap-1',
-        docks: [
-          { posClass: 'dock-top', id: 'prod-dock-c1-top', dotClass: '' },
-          { posClass: 'dock-bottom', id: 'prod-dock-c1-bottom', dotClass: '' }
-        ],
-        year: '2021 — 2023',
-        heading: 'PT BOSTON MAKMUR GEMILANG',
-        text: 'Developed internal desktop-based HR management systems (Kasumi) including recruitment forms, employee master data, organizational structure, and target evaluation modules using React.js and Redux. Built modern web solutions including Ignica.'
+        id: 'career-infosys-lead',
+        period: '2025 — PRESENT',
+        company: 'PT INFOSYS SOLUSI TERPADU',
+        role: 'FRONTEND DEVELOPER',
+        description:
+          'Spearheading frontend architecture for critical Internet Banking services and transaction revamp initiatives (OCTO Click CIMB Niaga, Hibank Client Portal, BTN Mobile Banking Backoffice) with strict banking security compliance, TypeScript, and Redux Toolkit.'
       },
       {
-        id: 'prod-card-2',
-        wrapId: 'timeline-wrap-2',
-        docks: [
-          { posClass: 'dock-left', id: 'prod-dock-c2-left', dotClass: 'purple' },
-          { posClass: 'dock-bottom', id: 'prod-dock-c2-bottom', dotClass: 'purple' }
-        ],
-        year: '2023 — 2024',
-        heading: 'PT INFOSYS SOLUSI TERPADU',
-        text: 'Engineered desktop-based internal banking web applications with React.js for transaction approvals, customer data governance, and financial reporting. Collaborated closely with backend engineers and QA teams to guarantee strict API and security compliance.'
+        id: 'career-infosys',
+        period: '2023 — 2024',
+        company: 'PT INFOSYS SOLUSI TERPADU',
+        role: 'FRONTEND DEVELOPER',
+        description:
+          'Engineered desktop-based internal banking web applications with React.js for transaction approvals, customer data governance, and financial reporting. Collaborated closely with backend engineers and QA teams to guarantee strict API and security compliance.'
       },
       {
-        id: 'prod-card-3',
-        wrapId: 'timeline-wrap-3',
-        docks: [
-          { posClass: 'dock-right', id: 'prod-dock-c3-right', dotClass: '' },
-          { posClass: 'dock-bottom', id: 'prod-dock-c3-bottom', dotClass: '' }
-        ],
-        year: '2025 — PRESENT',
-        heading: 'PT INFOSYS SOLUSI TERPADU',
-        text: 'Spearheading frontend architecture for critical Internet Banking services and transaction revamp initiatives (OCTO Click CIMB Niaga, Hibank Client Portal, BTN Mobile Banking Backoffice) with strict banking security compliance, TypeScript, and Redux Toolkit.'
+        id: 'career-boston',
+        period: '2021 — 2023',
+        company: 'PT BOSTON MAKMUR GEMILANG',
+        role: 'FRONTEND DEVELOPER',
+        description:
+          'Developed internal desktop-based HR management systems (Kasumi) including recruitment forms, employee master data, organizational structure, and target evaluation modules using React.js and Redux. Built modern web solutions including Ignica.'
       }
     ],
+
+    // Backward compatibility alias for timeline
+    get timeline() {
+      return this.career;
+    },
 
     skills: [
       { name: 'React.js', size: 175 },

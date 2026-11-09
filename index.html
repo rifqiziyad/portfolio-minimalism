@@ -43,7 +43,7 @@
         <nav class="nav-menu" id="navMenu">
           <ul class="nav-list">
             <li class="nav-item"><a href="#project" class="nav-link">PROJECT</a></li>
-            <li class="nav-item"><a href="#timeline" class="nav-link">TIMELINE</a></li>
+            <li class="nav-item"><a href="#career" class="nav-link">CAREER</a></li>
             <li class="nav-item"><a href="#skills" class="nav-link">SKILLS</a></li>
             <li class="nav-item"><a href="#education" class="nav-link">EDUCATION</a></li>
             <li class="nav-item"><a href="#contact" class="nav-link">CONTACT</a></li>
@@ -119,24 +119,21 @@
     </section>
 
     <!-- ═══════════════════════════════════════ -->
-    <!-- TIMELINE & TRAJECTORY SECTION           -->
+    <!-- CAREER & EXPERIENCE SECTION             -->
     <!-- ═══════════════════════════════════════ -->
-    <section class="section section-timeline" id="timeline">
-      <div class="bg-outline-text bg-text-timeline" data-parallax="0.18" aria-hidden="true">TIMELINE</div>
+    <section class="section section-career" id="career">
+      <a id="timeline" class="sr-only" aria-hidden="true"></a>
+      <div class="bg-outline-text bg-text-career" data-parallax="0.10" aria-hidden="true">CAREER</div>
 
-      <!-- Giant Background Wireframe Crystal Shards (Rendered via js/components/crystal-backgrounds.js) -->
-      <div class="bg-outline-shard bg-shard-right" id="bgShardRight" aria-hidden="true"></div>
-      <div class="bg-outline-shard bg-shard-left" id="bgShardLeft" aria-hidden="true"></div>
-
-      <div class="container timeline-container">
+      <div class="container career-container">
         <div class="section-header reveal reveal-fade">
           <div class="section-title-wrap">
-            <h2 class="section-main-title">TIMELINE</h2>
+            <h2 class="section-main-title">CAREER</h2>
           </div>
         </div>
 
-        <!-- Dynamic Timeline Stream rendered from data/portfolio-data.js -->
-        <div class="timeline-stream-container" id="timelineStream"></div>
+        <!-- Dynamic Career Table rendered from data/portfolio-data.js -->
+        <div class="career-table" id="careerTable"></div>
       </div>
     </section>
 
@@ -337,7 +334,7 @@
   <!-- Modular Application Scripts (Layered Architecture — works on both file:// and HTTP) -->
   <script defer src="js/core/scroll.js"></script>
   <script defer src="js/renderers/portfolio.js"></script>
-  <script defer src="js/renderers/timeline.js"></script>
+  <script defer src="js/renderers/career.js"></script>
   <script defer src="js/renderers/skills.js"></script>
   <script defer src="js/renderers/education.js"></script>
   <script defer src="js/core/renderer.js"></script>
@@ -352,7 +349,6 @@
   <script defer src="js/animations/archive-parallax.js"></script>
   <script defer src="js/animations/scroll-reveal.js"></script>
   <script defer src="js/animations/parallax.js"></script>
-  <script defer src="js/animations/timeline.js"></script>
   <script defer src="js/animations/skills.js"></script>
   <script defer src="js/animations/contact.js"></script>
   <script defer src="js/core/router.js"></script>

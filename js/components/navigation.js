@@ -92,7 +92,7 @@
 
     // 4. Real-time Scroll Spy for Active Section Navbar Link with Kinetic Indicator Bar
     function initScrollSpy() {
-      const sectionIds = ['project', 'portfolio', 'timeline', 'skills', 'education', 'contact'];
+      const sectionIds = ['project', 'portfolio', 'career', 'timeline', 'skills', 'education', 'contact'];
       const sectionElements = [];
 
       sectionIds.forEach((id) => {

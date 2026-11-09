@@ -19,8 +19,10 @@
       renderer.renderPortfolio(data.portfolio || data.works);
     }
 
-    if (typeof renderer.renderTimeline === 'function') {
-      renderer.renderTimeline(data.timeline);
+    if (typeof renderer.renderCareer === 'function') {
+      renderer.renderCareer(data.career || data.timeline);
+    } else if (typeof renderer.renderTimeline === 'function') {
+      renderer.renderTimeline(data.timeline || data.career);
     }
 
     if (typeof renderer.renderSkills === 'function') {

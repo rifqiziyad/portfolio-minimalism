@@ -103,9 +103,6 @@
       if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
         app.parallax.initParallaxAnimations(viewHome);
       }
-      if (app.timeline && typeof app.timeline.initTimelineChoreography === 'function') {
-        app.timeline.initTimelineChoreography();
-      }
       if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
         app.skills.initSkillsCrystalAnimation();
       }
