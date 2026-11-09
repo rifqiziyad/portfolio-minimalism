@@ -269,31 +269,6 @@
         const ptsStr = `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`;
         const ptsData = `${p1[0]},${p1[1]};${p2[0]},${p2[1]};${p3[0]},${p3[1]}`;
 
-        const insetPts = item.pts
-          .map(
-            ([x, y]) =>
-              `${Math.round(item.cx + (x - item.cx) * 0.86)},${Math.round(item.cy + (y - item.cy) * 0.86)}`
-          )
-          .join(' ');
-
-        let ridgeSvg = '';
-        if (item.ridge) {
-          const [r1, r2] = item.ridge;
-          ridgeSvg = `<line class="skill-tri-ridge" x1="${r1[0]}" y1="${r1[1]}" x2="${r2[0]}" y2="${r2[1]}" stroke="#ffffff" stroke-width="2.2" opacity="0.85" filter="url(#skills-gem-shard-laser)" pointer-events="none" />`;
-        }
-
-        let nodeSvg = '';
-        if (item.node) {
-          const np = item.node;
-          nodeSvg = `
-            <g class="shard-node" transform="translate(${np[0]}, ${np[1]})" pointer-events="none">
-              <circle r="24" fill="url(#skills-g-shard-star)" filter="url(#skills-gem-shard-core)" />
-              <circle r="5.5" fill="#ffffff" />
-              <circle r="12" fill="none" stroke="${item.stroke}" stroke-width="1.8" />
-            </g>
-          `;
-        }
-
         return `
           <g class="skill-shard skill-tri-shard"
              data-index="${idx}"
@@ -302,6 +277,8 @@
              data-tier="${item.tier}"
              data-cx="${Math.round(item.cx)}"
              data-cy="${Math.round(item.cy)}"
+             data-tx="${item.tx}"
+             data-ty="${item.ty}"
              data-inradius="${Math.round(item.inradius)}"
              data-pts="${ptsData}"
              data-angle="${item.angle}"
@@ -315,12 +292,6 @@
                          stroke="${item.stroke}"
                          stroke-width="2.0"
                          stroke-linejoin="round" />
-                <polygon class="skill-tri-sheen"
-                         points="${insetPts}"
-                         fill="url(#skills-g-inner-sheen)"
-                         stroke="rgba(255, 255, 255, 0.14)"
-                         stroke-width="0.8"
-                         pointer-events="none" />
                 <g class="skill-tri-text-wrap"
                    transform="translate(${item.tx}, ${item.ty}) rotate(${item.angle})"
                    pointer-events="none">
@@ -335,8 +306,6 @@
                          points="${ptsStr}"
                          fill="url(#skills-g-glass-refract)"
                          pointer-events="none" />
-                ${ridgeSvg}
-                ${nodeSvg}
               </g>
             </g>
           </g>
@@ -353,24 +322,6 @@
            id="skillsCrystalSvg"
            overflow="visible">
         <defs>
-          <filter id="skills-gem-shard-laser" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="5" result="blur1" />
-            <feGaussianBlur stdDeviation="2" result="blur2" />
-            <feMerge>
-              <feMergeNode in="blur1" />
-              <feMergeNode in="blur2" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
-          <filter id="skills-gem-shard-core" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="10" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-
           <linearGradient id="skills-g-shard-orange-intense" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#ff9900" stop-opacity="0.95" />
             <stop offset="45%" stop-color="#ff4500" stop-opacity="0.8" />
@@ -395,24 +346,11 @@
             <stop offset="100%" stop-color="#a855f7" stop-opacity="0.4" />
           </linearGradient>
 
-          <linearGradient id="skills-g-inner-sheen" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.09" />
-            <stop offset="50%" stop-color="#ffffff" stop-opacity="0" />
-            <stop offset="100%" stop-color="#000000" stop-opacity="0.16" />
-          </linearGradient>
-
           <linearGradient id="skills-g-glass-refract" x1="0%" y1="0%" x2="60%" y2="100%">
             <stop offset="0%" stop-color="#ffffff" stop-opacity="0.18" />
             <stop offset="35%" stop-color="#ffffff" stop-opacity="0.04" />
             <stop offset="100%" stop-color="#a855f7" stop-opacity="0.08" />
           </linearGradient>
-
-          <radialGradient id="skills-g-shard-star" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-            <stop offset="30%" stop-color="#ff8c00" stop-opacity="0.95" />
-            <stop offset="70%" stop-color="#c084fc" stop-opacity="0.4" />
-            <stop offset="100%" stop-color="#ff4500" stop-opacity="0" />
-          </radialGradient>
         </defs>
 
         <g id="skills-crystal-formation">

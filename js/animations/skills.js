@@ -73,8 +73,71 @@
       const tx = Math.round((lam1 * p1[0] + lam2 * p2[0] + lam3 * p3[0]) * 10) / 10;
       const ty = Math.round((lam1 * p1[1] + lam2 * p2[1] + lam3 * p3[1]) * 10) / 10;
 
+      el.dataset.tx = tx;
+      el.dataset.ty = ty;
       textWrap.setAttribute('transform', `translate(${tx}, ${ty}) rotate(${angle})`);
     });
+  }
+
+  function transformTriangle(pts, ox, oy, scale, rotDeg, dx, dy) {
+    const rad = (rotDeg * Math.PI) / 180;
+    const cos = Math.cos(rad);
+    const sin = Math.sin(rad);
+    return pts.map((p) => {
+      const sx = (p[0] - ox) * scale;
+      const sy = (p[1] - oy) * scale;
+      return [
+        ox + sx * cos - sy * sin + dx,
+        oy + sx * sin + sy * cos + dy
+      ];
+    });
+  }
+
+  function shiftTriangle(pts, dx, dy) {
+    return [
+      [pts[0][0] + dx, pts[0][1] + dy],
+      [pts[1][0] + dx, pts[1][1] + dy],
+      [pts[2][0] + dx, pts[2][1] + dy]
+    ];
+  }
+
+  // Separating Axis Theorem (SAT) for 2D triangles with an explicit clearance margin
+  function trianglesOverlapWithMargin(triA, triB, margin) {
+    const polys = [triA, triB];
+    for (let p = 0; p < 2; p++) {
+      const poly = polys[p];
+      for (let i = 0; i < 3; i++) {
+        const p1 = poly[i];
+        const p2 = poly[(i + 1) % 3];
+        const ex = p2[0] - p1[0];
+        const ey = p2[1] - p1[1];
+        const len = Math.hypot(ex, ey);
+        if (len < 1e-5) continue;
+        const nx = -ey / len;
+        const ny = ex / len;
+
+        let minA = Infinity;
+        let maxA = -Infinity;
+        for (let k = 0; k < 3; k++) {
+          const proj = triA[k][0] * nx + triA[k][1] * ny;
+          if (proj < minA) minA = proj;
+          if (proj > maxA) maxA = proj;
+        }
+
+        let minB = Infinity;
+        let maxB = -Infinity;
+        for (let k = 0; k < 3; k++) {
+          const proj = triB[k][0] * nx + triB[k][1] * ny;
+          if (proj < minB) minB = proj;
+          if (proj > maxB) maxB = proj;
+        }
+
+        if (maxA + margin <= minB || maxB + margin <= minA) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   function initSkillsCrystalAnimation() {
@@ -119,6 +182,14 @@
       const cy = Number(el.dataset.cy) || MONOLITH_CENTER.y;
       const size = Number(el.dataset.size) || 140;
       const inradius = Number(el.dataset.inradius) || 45;
+      const angle = Number(el.dataset.angle) || 0;
+      const tx = Number(el.dataset.tx) || cx;
+      const ty = Number(el.dataset.ty) || cy;
+      const ptsData = el.dataset.pts || '';
+      const pts = ptsData
+        ? ptsData.split(';').map((pair) => pair.split(',').map(Number))
+        : [[cx - 30, cy - 30], [cx + 30, cy - 30], [cx, cy + 30]];
+
       const tier = el.dataset.tier || 'core-monolith';
       const tierBase = TIER_SCATTER[tier] || TIER_SCATTER['core-monolith'];
 
@@ -137,19 +208,34 @@
 
       return {
         el,
+        hitEl: el.querySelector('.skill-shard-body') || el,
         scrollEl: el.querySelector('.skill-shard-scroll'),
         bodyEl: el.querySelector('.skill-shard-body'),
         idx,
         cx,
         cy,
+        tx,
+        ty,
+        angle,
+        pts,
         size,
         inradius,
         scatterX,
         scatterY,
         scatterRot,
-        scatterScale
+        scatterScale,
+        anim: { x: 0, y: 0, scale: 1, rot: 0 }
       };
     });
+
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        shardState.forEach((it) => {
+          it.tx = Number(it.el.dataset.tx) || it.cx;
+          it.ty = Number(it.el.dataset.ty) || it.cy;
+        });
+      });
+    }
 
     // 1. GSAP ScrollTrigger Assembly Animation (Identical choreography to #bgContactCrystal)
     if (hasGSAP) {
@@ -209,118 +295,250 @@
       });
     }
 
-    // 2. Interactive Hover Glow & Dynamic Radial Repulsion on Neighboring Triangular Shards
-    function handleShardHover(hoveredIndex) {
-      const hovered = shardState[hoveredIndex];
-      if (!hovered) return;
+    // 2. Interactive Hover (Glow Only) & Click (Scale + Horizontal Rotation + 2s Auto-Reset)
+    let activeClickIdx = -1;
+    let clickResetTimer = null;
+    let clickScrollY = 0;
 
+    // Pure SVG transform attribute writer around exact pivot (ox, oy) — immune to GSAP smoothOrigin drift
+    function applyShardTransform(it) {
+      if (!it.bodyEl) return;
+      const { x, y, scale, rot } = it.anim;
+      if (
+        Math.abs(x) < 0.01 &&
+        Math.abs(y) < 0.01 &&
+        Math.abs(scale - 1) < 0.001 &&
+        Math.abs(rot) < 0.01
+      ) {
+        it.bodyEl.removeAttribute('transform');
+        return;
+      }
+      const ox = Number(it.el.dataset.tx) || it.tx;
+      const oy = Number(it.el.dataset.ty) || it.ty;
+      const tx1 = Math.round((ox + x) * 100) / 100;
+      const ty1 = Math.round((oy + y) * 100) / 100;
+      const r = Math.round(rot * 100) / 100;
+      const s = Math.round(scale * 1000) / 1000;
+      it.bodyEl.setAttribute(
+        'transform',
+        `translate(${tx1}, ${ty1}) rotate(${r}) scale(${s}) translate(${-ox}, ${-oy})`
+      );
+    }
+
+    function tweenShardTo(it, targetX, targetY, targetScale, targetRot, duration) {
+      if (hasGSAP) {
+        gsap.to(it.anim, {
+          x: targetX,
+          y: targetY,
+          scale: targetScale,
+          rot: targetRot,
+          duration,
+          ease: 'power3.out',
+          overwrite: true,
+          onUpdate: () => applyShardTransform(it),
+          onComplete: () => applyShardTransform(it)
+        });
+      } else {
+        it.anim.x = targetX;
+        it.anim.y = targetY;
+        it.anim.scale = targetScale;
+        it.anim.rot = targetRot;
+        applyShardTransform(it);
+      }
+    }
+
+    function handleShardHoverEnter(hoveredIndex) {
       stage.classList.add('has-hovered-shard');
-
       shardState.forEach((it, idx) => {
-        if (!it.bodyEl) return;
-
         if (idx === hoveredIndex) {
           it.el.classList.add('is-hovered');
-          if (hasGSAP) {
-            gsap.to(it.bodyEl, {
-              x: 0,
-              y: 0,
-              scale: 1.09,
-              rotation: 0,
-              transformOrigin: '50% 50%',
-              duration: 0.38,
-              ease: 'power3.out',
-              overwrite: 'auto'
-            });
-          } else {
-            it.bodyEl.style.transform = 'translate3d(0px, 0px, 0) scale(1.09)';
-          }
         } else {
           it.el.classList.remove('is-hovered');
-
-          const dx = it.cx - hovered.cx;
-          const dy = it.cy - hovered.cy;
-          const dist = Math.hypot(dx, dy) || 1;
-          const ux = dx / dist;
-          const uy = dy / dist;
-
-          // Repulsion radius scales with hovered skill's size field in JSON
-          const sizeMultiplier = hovered.size / 140;
-          const repelRadius = 380 * sizeMultiplier;
-
-          if (dist < repelRadius) {
-            const ratio = 1 - dist / repelRadius;
-            const pushDist = Math.pow(ratio, 1.15) * 72 * sizeMultiplier;
-            const pushX = Math.round(ux * pushDist * 10) / 10;
-            const pushY = Math.round(uy * pushDist * 10) / 10;
-            const tiltRot = Math.round(ux * 7 * ratio * 10) / 10;
-
-            if (hasGSAP) {
-              gsap.to(it.bodyEl, {
-                x: pushX,
-                y: pushY,
-                rotation: tiltRot,
-                scale: 1,
-                transformOrigin: '50% 50%',
-                duration: 0.44,
-                ease: 'power3.out',
-                overwrite: 'auto'
-              });
-            } else {
-              it.bodyEl.style.transform = `translate3d(${pushX}px, ${pushY}px, 0) rotate(${tiltRot}deg)`;
-            }
-          } else {
-            if (hasGSAP) {
-              gsap.to(it.bodyEl, {
-                x: 0,
-                y: 0,
-                rotation: 0,
-                scale: 1,
-                transformOrigin: '50% 50%',
-                duration: 0.44,
-                ease: 'power3.out',
-                overwrite: 'auto'
-              });
-            } else {
-              it.bodyEl.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
-            }
-          }
         }
       });
     }
 
-    function resetAllShardsHover() {
+    function handleShardHoverLeave() {
       stage.classList.remove('has-hovered-shard');
-
       shardState.forEach((it) => {
         it.el.classList.remove('is-hovered');
-        if (!it.bodyEl) return;
+      });
+    }
 
-        if (hasGSAP) {
-          gsap.to(it.bodyEl, {
-            x: 0,
-            y: 0,
-            rotation: 0,
-            scale: 1,
-            transformOrigin: '50% 50%',
-            duration: 0.55,
-            ease: 'power3.out',
-            overwrite: 'auto'
-          });
+    function resetAllShardsTransform() {
+      if (clickResetTimer) {
+        clearTimeout(clickResetTimer);
+        clickResetTimer = null;
+      }
+      activeClickIdx = -1;
+      stage.classList.remove('has-active-shard');
+
+      shardState.forEach((it) => {
+        it.el.classList.remove('is-active');
+        tweenShardTo(it, 0, 0, 1, 0, 0.52);
+      });
+    }
+
+    function handleShardClick(clickedIndex) {
+      // Clicking the same active shard again immediately returns all shards to rest
+      if (activeClickIdx === clickedIndex) {
+        resetAllShardsTransform();
+        return;
+      }
+
+      if (clickResetTimer) {
+        clearTimeout(clickResetTimer);
+        clickResetTimer = null;
+      }
+
+      const clicked = shardState[clickedIndex];
+      if (!clicked) return;
+
+      activeClickIdx = clickedIndex;
+      clickScrollY = window.scrollY || window.pageYOffset || 0;
+      stage.classList.add('has-active-shard');
+
+      // Adaptive scale: smaller shards scale up more (up to 1.55x) so small labels become easy to read
+      const hoverScale = Math.max(1.35, Math.min(1.55, 1.62 - clicked.inradius / 180));
+      // Counter-rotate by -angle so embedded skill text becomes strictly horizontal (0 deg)
+      const targetRot = -clicked.angle;
+      const ox = Number(clicked.el.dataset.tx) || clicked.tx;
+      const oy = Number(clicked.el.dataset.ty) || clicked.ty;
+
+      // Exact 2D vertices of the clicked triangle after scaling & rotating to horizontal (from its rest state)
+      const clickedPoly = transformTriangle(clicked.pts, ox, oy, hoverScale, targetRot, 0, 0);
+
+      // Highlight active shard
+      shardState.forEach((it, idx) => {
+        if (idx === clickedIndex) {
+          it.el.classList.add('is-active');
         } else {
-          it.bodyEl.style.transform = 'translate3d(0px, 0px, 0) scale(1)';
+          it.el.classList.remove('is-active');
         }
       });
+
+      // Animate clicked shard to x=0, y=0, scale=hoverScale, rot=targetRot around (ox, oy)
+      tweenShardTo(clicked, 0, 0, hoverScale, targetRot, 0.44);
+
+      // Compute outward radial vectors & required clearance push against clickedPoly
+      const neighbors = [];
+      const sizeMultiplier = clicked.size / 140;
+      const repelRadius = 380 * sizeMultiplier;
+
+      shardState.forEach((it, idx) => {
+        if (idx === clickedIndex) return;
+
+        const dx = it.cx - ox;
+        const dy = it.cy - oy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const ux = dx / dist;
+        const uy = dy / dist;
+
+        let pushDist = 0;
+        if (dist < repelRadius) {
+          const ratio = 1 - dist / repelRadius;
+          pushDist = Math.pow(ratio, 1.15) * 44 * sizeMultiplier;
+        }
+
+        // Step outward along (ux, uy) until zero overlap with clickedPoly (+16px breathing margin)
+        let currentPoly = shiftTriangle(it.pts, ux * pushDist, uy * pushDist);
+        let guard = 0;
+        while (trianglesOverlapWithMargin(clickedPoly, currentPoly, 16) && guard < 50) {
+          pushDist += 6;
+          currentPoly = shiftTriangle(it.pts, ux * pushDist, uy * pushDist);
+          guard++;
+        }
+
+        neighbors.push({
+          it,
+          dist,
+          ux,
+          uy,
+          pushDist
+        });
+      });
+
+      // Radial Diffeomorphism Envelope: propagate push smoothly from inner to outer shards
+      // so inner shards never overtake or compress into outer shards
+      neighbors.sort((a, b) => a.dist - b.dist);
+
+      for (let i = 0; i < neighbors.length; i++) {
+        const inner = neighbors[i];
+        if (inner.pushDist <= 0) continue;
+        for (let j = i + 1; j < neighbors.length; j++) {
+          const outer = neighbors[j];
+          const cosSim = inner.ux * outer.ux + inner.uy * outer.uy;
+          if (cosSim > 0.15) {
+            const radialGap = Math.max(0, outer.dist - inner.dist);
+            const carriedPush = inner.pushDist * Math.pow(cosSim, 0.55) - radialGap * 0.08;
+            if (carriedPush > outer.pushDist) {
+              outer.pushDist = carriedPush;
+            }
+          }
+        }
+      }
+
+      // Apply final collision-free positions to all neighbor shards (without rotating/scaling them)
+      neighbors.forEach(({ it, ux, uy, pushDist }) => {
+        const pushX = Math.round(ux * pushDist * 10) / 10;
+        const pushY = Math.round(uy * pushDist * 10) / 10;
+        tweenShardTo(it, pushX, pushY, 1, 0, 0.44);
+      });
+
+      // Automatically return to original position after 2 seconds (2000ms)
+      clickResetTimer = setTimeout(() => {
+        resetAllShardsTransform();
+      }, 2000);
     }
 
     if (!stage.dataset.hoverBound) {
       stage.dataset.hoverBound = 'true';
-      shardEls.forEach((el, idx) => {
-        el.addEventListener('mouseenter', () => handleShardHover(idx));
-        el.addEventListener('mouseleave', () => resetAllShardsHover());
+      shardState.forEach((it, idx) => {
+        it.hitEl.addEventListener('mouseenter', () => handleShardHoverEnter(idx));
+        it.hitEl.addEventListener('mouseleave', () => handleShardHoverLeave());
+        it.hitEl.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleShardClick(idx);
+        });
       });
 
-      stage.addEventListener('mouseleave', resetAllShardsHover);
+      stage.addEventListener('mouseleave', handleShardHoverLeave);
+
+      // Reset active shard when clicking anywhere outside a shard
+      document.addEventListener('click', (e) => {
+        if (activeClickIdx === -1) return;
+        if (e.target && e.target.closest && e.target.closest('.skill-shard-body')) return;
+        resetAllShardsTransform();
+      });
+
+      // Reset active shard immediately on user scroll action (wheel, touchmove, or scroll delta)
+      window.addEventListener(
+        'wheel',
+        () => {
+          if (activeClickIdx !== -1) resetAllShardsTransform();
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        'touchmove',
+        () => {
+          if (activeClickIdx !== -1) resetAllShardsTransform();
+        },
+        { passive: true }
+      );
+
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (activeClickIdx === -1) return;
+          const currentY = window.scrollY || window.pageYOffset || 0;
+          if (Math.abs(currentY - clickScrollY) > 6) {
+            resetAllShardsTransform();
+          }
+        },
+        { passive: true }
+      );
     }
   }
 
