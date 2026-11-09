@@ -1,7 +1,8 @@
 /**
  * EDUCATION & CERTIFICATIONS DOM RENDERER
  * Module: js/renderers/education.js
- * Injects formal education degrees and programs into #educationTable.
+ * Injects 3-column monochrome education rows (Year | Institution + Degree | Description)
+ * with text-line masks into #educationTable.
  */
 
 (function (window, document) {
@@ -10,24 +11,37 @@
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
+  function escapeAttr(str) {
+    return String(str || '').replace(/"/g, '&quot;');
+  }
+
   function renderEducation(education) {
     const container = document.getElementById('educationTable');
     if (!container || !Array.isArray(education)) return;
 
     const html = education
       .map((item, index) => {
-        const delayClass = index > 0 ? ` delay-${index}` : '';
-
         return `
-          <div class="education-row reveal reveal-up${delayClass}">
-            <span class="education-index">${item.index}</span>
-            <div class="education-main">
-              <div class="education-meta-top">
-                <span class="education-period">${item.period}</span>
-              </div>
-              <h3 class="education-degree">${item.degree}</h3>
-              <p class="education-school">${item.school}</p>
-              <p class="education-desc">${item.description}</p>
+          <div class="education-row" data-index="${index}">
+            <div class="education-col-year">
+              <span class="text-line-mask">
+                <span class="text-line-inner education-year">${item.period}</span>
+              </span>
+            </div>
+            <div class="education-col-institution">
+              <h3 class="education-school" data-raw-text="${escapeAttr(item.school)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${item.school}</span>
+                </span>
+              </h3>
+              <p class="education-degree" data-raw-text="${escapeAttr(item.degree)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${item.degree}</span>
+                </span>
+              </p>
+            </div>
+            <div class="education-col-desc">
+              <p class="education-desc" data-raw-text="${escapeAttr(item.description)}">${item.description}</p>
             </div>
           </div>
         `;

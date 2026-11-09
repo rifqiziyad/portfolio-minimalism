@@ -1,25 +1,29 @@
-/* ─── EDUCATION & CREDENTIALS SECTION ─── */
+/* ─── EDUCATION & CREDENTIALS SECTION (3-COLUMN MONOCHROME) ─── */
 .section-education {
   position: relative;
-  padding-top: clamp(3rem, 6vw, 5rem);
+  padding-top: clamp(3.5rem, 7vw, 6rem);
+  padding-bottom: clamp(3rem, 6vw, 5rem);
   border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-primary);
+  color: #ffffff;
 }
 
 .education-table {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
   z-index: 2;
+  margin-top: clamp(2rem, 4vw, 3.5rem);
 }
 
 .education-row {
   display: grid;
-  grid-template-columns: 80px 1fr;
-  gap: 2rem;
-  align-items: center;
-  padding: clamp(1.75rem, 3.5vw, 2.75rem) 1.5rem;
-  border-bottom: 1px solid var(--border-subtle);
+  grid-template-columns: minmax(140px, 1.1fr) minmax(240px, 1.8fr) 2.4fr;
+  gap: clamp(1.5rem, 3.5vw, 3.5rem);
+  align-items: start;
+  padding: clamp(2.25rem, 4.5vh, 3.5rem) 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   background-color: transparent;
   transition: background-color var(--transition-fast);
 }
@@ -28,69 +32,101 @@
   background-color: rgba(255, 255, 255, 0.015);
 }
 
-.education-index {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent-orange);
+/* ─── Column 1: Year ─── */
+.education-col-year {
+  padding-top: 0.15rem;
 }
 
-.education-meta-top {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.education-period {
-  display: inline-flex;
-  align-items: center;
+.education-year {
+  display: inline-block;
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
+  font-size: clamp(0.85rem, 0.95vw, 1rem);
   font-weight: 600;
-  color: var(--accent-orange);
   letter-spacing: 0.08em;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid rgba(255, 69, 0, 0.3);
-  background-color: rgba(255, 69, 0, 0.04);
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1.4;
 }
 
-.education-degree {
-  font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2.2vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
+/* ─── Column 2: Institution & Degree ─── */
+.education-col-institution {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
 .education-school {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 1.6vw, 1.55rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: #ffffff;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.education-degree {
   font-family: var(--font-mono);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #d1d1d6;
-  margin-bottom: 0.5rem;
+  font-size: clamp(0.72rem, 0.82vw, 0.85rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ─── Column 3: Description ─── */
+.education-col-desc {
+  max-width: 58ch;
 }
 
 .education-desc {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 75ch;
+  font-family: var(--font-sans);
+  font-size: clamp(0.9rem, 1.02vw, 1.05rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.86);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.education-col-desc .text-line-mask + .text-line-mask {
+  margin-top: 0.2rem;
+}
+
+/* ─── Text Line Mask & Inner (Viewport Reveal) ─── */
+.education-row .text-line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+
+.education-row .text-line-inner {
+  display: block;
+  will-change: transform, opacity;
 }
 
 /* ─── RESPONSIVE: EDUCATION ─── */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
   .education-row {
-    grid-template-columns: 60px 1fr;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: clamp(1.75rem, 3.5vh, 2.5rem) 0;
+  }
+
+  .education-col-institution {
+    gap: 0.35rem;
+  }
+
+  .education-col-desc {
+    max-width: 100%;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .education-row {
-    grid-template-columns: 40px 1fr;
+    gap: 0.85rem;
     padding: 1.5rem 0;
   }
 }

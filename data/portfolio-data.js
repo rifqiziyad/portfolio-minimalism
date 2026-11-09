@@ -206,7 +206,7 @@
       {
         index: '01',
         programTag: 'UNDERGRADUATE DEGREE',
-        period: 'FEB 2026 — PRESENT',
+        period: '2026 — PRESENT',
         degree: 'COMPUTER SCIENCE',
         school: 'Bina Nusantara University (BINUS Online)',
         description:
@@ -215,7 +215,7 @@
       {
         index: '02',
         programTag: 'ACCELERATED IMMERSIVE',
-        period: 'MAY 2021 — AUG 2021',
+        period: '2021',
         degree: 'FULL STACK DEVELOPER',
         school: 'Bootcamp Fazztrack',
         description:
@@ -224,7 +224,7 @@
       {
         index: '03',
         programTag: 'SECONDARY EDUCATION',
-        period: 'JUN 2016 — APR 2019',
+        period: '2016 — 2019',
         degree: 'NATURAL SCIENCE (MIPA)',
         school: 'Madrasah Aliyah Khazanah Kebajikan',
         description:
