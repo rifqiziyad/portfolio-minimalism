@@ -4,7 +4,7 @@
   position: relative;
   overflow: hidden;
   background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: none;
 }
 
 .timeline-stream-container {

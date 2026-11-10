@@ -237,8 +237,8 @@
   padding: 0 !important;
   margin: 0;
   background-color: var(--bg-primary);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: none;
+  border-bottom: none;
 }
 
 /* ─── Dedicated Vertical Header Area: PROJECT Title & Giant Outline Text ─── */
