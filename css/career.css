@@ -120,8 +120,12 @@
 /* ─── RESPONSIVE: CAREER ─── */
 @media (max-width: 900px) {
   .section-career {
-    padding-top: clamp(3.5rem, 7vw, 5.5rem);
+    padding-top: clamp(5rem, 12vw, 7.5rem);
     padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .section-career .bg-text-career {
+    top: clamp(1rem, 2.5vw, 2.25rem);
   }
 
   .section-career .section-header {
@@ -151,8 +155,12 @@
 
 @media (max-width: 640px) {
   .section-career {
-    padding-top: clamp(3.5rem, 8vw, 5rem);
+    padding-top: clamp(5.5rem, 14vw, 8rem);
     padding-bottom: 2.5rem;
+  }
+
+  .section-career .bg-text-career {
+    top: 1.5rem;
   }
 
   .section-career .section-header {
