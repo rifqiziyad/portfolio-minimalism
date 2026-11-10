@@ -51,11 +51,11 @@
     let projectScrubTween = null;
     const playhead = { progress: 0 };
 
-    const entrySpan = 0.60; // Clean entry span matching pre-pin scroll
+    const entrySpan = 1.00; // Uniform 1.0 step matching middle transitions
     const fMin = -entrySpan;
-    const pinnedExitSpan = 0.35; // Stage unpins and switches to vertical scroll at exactly 50% image closure
-    const verticalExitSpan = 0.35; // While scrolling vertically, image completes remaining 50% to 100% closure
-    const totalExitSpan = pinnedExitSpan + verticalExitSpan; // 0.70 total exit span
+    const pinnedExitSpan = 0.50; // Stage unpins and switches to vertical scroll at exactly 50% image closure
+    const verticalExitSpan = 0.50; // While scrolling vertically, image completes remaining 50% to 100% closure
+    const totalExitSpan = pinnedExitSpan + verticalExitSpan; // 1.00 total exit span (uniform 1.0 step)
     const fMax = (total - 1) + totalExitSpan;
     const fRange = fMax - fMin;
 
@@ -92,23 +92,18 @@
       // f = total-1..total is Exit (right line closes from 88% to 33%)
       const rawF = fMin + progress * fRange;
 
-      // C1-Continuous Hermite Easing at Entry & Exit so horizontal velocity
-      // accelerates gently from vertical scroll and matches slope 1.000 at f = 0 and f = total - 1
+      // Linear pacing matching middle scroll transitions exactly across awal, tengah, dan akhir
       let f = rawF;
       let cushionY = 0;
 
       if (rawF < 0) {
         const u = Math.max(0, Math.min(1, (rawF + entrySpan) / entrySpan));
-        // C1-Continuous smooth acceleration: starts with 0 velocity, ramps gently to 1.0 at f = 0
-        const easedU = 2 * u * u - u * u * u;
-        f = -entrySpan + easedU * entrySpan;
+        f = rawF;
         // Soft vertical landing cushion across the top 0% pin boundary (decays to 0 at f = 0)
-        cushionY = Math.pow(1 - u, 2.2) * 16;
+        cushionY = Math.pow(1 - u, 2.2) * 12;
       } else if (rawF > total - 1) {
-        const exitRatio = Math.max(0, Math.min(1, (rawF - (total - 1)) / totalExitSpan));
-        const easedV = exitRatio * exitRatio * (3 - 2 * exitRatio);
-        f = (total - 1) + easedV * totalExitSpan;
-        cushionY = 0; // Strict zero upward shift on exit to eliminate overflow into title band
+        f = rawF;
+        cushionY = 0;
       }
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
@@ -261,7 +256,7 @@
       }
 
       // ─── 4. Active Current Frame State & Info Panel / Bottom Status Visibility ───
-      const isEntering = f < -0.35;
+      const isEntering = f < -0.50;
       const isExiting = f > (total - 1) + pinnedExitSpan;
       const nearestIdx = Math.max(0, Math.min(total - 1, Math.round(f)));
 
