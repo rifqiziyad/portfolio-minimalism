@@ -110,7 +110,6 @@ ul, ol {
   position: relative;
   padding-top: clamp(5rem, 12vw, 10rem);
   padding-bottom: clamp(5rem, 12vw, 10rem);
-  overflow: hidden;
   border-bottom: none;
 }
 
