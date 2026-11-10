@@ -53,13 +53,13 @@
 .skill-tri-text {
   font-family: var(--font-display);
   font-weight: 800;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
-  fill: rgba(255, 255, 255, 0.9);
+  fill: #ffffff;
   paint-order: stroke fill;
-  stroke: rgba(15, 5, 28, 0.45);
-  stroke-width: 0.8px;
-  filter: drop-shadow(0 1px 5px rgba(0, 0, 0, 0.65));
+  stroke: rgba(10, 4, 20, 0.65);
+  stroke-width: 0.9px;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.85));
   transition: fill 0.3s ease, filter 0.3s ease;
   pointer-events: none;
 }
@@ -96,21 +96,44 @@
 /* ─── RESPONSIVE: SKILLS CRYSTAL MONOLITH ─── */
 @media (max-width: 992px) {
   .skills-crystal-svg {
-    max-width: clamp(460px, 88vw, 720px);
+    max-width: clamp(480px, 90vw, 760px);
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .section-skills {
-    padding-bottom: 1.25rem;
+    padding-bottom: 2rem;
+  }
+
+  .skills-container {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 
   .skills-crystal-stage {
-    padding-top: 0.25rem;
-    padding-bottom: 0;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    overflow: visible;
   }
 
   .skills-crystal-svg {
-    max-width: 98vw;
+    width: 138%;
+    max-width: 560px;
+    margin-left: -19%;
+    margin-right: -19%;
+  }
+}
+
+@media (max-width: 480px) {
+  .skills-container {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+
+  .skills-crystal-svg {
+    width: 152%;
+    max-width: 580px;
+    margin-left: -26%;
+    margin-right: -26%;
   }
 }

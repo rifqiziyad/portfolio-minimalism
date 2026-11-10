@@ -37,7 +37,7 @@
       }
 
       if (measuredW > safeSpan && safeSpan > 20) {
-        fontSize = Math.max(7.2, Math.round((fontSize * (safeSpan / measuredW)) * 10) / 10);
+        fontSize = Math.max(8.5, Math.round((fontSize * (safeSpan / measuredW)) * 10) / 10);
         textEl.setAttribute('font-size', fontSize + 'px');
         try {
           measuredW = textEl.getComputedTextLength();

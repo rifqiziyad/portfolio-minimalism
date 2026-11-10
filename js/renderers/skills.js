@@ -93,7 +93,7 @@
     }
 
     const sizeScale = Math.sqrt(skillSize / 145);
-    const fontSize = Math.max(7.5, Math.min(12.8, Math.round(best.fMax * 0.55 * sizeScale * 10) / 10));
+    const fontSize = Math.max(9.5, Math.min(22.0, Math.round(best.fMax * 0.78 * sizeScale * 10) / 10));
 
     const R1 = fontSize * best.r1_unit;
     const R2 = fontSize * best.r2_unit;
@@ -108,7 +108,7 @@
 
     const tx = lam1 * p1[0] + lam2 * p2[0] + lam3 * p3[0];
     const ty = lam1 * p1[1] + lam2 * p2[1] + lam3 * p3[1];
-    const safeSpan = Math.round(best.fMax * w0 * 0.65);
+    const safeSpan = Math.round(best.fMax * w0 * 0.82);
 
     return {
       ...m,
