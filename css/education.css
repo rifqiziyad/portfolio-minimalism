@@ -14,7 +14,7 @@
 }
 
 .section-education .section-header {
-  margin-bottom: clamp(1.25rem, 2.5vw, 2.25rem);
+  margin-bottom: clamp(3rem, 5.5vw, 5.5rem);
   padding-bottom: 0.5rem;
 }
 
@@ -24,7 +24,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   position: relative;
   z-index: 2;
-  margin-top: clamp(1rem, 2vw, 2rem);
+  margin-top: clamp(1.5rem, 3vw, 3rem);
 }
 
 .education-row {
@@ -125,12 +125,12 @@
   }
 
   .section-education .section-header {
-    margin-bottom: 1.25rem;
+    margin-bottom: 2.25rem;
     padding-bottom: 0.5rem;
   }
 
   .education-table {
-    margin-top: 0.75rem;
+    margin-top: 1.25rem;
   }
 
   .education-row {
@@ -156,12 +156,12 @@
   }
 
   .section-education .section-header {
-    margin-bottom: 1rem;
+    margin-bottom: 1.75rem;
     padding-bottom: 0.35rem;
   }
 
   .education-table {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
   }
 
   .education-row {
