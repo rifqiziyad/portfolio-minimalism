@@ -95,24 +95,46 @@
       trackLit.style.transform = trackTransform;
       trackLit.style.opacity = '1';
 
-      // 3. Horizontal Carousel Slides (1:1 side-by-side translation, zero zoom parallax)
+      // 3. Horizontal Carousel Slides with Desktop-Parallax (Zoom & Pan)
       for (let i = 0; i < slideFrames.length; i++) {
         const frame = slideFrames[i];
         const img = slideImgs[i];
         const delta = i - f;
 
-        if (Math.abs(delta) > 1.35) {
+        if (Math.abs(delta) > 1.15) {
           frame.style.display = 'none';
           continue;
         }
 
         frame.style.display = '';
-        const frameXPercent = delta * 100;
+
+        let frameXPercent = 0;
+        let imgXPercent = 0;
+        let imgScale = 1.0;
+
+        if (delta >= 1) {
+          frameXPercent = 100.5;
+          imgXPercent = -22;
+          imgScale = 1.25;
+        } else if (delta >= 0) {
+          frameXPercent = delta * 100;
+          imgXPercent = -22 * delta;
+          imgScale = 1.0 + delta * 0.25;
+        } else if (delta > -1) {
+          frameXPercent = delta * 28;
+          imgXPercent = -delta * 14;
+          imgScale = 1.0;
+        } else {
+          frameXPercent = -28;
+          imgXPercent = 14;
+          imgScale = 1.0;
+        }
+
         frame.style.transform = `translate3d(${frameXPercent.toFixed(2)}%, 0, 0)`;
         frame.style.opacity = '1';
 
         if (img) {
-          img.style.transform = 'none';
+          img.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(${imgScale.toFixed(3)})`;
         }
       }
 
