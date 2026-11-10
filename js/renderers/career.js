@@ -46,7 +46,11 @@
               </p>
             </div>
             <div class="career-col-desc">
-              <p class="career-desc" data-raw-text="${escapeAttr(description)}">${description}</p>
+              <p class="career-desc" data-raw-text="${escapeAttr(description)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${description}</span>
+                </span>
+              </p>
             </div>
           </div>
         `;

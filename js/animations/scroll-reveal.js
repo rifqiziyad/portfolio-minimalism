@@ -37,8 +37,9 @@
     let currentTop = -1;
 
     wordEls.forEach((el) => {
-      const top = el.offsetTop;
-      if (currentTop !== -1 && Math.abs(top - currentTop) > 4) {
+      const rect = el.getBoundingClientRect();
+      const top = rect.top || el.offsetTop;
+      if (currentTop !== -1 && Math.abs(top - currentTop) > 3) {
         if (currentWords.length) lines.push(currentWords.join(' '));
         currentWords = [];
       }
@@ -50,7 +51,7 @@
     }
 
     // Fallback if offsetTop is not measurable (e.g. 0 height before layout)
-    if (lines.length <= 1 && raw.length > 70) {
+    if (lines.length <= 1 && raw.length > 60) {
       const fallbackLines = raw.match(/[^,;:.!?]+[,;:.!?]+(\s|$)|[^,;:.!?]+$/g) || [raw];
       containerEl.innerHTML = fallbackLines
         .map((l) => l.trim())
@@ -74,6 +75,7 @@
         const isRevealed = row.classList.contains('is-revealed');
         const titleEl = row.querySelector('.education-school, .career-company-name');
         const descEl = row.querySelector('.education-desc, .career-desc');
+
         if (titleEl) formatTextLines(titleEl);
         if (descEl) formatTextLines(descEl);
 
@@ -90,7 +92,7 @@
 
   /**
    * Initializes staggered line-by-line masked reveals for 3-column rows (Career & Education)
-   * (identical timing, stagger, and easing to project-info description)
+   * Runs consistently across both desktop and mobile screens.
    */
   function initThreeColumnRowsReveal(scope, rowSelector, titleSelector, descSelector) {
     const targetScope = scope || document;
@@ -114,15 +116,16 @@
 
         ScrollTrigger.create({
           trigger: row,
-          start: 'top 86%',
+          start: 'top 88%',
           once: true,
           onEnter: () => {
             row.classList.add('is-revealed');
-            gsap.to(inners, {
+            const currentInners = row.querySelectorAll('.text-line-inner');
+            gsap.to(currentInners, {
               yPercent: 0,
               opacity: 1,
-              duration: 0.38,
-              stagger: 0.065,
+              duration: 0.42,
+              stagger: 0.055,
               ease: 'power3.out'
             });
           }
