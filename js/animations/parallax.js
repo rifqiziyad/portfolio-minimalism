@@ -14,18 +14,63 @@
 
   window.Portfolio = window.Portfolio || {};
 
+  let currentProjectMode = null; // 'mobile' | 'desktop' | null
+  let lastScope = null;
+  let resizeModeListenerBound = false;
+
+  function initActiveProjectController(scope) {
+    const app = window.Portfolio;
+    const isMobile = window.innerWidth <= 768;
+    const targetMode = isMobile ? 'mobile' : 'desktop';
+
+    if (targetMode === 'mobile') {
+      if (app.projectShowcase && typeof app.projectShowcase.cleanupProjectShowcase === 'function') {
+        app.projectShowcase.cleanupProjectShowcase();
+      }
+      if (app.projectMobile && typeof app.projectMobile.initProjectMobileCarousel === 'function') {
+        app.projectMobile.initProjectMobileCarousel(scope);
+      }
+    } else {
+      if (app.projectMobile && typeof app.projectMobile.cleanupProjectMobile === 'function') {
+        app.projectMobile.cleanupProjectMobile();
+      }
+      if (app.projectShowcase && typeof app.projectShowcase.initProjectShowcaseScroll === 'function') {
+        app.projectShowcase.initProjectShowcaseScroll(scope);
+      }
+    }
+
+    currentProjectMode = targetMode;
+  }
+
+  function onBreakpointCheck() {
+    const isMobile = window.innerWidth <= 768;
+    const nextMode = isMobile ? 'mobile' : 'desktop';
+    if (currentProjectMode && nextMode !== currentProjectMode) {
+      initActiveProjectController(lastScope || document);
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
+    }
+  }
+
   function initParallaxAnimations(container) {
     const scope = container || document;
     const app = window.Portfolio;
 
-    // 1. Horizontal Project Showcase on Home #project
+    // 1. Horizontal Project Showcase on Home #project (Desktop vs Mobile Dedicated Controller)
     const isHomeShowcaseInScope =
       scope === document ||
       scope.id === 'viewHome' ||
       !!scope.querySelector('#project.project-showcase-section, #portfolio.project-showcase-section');
 
-    if (isHomeShowcaseInScope && app.projectShowcase && typeof app.projectShowcase.initProjectShowcaseScroll === 'function') {
-      app.projectShowcase.initProjectShowcaseScroll(scope);
+    if (isHomeShowcaseInScope) {
+      lastScope = scope;
+      initActiveProjectController(scope);
+
+      if (!resizeModeListenerBound) {
+        window.addEventListener('resize', onBreakpointCheck, { passive: true });
+        resizeModeListenerBound = true;
+      }
     }
 
     // 2. Background Outline Texts Parallax (Timeline, Skills, Education, Projects)
@@ -49,6 +94,10 @@
     if (app.projectShowcase && typeof app.projectShowcase.cleanupProjectShowcase === 'function') {
       app.projectShowcase.cleanupProjectShowcase();
     }
+    if (app.projectMobile && typeof app.projectMobile.cleanupProjectMobile === 'function') {
+      app.projectMobile.cleanupProjectMobile();
+    }
+    currentProjectMode = null;
   }
 
   window.Portfolio.parallax = {

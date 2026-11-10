@@ -16,6 +16,7 @@
 /* ─── SECTIONS (CHRONOLOGICAL ORDER) ─── */
 @import url('css/hero.css');
 @import url('css/portfolio.css');
+@import url('css/portfolio-mobile.css');
 @import url('css/carousel.css');
 @import url('css/career.css');
 @import url('css/skills.css');

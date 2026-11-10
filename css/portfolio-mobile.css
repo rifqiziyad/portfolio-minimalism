@@ -1,0 +1,188 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEDICATED MOBILE PROJECT HORIZONTAL CAROUSEL (<= 768px)
+   Module: css/portfolio-mobile.css
+   Isolated mobile layout & styling so desktop css/portfolio.css is untouched.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .project-header-area {
+    padding: clamp(3.5rem, 8vw, 5rem) 0 clamp(1.25rem, 3.5vw, 2rem);
+  }
+
+  /* Release 100vh lock so user can scroll vertically through the page naturally */
+  .project-sticky-stage {
+    position: relative;
+    width: 100%;
+    height: auto !important;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  /* ─── 1. Symmetric Architectural Hairline Grid (8% Left & 92% Right) ─── */
+  .project-grid-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+
+  .project-vline-center {
+    left: 8% !important;
+  }
+
+  .project-vline-right {
+    left: 92% !important;
+    opacity: 1 !important;
+  }
+
+  .project-grid-hline {
+    display: none;
+  }
+
+  /* ─── 2. Horizontal Sliding Title Band (Centered Spotlight 8% to 92%) ─── */
+  .project-title-band {
+    order: 1;
+    position: relative;
+    left: auto;
+    right: auto;
+    top: auto;
+    bottom: auto;
+    width: 100%;
+    height: 4.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 5;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .project-title-layer {
+    padding-bottom: 0.85rem;
+  }
+
+  .project-title-layer-lit {
+    clip-path: inset(0 8% 0 8%) !important;
+    -webkit-clip-path: inset(0 8% 0 8%) !important;
+  }
+
+  .project-title-item {
+    flex: 0 0 84vw;
+    width: 84vw;
+    min-width: 84vw;
+    padding-right: 1.25rem;
+    font-size: clamp(1.3rem, 5.2vw, 1.75rem);
+  }
+
+  /* ─── 3. Dead-Center Horizontal Swipe Image Carousel (8% to 92% = 84% Width) ─── */
+  .project-image-viewport {
+    order: 2;
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 84%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    margin: 0 auto;
+    overflow: hidden;
+    z-index: 3;
+    clip-path: none !important;
+    -webkit-clip-path: none !important;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  .project-image-viewport:active {
+    cursor: grabbing;
+  }
+
+  .project-image-viewport .project-slide-frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .project-image-viewport .project-slide-frame.is-current-frame {
+    pointer-events: auto;
+  }
+
+  .project-image-viewport .project-slide-frame .project-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    transform: none !important;
+    filter: grayscale(8%) contrast(1.03);
+  }
+
+  /* ─── 4. Synchronized Info Panel Below Centered Image ─── */
+  .project-info-panel {
+    order: 3;
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 84%;
+    height: auto;
+    margin: 0 auto;
+    padding: 1.35rem 0.25rem 1.15rem;
+    background: transparent;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 4;
+  }
+
+  .project-info-inner {
+    max-width: 100%;
+  }
+
+  .project-info-desc {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    margin-bottom: 1.1rem;
+    max-width: 100%;
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+
+  .project-info-specs {
+    margin-bottom: 1.15rem;
+    gap: 0.85rem 1.75rem;
+  }
+
+  /* ─── 5. Bottom Architectural Status Bar (01 | 07) ─── */
+  .project-bottom-bar {
+    order: 4;
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 84%;
+    height: auto;
+    margin: 0 auto;
+    padding: 0.85rem 0.25rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    justify-content: space-between;
+    z-index: 6;
+  }
+
+  .project-bottom-right {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .project-bottom-title {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.65);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+}
