@@ -254,8 +254,8 @@
       assembleTl
         .fromTo(
           svg,
-          { y: -70, rotation: -5, transformOrigin: '50% 50%' },
-          { y: 0, rotation: 0, transformOrigin: '50% 50%' },
+          { y: -70 },
+          { y: 0 },
           0
         )
         .fromTo(

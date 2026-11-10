@@ -30,6 +30,9 @@
   overflow: visible;
   display: block;
   user-select: none;
+  transform-origin: center;
+  rotate: 15deg;
+  transition: rotate 0.35s ease;
 }
 
 .skill-tri-shard,
@@ -121,6 +124,7 @@
     max-width: 560px;
     margin-left: -19%;
     margin-right: -19%;
+    rotate: -15deg;
   }
 }
 
@@ -135,5 +139,6 @@
     max-width: 580px;
     margin-left: -26%;
     margin-right: -26%;
+    rotate: -15deg;
   }
 }
