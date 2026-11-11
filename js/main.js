@@ -58,6 +58,11 @@
         app.contact.initContactCrystalAnimation();
       }
     }
+
+    // 6. Full-Screen Loading Overlay (Real-Time Asset Tracker & Smooth Reveal)
+    if (app.preloader && typeof app.preloader.initPreloader === 'function') {
+      app.preloader.initPreloader();
+    }
   }
 
   if (document.readyState === 'loading') {

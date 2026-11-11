@@ -1,0 +1,74 @@
+/* ─── FULL-SCREEN LOADING OVERLAY ─── */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000000;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  will-change: opacity;
+}
+
+.loading-overlay.is-hidden {
+  display: none;
+  pointer-events: none;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2.2vw, 1.75rem);
+  padding: 0 1.25rem;
+  text-align: center;
+  will-change: transform, opacity;
+}
+
+.loading-outline-title {
+  --load-progress: 0%;
+  position: relative;
+  display: inline-block;
+  padding: 0.06em 0.04em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(2.35rem, 9.5vw, 9.5rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.28);
+  pointer-events: none;
+}
+
+.loading-outline-title::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0.06em 0.04em;
+  color: #ffffff;
+  -webkit-text-stroke: 1.5px #ffffff;
+  clip-path: inset(calc(100% - var(--load-progress, 0%)) 0 0 0);
+  pointer-events: none;
+  will-change: clip-path;
+}
+
+.loading-percentage {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.4vw, 1.25rem);
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}

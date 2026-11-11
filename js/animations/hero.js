@@ -8,6 +8,14 @@
 
   window.Portfolio = window.Portfolio || {};
 
+  let activeIntroTl = null;
+
+  function playIntro() {
+    if (activeIntroTl) {
+      activeIntroTl.play();
+    }
+  }
+
   function initHeroAnimations(skipIntro = false) {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
 
@@ -91,10 +99,17 @@
       gsap.set('#heroFrontendInner', { xPercent: 90, opacity: 0 });
       gsap.set('#heroDeveloperInner', { xPercent: -90, opacity: 0 });
 
+      const isPreloaderActive =
+        window.Portfolio.preloader && typeof window.Portfolio.preloader.isActive === 'function'
+          ? window.Portfolio.preloader.isActive()
+          : false;
+
       const introTl = gsap.timeline({
+        paused: isPreloaderActive,
         defaults: { ease: 'power3.out' },
         delay: 0.1
       });
+      activeIntroTl = introTl;
 
       // 1. Central photo zooms down from large (1.45x) to normal scale (1.0)
       introTl.to('#heroImageBox', {
@@ -147,6 +162,7 @@
         lenis.on('scroll', onFirstScroll);
       }
     } else {
+      activeIntroTl = null;
       // If already scrolled down or skipIntro, ensure inner elements are fully visible and neutral
       gsap.set('#heroImageBox', { scale: 1.0, opacity: 1, clearProps: 'transform,opacity' });
       gsap.set('#heroFrontendInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
@@ -155,6 +171,7 @@
   }
 
   window.Portfolio.hero = {
-    initHeroAnimations
+    initHeroAnimations,
+    playIntro
   };
 })(window, document);

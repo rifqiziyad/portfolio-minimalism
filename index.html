@@ -25,6 +25,14 @@
 
 <body>
 
+  <!-- Full-Screen Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="Loading">
+    <div class="loading-content" id="loadingContent">
+      <div class="loading-outline-title" id="loadingTitle" data-text="PLEASE WAIT">PLEASE WAIT</div>
+      <div class="loading-percentage" id="loadingPercentage">0%</div>
+    </div>
+  </div>
+
   <!-- Custom Minimal Cursor Dot -->
   <div id="cursor-dot" aria-hidden="true"></div>
 
@@ -337,6 +345,7 @@
   <script defer src="js/renderers/skills.js"></script>
   <script defer src="js/renderers/education.js"></script>
   <script defer src="js/core/renderer.js"></script>
+  <script defer src="js/components/preloader.js"></script>
   <script defer src="js/components/crystal-backgrounds.js"></script>
   <script defer src="js/components/cursor.js"></script>
   <script defer src="js/components/navigation.js"></script>
