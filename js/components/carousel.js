@@ -21,7 +21,6 @@
     const footer = modal.querySelector('.carousel-footer');
     const viewport = document.getElementById('carouselViewport');
     const projectTitle = document.getElementById('carouselProjectTitle');
-    const projectTag = document.getElementById('carouselProjectTag');
     const mainImg = document.getElementById('carouselMainImg');
     const slideCard = document.getElementById('carouselSlideCard');
     const thumbsTrack = document.getElementById('carouselThumbsTrack');
@@ -290,7 +289,6 @@
 
       // Populate header details
       if (projectTitle) projectTitle.textContent = project.title || 'PROJECT';
-      if (projectTag) projectTag.textContent = project.category || project.tag || 'GALLERY';
 
       // Render initial image & thumbnails
       if (mainImg) mainImg.src = currentGallery[currentSlideIdx];

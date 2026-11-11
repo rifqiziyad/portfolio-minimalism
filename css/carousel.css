@@ -84,18 +84,6 @@
   color: #ffffff;
 }
 
-.carousel-project-tag {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  padding: 0.25rem 0.6rem;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 69, 0, 0.4);
-  background: rgba(255, 69, 0, 0.08);
-  color: var(--accent-orange);
-}
-
 .carousel-close-btn {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -295,10 +283,6 @@
 @media (max-width: 768px) {
   .carousel-header {
     padding: 1rem 1.25rem;
-  }
-
-  .carousel-project-tag {
-    display: none;
   }
 
   .carousel-nav-btn {
