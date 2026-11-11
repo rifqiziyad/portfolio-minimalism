@@ -212,6 +212,25 @@
   transform: scale(0.95);
 }
 
+.carousel-nav-btn svg {
+  width: 22px;
+  height: 22px;
+  display: block;
+  transition: transform var(--transition-fast);
+}
+
+.carousel-btn-prev svg {
+  transform: rotate(180deg);
+}
+
+.carousel-btn-prev:hover svg {
+  transform: rotate(180deg) translateX(2px);
+}
+
+.carousel-btn-next:hover svg {
+  transform: translateX(2px);
+}
+
 /* 5. Bottom Thumbnail Strip */
 .carousel-footer {
   position: relative;
@@ -286,6 +305,11 @@
     width: 40px;
     height: 40px;
     font-size: 0.95rem;
+  }
+
+  .carousel-nav-btn svg {
+    width: 18px;
+    height: 18px;
   }
 
   .carousel-btn-prev {

@@ -510,7 +510,17 @@
 
 .project-gallery-trigger .arrow,
 .project-live-link .arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: transform 0.2s ease;
+}
+
+.project-gallery-trigger .arrow svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+  transform: rotate(-45deg);
 }
 
 .project-gallery-trigger:hover .arrow,
