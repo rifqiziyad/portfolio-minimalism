@@ -14,8 +14,8 @@
         category: 'BANKING BACKOFFICE',
         title: 'BTN BACKOFFICE',
         description:
-          'A mission-critical backoffice platform engineered to monitor transactions, govern sensitive user records, and orchestrate dynamic in-app features within Bank BTN’s mobile banking ecosystem.',
-        year: '2024',
+          'Banking backoffice provides a transaction dashboard, promo/info blast, account management (unregister, block, unblock), bank manager, approval, and monitoring, supported by role-based authorization to ensure security and access control according to user privileges.',
+        year: '2023 - PRESENT',
         stack: 'JavaScript • React.js • Material UI • Redux',
         linkUrl: null,
         image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
@@ -30,9 +30,9 @@
       {
         id: 'project-hibank',
         category: 'INTERNET BANKING',
-        title: 'HIBANK PORTAL',
+        title: 'HIBANK CLIENT PORTAL',
         description:
-          'Architected and integrated comprehensive Internet Banking modules for Hibank, including inter-bank fund transfers, real-time bill payments, account summaries, and financial transaction processing.',
+          'Built and integrated features for Internet Banking services such as transfers, payments, and purchases.',
         year: '2024',
         stack: 'React • TypeScript • Redux Toolkit • Material UI',
         linkUrl: null,
@@ -51,11 +51,11 @@
       {
         id: 'project-octo',
         category: 'CUSTOMER PLATFORM',
-        title: 'OCTO CLICK',
+        title: 'CIMB OCTO CLICK',
         description:
-          'Full-scale modernization of CIMB Niaga OCTO Click\'s fund transfer ecosystem. Refactored multi-stage transaction flows, optimized user feedback states, and enforced banking security standards.',
-        year: '2024 — 2025',
-        stack: 'React • TypeScript • Material UI • REST API',
+          'Revamp of the transfer feature with a more modern interface, simplified transaction flow, and enhanced security and user experience.',
+        year: '2025',
+        stack: 'React • TypeScript • Material UI • Tanstack',
         linkUrl: null,
         image: 'assets/cimb/c1.png',
         imageAlt: 'CIMB Niaga OCTO Click Revamp',
@@ -70,11 +70,11 @@
       {
         id: 'project-bni',
         category: 'TRANSACTIONAL BANKING',
-        title: 'BNI CORPORATE',
+        title: 'BNI PORTAL AUTODEBIT',
         description:
-          'Advanced corporate banking web interface developed for Bank Negara Indonesia (BNI) featuring multi-level transaction authorization, liquidity dashboard, bulk payment processing, and corporate treasury management.',
-        year: '2024',
-        stack: 'React.js • TypeScript • Redux • Tailwind CSS • Secure REST',
+          'Web-based system for managing billers, customers, and automated billing transactions, equipped with a dashboard and reporting features for operational monitoring.',
+        year: '2026',
+        stack: 'React.js • TypeScript • Tailwind CSS • Zustand • Tanstack.',
         linkUrl: null,
         image: 'assets/bni/bni1.JPG',
         imageAlt: 'BNI Corporate Transactional Banking Portal',
@@ -88,10 +88,10 @@
       {
         id: 'project-smartbox',
         category: 'IOT & LOGISTICS',
-        title: 'SMARTBOX PLATFORM',
+        title: 'SMARTBOX INDUSTRIES',
         description:
-          'Next-generation smart locker and automated parcel delivery ecosystem. Features real-time locker telemetry, QR code authentication, user access governance, and fleet monitoring interfaces.',
-        year: '2023 — 2024',
+          'Revamp of the company profile with a modern design and seamless integration to Strapi for dynamic content management.',
+        year: '2025',
         stack: 'React Native • Flutter • TypeScript • WebSockets • Node.js',
         linkUrl: 'https://smartbox.build',
         image: 'assets/smartbox/s1.png',
@@ -107,11 +107,11 @@
       {
         id: 'project-ignica',
         category: 'DIGITAL RETAIL PLATFORM',
-        title: 'IGNICA PLATFORM',
+        title: 'IGNICA',
         description:
-          'Next-generation digital retail and in-store technology platform created for United Super Markets Holdings (U.S.M.H). Powers interactive digital signage, modern POS terminals, and responsive cross-device shopping experiences.',
+          'Company profile website that contains product & service, case study, contact, and news sections.',
         year: '2022 — 2023',
-        stack: 'JavaScript • React.js • Responsive Web • HTML5 / CSS3',
+        stack: 'JavaScript • jQuert • Bootstrap • HTML5 / CSS3',
         linkUrl: 'https://ignica.com',
         linkText: 'Visit ignica.com',
         image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.png',
@@ -128,7 +128,7 @@
         category: 'ENTERPRISE HR SYSTEM',
         title: 'KASUMI HR MANAGEMENT',
         description:
-          'Internal desktop-based enterprise HR and workflow management platform for Kasumi supermarket chain. Includes digital recruitment workflows, personnel approval forms, employee master records, and target evaluation systems.',
+          "Web application designed to meet the needs of our client's office. It consists of several modules, such as petty payment, general recruitment, master data, and target management.",
         year: '2021 — 2023',
         stack: 'React.js • Redux • JavaScript • CSS3 / SCSS',
         linkUrl: null,
@@ -143,20 +143,12 @@
 
     career: [
       {
-        id: 'career-infosys-lead',
-        period: '2025 — PRESENT',
-        company: 'PT INFOSYS SOLUSI TERPADU',
-        role: 'FRONTEND DEVELOPER',
-        description:
-          'Spearheading frontend architecture for critical Internet Banking services and transaction revamp initiatives (OCTO Click CIMB Niaga, Hibank Client Portal, BTN Mobile Banking Backoffice) with strict banking security compliance, TypeScript, and Redux Toolkit.'
-      },
-      {
         id: 'career-infosys',
-        period: '2023 — 2024',
+        period: '2023 — PRESENT',
         company: 'PT INFOSYS SOLUSI TERPADU',
         role: 'FRONTEND DEVELOPER',
         description:
-          'Engineered desktop-based internal banking web applications with React.js for transaction approvals, customer data governance, and financial reporting. Collaborated closely with backend engineers and QA teams to guarantee strict API and security compliance.'
+          'Developed internal web applications for banking operations, including modules for customer data management, transaction approvals, and financial reporting. Built and maintained features for a customer-facing platform to handle transactions such as money transfers, balance inquiries, and transaction history using React.js.'
       },
       {
         id: 'career-boston',
@@ -164,8 +156,16 @@
         company: 'PT BOSTON MAKMUR GEMILANG',
         role: 'FRONTEND DEVELOPER',
         description:
-          'Developed internal desktop-based HR management systems (Kasumi) including recruitment forms, employee master data, organizational structure, and target evaluation modules using React.js and Redux. Built modern web solutions including Ignica.'
-      }
+          'Developed internal HR management systems for desktop use, including recruitment forms, employee master data, organizational structure, and target evaluation modules. Built user-friendly interfaces using React.js tailored for non-technical HR users.'
+      },
+      {
+        id: 'career-clairmont',
+        period: '2019',
+        company: 'PT PRIMA HIDUP LESTARI',
+        role: 'ACCOUNTING',
+        description:
+          'Accustomed to using Microsoft Excel to make daily sales records and make reports on raw materials as well as entering bank mutations and entering tax invoices.'
+      },
     ],
 
     // Backward compatibility alias for timeline
@@ -206,7 +206,7 @@
         degree: 'COMPUTER SCIENCE',
         school: 'Bina Nusantara University (BINUS Online)',
         description:
-          'Pendidikan tinggi formal yang berfokus pada rekayasa perangkat lunak, struktur data dan algoritma, komputasi terdistribusi, serta perancangan sistem berbasis teknologi informasi modern.'
+          'I am pursuing a degree in Computer Science while working full-time as a Frontend Developer in the banking sector. Five courses—Operating Systems, Computer Networks, Computer Security, Human-Computer Interaction, and Specialized Platform Development—have been credited toward my degree through the Recognition of Prior Learning (RPL) process, all with a grade of A. I leverage this combination of five years of industry experience and a solid academic foundation to build web applications that are secure, well-structured, and highly scalable.'
       },
       {
         index: '02',
@@ -215,7 +215,7 @@
         degree: 'FULL STACK DEVELOPER',
         school: 'Bootcamp Fazztrack',
         description:
-          'Pelatihan intensif pengembangan aplikasi web end-to-end dengan penekanan pada modern JavaScript, React ecosystem, arsitektur REST API, dan integrasi basis data.'
+          'For 13 weeks, I learned to be a full stack web developer. I learned React.JS, Next.JS, Node.JS, ExpressJS, etc. Not only learning technical, in this bootcamp I also learn soft skills'
       },
       {
         index: '03',
@@ -224,7 +224,7 @@
         degree: 'NATURAL SCIENCE (MIPA)',
         school: 'Madrasah Aliyah Khazanah Kebajikan',
         description:
-          'Fondasi analitis, logika matematika, sains alamiah, dan metodologi pemecahan masalah sistematis.'
+          'At school I not only study science related, but also learn Islamic religious lessons such as Fiqih, Aqidah Akhlak, Al-Quran Hadits and Sejarah Kebudayaan Islam'
       }
     ]
   };
