@@ -68,6 +68,7 @@
     const slidesMarkup = items
       .map((item, idx) => {
         const currentClass = idx === 0 ? ' is-current-frame' : '';
+        const loadingAttr = idx === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
         return `
           <div class="project-slide-frame project-img-frame${currentClass}"
                data-slide-index="${idx}"
@@ -76,7 +77,7 @@
                role="button"
                tabindex="0"
                aria-label="View gallery for ${item.title}">
-            <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" loading="eager">
+            <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" ${loadingAttr} width="1200" height="800">
           </div>
         `;
       })

@@ -18,13 +18,13 @@
         year: '2023 - PRESENT',
         stack: 'JavaScript • React.js • Material UI • Redux',
         linkUrl: null,
-        image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
+        image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.webp',
         imageAlt: 'BTN Mobile Banking Backoffice System',
         gallery: [
-          'assets/btn/Screenshot 2025-04-25 at 16.07.25.png',
-          'assets/btn/Screenshot 2025-04-25 at 16.08.42.png',
-          'assets/btn/Screenshot 2025-04-25 at 16.08.59.png',
-          'assets/btn/Screenshot 2025-04-25 at 16.09.24.png'
+          'assets/btn/Screenshot 2025-04-25 at 16.07.25.webp',
+          'assets/btn/Screenshot 2025-04-25 at 16.08.42.webp',
+          'assets/btn/Screenshot 2025-04-25 at 16.08.59.webp',
+          'assets/btn/Screenshot 2025-04-25 at 16.09.24.webp'
         ]
       },
       {
@@ -36,16 +36,16 @@
         year: '2024',
         stack: 'React • TypeScript • Redux Toolkit • Material UI',
         linkUrl: null,
-        image: 'assets/hibank/1745218296927.jpg',
+        image: 'assets/hibank/1745218296927.webp',
         imageAlt: 'Hibank Client Portal System',
         gallery: [
-          'assets/hibank/1745218296927.jpg',
-          'assets/hibank/1745218296944.jpg',
-          'assets/hibank/1745218296962.jpg',
-          'assets/hibank/1745218296973.jpg',
-          'assets/hibank/1745218296987.jpg',
-          'assets/hibank/1745218297004.jpg',
-          'assets/hibank/1745218297015.jpg'
+          'assets/hibank/1745218296927.webp',
+          'assets/hibank/1745218296944.webp',
+          'assets/hibank/1745218296962.webp',
+          'assets/hibank/1745218296973.webp',
+          'assets/hibank/1745218296987.webp',
+          'assets/hibank/1745218297004.webp',
+          'assets/hibank/1745218297015.webp'
         ]
       },
       {
@@ -57,14 +57,14 @@
         year: '2025',
         stack: 'React • TypeScript • Material UI • Tanstack',
         linkUrl: null,
-        image: 'assets/cimb/c1.png',
+        image: 'assets/cimb/c1.webp',
         imageAlt: 'CIMB Niaga OCTO Click Revamp',
         gallery: [
-          'assets/cimb/c1.png',
-          'assets/cimb/c2.png',
-          'assets/cimb/c3.png',
-          'assets/cimb/c4.png',
-          'assets/cimb/c5.png'
+          'assets/cimb/c1.webp',
+          'assets/cimb/c2.webp',
+          'assets/cimb/c3.webp',
+          'assets/cimb/c4.webp',
+          'assets/cimb/c5.webp'
         ]
       },
       {
@@ -76,13 +76,13 @@
         year: '2026',
         stack: 'React.js • TypeScript • Tailwind CSS • Zustand • Tanstack.',
         linkUrl: null,
-        image: 'assets/bni/bni1.JPG',
+        image: 'assets/bni/bni1.webp',
         imageAlt: 'BNI Corporate Transactional Banking Portal',
         gallery: [
-          'assets/bni/bni1.JPG',
-          'assets/bni/bni2.JPG',
-          'assets/bni/bni3.JPG',
-          'assets/bni/bni4.JPG'
+          'assets/bni/bni1.webp',
+          'assets/bni/bni2.webp',
+          'assets/bni/bni3.webp',
+          'assets/bni/bni4.webp'
         ]
       },
       {
@@ -94,14 +94,14 @@
         year: '2025',
         stack: 'React Native • Flutter • TypeScript • WebSockets • Node.js',
         linkUrl: 'https://smartbox.build',
-        image: 'assets/smartbox/s1.png',
+        image: 'assets/smartbox/s1.webp',
         imageAlt: 'Smartbox Automated Locker & IoT Platform',
         gallery: [
-          'assets/smartbox/s1.png',
-          'assets/smartbox/s2.png',
-          'assets/smartbox/s3.png',
-          'assets/smartbox/s4.png',
-          'assets/smartbox/s5.png'
+          'assets/smartbox/s1.webp',
+          'assets/smartbox/s2.webp',
+          'assets/smartbox/s3.webp',
+          'assets/smartbox/s4.webp',
+          'assets/smartbox/s5.webp'
         ]
       },
       {
@@ -114,13 +114,13 @@
         stack: 'JavaScript • jQuert • Bootstrap • HTML5 / CSS3',
         linkUrl: 'https://ignica.com',
         linkText: 'Visit ignica.com',
-        image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.png',
+        image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp',
         imageAlt: 'Ignica Digital Retail and In-Store Experience Platform',
         gallery: [
-          'assets/ignica/Screenshot 2023-09-13 at 09.32.34.png',
-          'assets/ignica/Screenshot 2023-09-13 at 09.33.01.png',
-          'assets/ignica/ignica.com_(iPad Air).png',
-          'assets/ignica/ignica.com_(iPhone XR).png'
+          'assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp',
+          'assets/ignica/Screenshot 2023-09-13 at 09.33.01.webp',
+          'assets/ignica/ignica.com_(iPad Air).webp',
+          'assets/ignica/ignica.com_(iPhone XR).webp'
         ]
       },
       {
@@ -132,11 +132,11 @@
         year: '2021 — 2023',
         stack: 'React.js • Redux • JavaScript • CSS3 / SCSS',
         linkUrl: null,
-        image: 'assets/kasumi/home page.png',
+        image: 'assets/kasumi/home page.webp',
         imageAlt: 'Kasumi Enterprise HR Management System and Workflow Portal',
         gallery: [
-          'assets/kasumi/home page.png',
-          'assets/kasumi/form recruitment.png'
+          'assets/kasumi/home page.webp',
+          'assets/kasumi/form recruitment.webp'
         ]
       }
     ],

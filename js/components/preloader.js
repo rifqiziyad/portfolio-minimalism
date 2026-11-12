@@ -151,14 +151,16 @@
       }
     }
 
-    // Collect real page assets: active images, web fonts, and window load state
-    const allImages = Array.from(document.querySelectorAll('img')).filter((img) => {
+    // Collect only critical above-the-fold assets: eager images, hero photo, web fonts, and DOM readiness
+    const criticalImages = Array.from(document.querySelectorAll('img')).filter((img) => {
       const src = img.getAttribute('src');
-      return Boolean(src && src.trim().length > 0);
+      if (!src || src.trim().length === 0) return false;
+      const isLazy = img.getAttribute('loading') === 'lazy';
+      return !isLazy;
     });
 
-    // Total tasks = images + fonts + window load
-    const totalTasks = allImages.length + 2;
+    // Total tasks = critical images + fonts + window load
+    const totalTasks = Math.max(1, criticalImages.length + 2);
     let completedTasks = 0;
 
     function markTaskComplete() {
@@ -167,8 +169,8 @@
       animateToTarget(ratio);
     }
 
-    // 1. Track each image
-    allImages.forEach((img) => {
+    // 1. Track critical images
+    criticalImages.forEach((img) => {
       if (img.complete) {
         markTaskComplete();
       } else {
@@ -216,7 +218,7 @@
         completedTasks = totalTasks;
         animateToTarget(100);
       }
-    }, 4500);
+    }, 1800);
   }
 
   window.Portfolio.preloader = {

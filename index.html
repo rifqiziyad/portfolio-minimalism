@@ -16,11 +16,32 @@
   <!-- Google Fonts: Syne (Headline) + Inter (Body) + Space Grotesk (Labels) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;700;800&display=swap">
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet">
+  </noscript>
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Modular Stylesheets (Loaded in Parallel - Eliminates @import Chaining) -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/preloader.css">
+  <link rel="stylesheet" href="css/cursor.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="stylesheet" href="css/portfolio-mobile.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/career.css">
+  <link rel="stylesheet" href="css/skills.css">
+  <link rel="stylesheet" href="css/education.css">
+  <link rel="stylesheet" href="css/contact.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 
 <body>
@@ -87,7 +108,7 @@
           <div class="hero-image-wrapper" id="heroImageWrapper">
             <div class="hero-image-box" id="heroImageBox">
               <div class="image-inner">
-                <img src="assets/my-photo.webp" alt="Rifqi Ziyad Imtinan" class="profile-img" id="heroProfileImg">
+                <img src="assets/my-photo.webp" alt="Rifqi Ziyad Imtinan" class="profile-img" id="heroProfileImg" width="1000" height="962" fetchpriority="high" loading="eager">
                 <div class="image-overlay-scanline"></div>
               </div>
               <div class="image-caption">
@@ -313,7 +334,7 @@
 
       <div class="carousel-slide-viewport" id="carouselViewport">
         <div class="carousel-slide-card" id="carouselSlideCard">
-          <img src="" alt="Portfolio Showcase" class="carousel-main-img" id="carouselMainImg">
+          <img src="" alt="Portfolio Showcase" class="carousel-main-img" id="carouselMainImg" width="1200" height="800" loading="lazy">
         </div>
       </div>
 
