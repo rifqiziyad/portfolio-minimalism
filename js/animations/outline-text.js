@@ -22,46 +22,24 @@
       const isProjectSection = parent.id === 'project' || parent.classList.contains('project-showcase-section');
 
       if (isProjectSection) {
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-          // On mobile, the project section scrolls naturally without sticky pinning.
-          // Trigger against the entire section so parallax travel matches Career, Skills, etc.
-          const speed = parseFloat(text.getAttribute('data-parallax')) || 0.18;
-          gsap.fromTo(
-            text,
-            { y: 0 },
-            {
-              y: () => parent.offsetHeight * speed,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: parent,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 0.8,
-                invalidateOnRefresh: true
-              }
+        // Dedicated parallax for Project header area: settles directly behind 'PROJECT' title across desktop & mobile
+        const headerArea = parent.querySelector('.project-header-area') || parent;
+        const speed = parseFloat(text.getAttribute('data-parallax')) || 0.18;
+        gsap.fromTo(
+          text,
+          { y: 0 },
+          {
+            y: () => headerArea.offsetHeight * speed,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: headerArea,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.8,
+              invalidateOnRefresh: true
             }
-          );
-        } else {
-          // Dedicated parallax for Project header area: settles directly behind 'PROJECT' title like other sections
-          const headerArea = parent.querySelector('.project-header-area') || parent;
-          const speed = parseFloat(text.getAttribute('data-parallax')) || 0.18;
-          gsap.fromTo(
-            text,
-            { y: 0 },
-            {
-              y: () => headerArea.offsetHeight * speed,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: headerArea,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: 0.8,
-                invalidateOnRefresh: true
-              }
-            }
-          );
-        }
+          }
+        );
       } else {
         const speed = parseFloat(text.getAttribute('data-parallax')) || 0.2;
 

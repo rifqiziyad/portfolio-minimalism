@@ -9,6 +9,11 @@
     padding: clamp(3.5rem, 8vw, 5rem) 0 clamp(1.25rem, 3.5vw, 2rem);
   }
 
+  .project-header-area .bg-outline-text {
+    top: clamp(0.5rem, 2vw, 1.5rem);
+    left: -2vw;
+  }
+
   /* Release 100vh lock so user can scroll vertically through the page naturally */
   .project-sticky-stage {
     position: relative;
