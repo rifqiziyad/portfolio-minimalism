@@ -1,4 +1,11 @@
 /* ─── FULL-SCREEN LOADING OVERLAY ─── */
+/* Wide geometric fallback matching Syne's proportions to prevent narrow FOUT on initial render */
+@font-face {
+  font-family: 'SyneFallback';
+  src: local('Arial Black'), local('Impact'), local('sans-serif');
+  size-adjust: 135%;
+}
+
 .loading-overlay {
   position: fixed;
   top: 0;

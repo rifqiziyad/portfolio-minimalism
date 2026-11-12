@@ -19,7 +19,7 @@
   --border-strong: rgba(255, 255, 255, 0.3);
   --border-accent: rgba(255, 69, 0, 0.6);
 
-  --font-display: 'Syne', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Syne', 'SyneFallback', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'Space Grotesk', monospace;
 
