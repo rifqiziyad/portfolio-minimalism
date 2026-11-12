@@ -49,6 +49,16 @@
       <div class="loading-percentage" id="loadingPercentage">0%</div>
     </div>
   </div>
+  <script>
+    (function () {
+      try {
+        var title = document.getElementById('loadingTitle');
+        if (title && document.fonts && document.fonts.check && document.fonts.check('800 1rem Syne')) {
+          title.classList.add('is-syne-loaded');
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- Custom Minimal Cursor Dot -->
   <div id="cursor-dot" aria-hidden="true"></div>

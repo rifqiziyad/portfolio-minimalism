@@ -53,6 +53,58 @@
 
     renderProgress(0);
 
+    // Smooth width transition from initial fallback width (~60vw) to loaded Syne width (~100vw)
+    let fontTransitionDone = false;
+
+    function applySyneWithTransition() {
+      if (fontTransitionDone || !titleEl) return;
+      fontTransitionDone = true;
+
+      if (titleEl.classList.contains('is-syne-loaded')) return;
+
+      const oldWidth = titleEl.offsetWidth;
+      titleEl.classList.add('is-syne-loaded');
+      const newWidth = titleEl.offsetWidth;
+
+      if (oldWidth > 0 && newWidth > 0 && oldWidth !== newWidth && typeof gsap !== 'undefined') {
+        const scaleRatio = Math.min(1, Math.max(0.4, oldWidth / newWidth));
+        // Instantly lock visual width to the initial fallback width, then smoothly expand to 100vw
+        gsap.fromTo(
+          titleEl,
+          {
+            scaleX: scaleRatio,
+            opacity: 0.7,
+            transformOrigin: '50% 50%'
+          },
+          {
+            scaleX: 1,
+            opacity: 1,
+            duration: 0.85,
+            ease: 'power3.out',
+            clearProps: 'scaleX,opacity'
+          }
+        );
+      }
+    }
+
+    if (document.fonts) {
+      if (typeof document.fonts.check === 'function' && document.fonts.check('800 1rem Syne')) {
+        titleEl.classList.add('is-syne-loaded');
+        fontTransitionDone = true;
+      } else {
+        if (typeof document.fonts.load === 'function') {
+          document.fonts.load('800 1rem Syne').then(applySyneWithTransition).catch(applySyneWithTransition);
+        }
+        if (document.fonts.ready) {
+          document.fonts.ready.then(applySyneWithTransition).catch(applySyneWithTransition);
+        }
+        setTimeout(applySyneWithTransition, 800);
+      }
+    } else {
+      titleEl.classList.add('is-syne-loaded');
+      fontTransitionDone = true;
+    }
+
     function unlockScroll() {
       document.documentElement.style.overflow = '';
       const currentLenis =
@@ -69,6 +121,7 @@
       isExiting = true;
       active = false;
 
+      applySyneWithTransition();
       renderProgress(100);
       unlockScroll();
 
@@ -188,12 +241,15 @@
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready
         .then(() => {
+          applySyneWithTransition();
           markTaskComplete();
         })
         .catch(() => {
+          applySyneWithTransition();
           markTaskComplete();
         });
     } else {
+      applySyneWithTransition();
       markTaskComplete();
     }
 
