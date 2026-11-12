@@ -38,6 +38,8 @@
   .project-vline-right {
     left: 92% !important;
     opacity: 1 !important;
+    transform-origin: top center;
+    will-change: transform;
   }
 
   .project-grid-hline {
@@ -58,6 +60,7 @@
     z-index: 5;
     touch-action: pan-y;
     cursor: grab;
+    will-change: transform;
   }
 
   .project-title-layer {
@@ -93,6 +96,7 @@
     -webkit-clip-path: none !important;
     touch-action: pan-y;
     cursor: grab;
+    will-change: transform;
   }
 
   .project-image-viewport:active {

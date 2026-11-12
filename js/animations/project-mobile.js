@@ -51,6 +51,9 @@
 
     const playhead = { f: 0 };
     let snapTween = null;
+    let entranceTrigger = null;
+    let entranceTween = null;
+    let hasCompletedEntrance = false;
     let suppressNextClick = false;
     let suppressClickTimer = null;
 
@@ -78,7 +81,9 @@
       if (imageViewport) {
         imageViewport.style.clipPath = 'none';
         imageViewport.style.webkitClipPath = 'none';
-        imageViewport.style.transform = '';
+        if (hasCompletedEntrance) {
+          imageViewport.style.transform = '';
+        }
       }
       if (titleBand) {
         titleBand.style.transform = '';
@@ -90,10 +95,12 @@
       const trackX = spotlightLeftPx - f * colWidthPx;
       const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
 
-      trackDim.style.transform = trackTransform;
-      trackDim.style.opacity = '1';
-      trackLit.style.transform = trackTransform;
-      trackLit.style.opacity = '1';
+      if (hasCompletedEntrance) {
+        trackDim.style.transform = trackTransform;
+        trackDim.style.opacity = '1';
+        trackLit.style.transform = trackTransform;
+        trackLit.style.opacity = '1';
+      }
 
       // 3. Horizontal Carousel Slides with Desktop-Parallax (Zoom & Pan)
       for (let i = 0; i < slideFrames.length; i++) {
@@ -200,6 +207,30 @@
       if (snapTween) {
         snapTween.kill();
         snapTween = null;
+      }
+      if (entranceTween) {
+        entranceTween.kill();
+        entranceTween = null;
+      }
+      if (entranceTrigger) {
+        entranceTrigger.kill();
+        entranceTrigger = null;
+      }
+      if (!hasCompletedEntrance) {
+        hasCompletedEntrance = true;
+        if (vlineRight) gsap.set(vlineRight, { clearProps: 'transform' });
+        if (imageViewport) gsap.set(imageViewport, { clearProps: 'transform' });
+        if (slideImgs[0]) gsap.set(slideImgs[0], { clearProps: 'transform' });
+        gsap.set([trackDim, trackLit], { clearProps: 'x' });
+        const infoInner = section.querySelector('#projectInfoInner');
+        if (infoInner) {
+          const inners = infoInner.querySelectorAll('.text-line-inner');
+          if (inners.length) {
+            gsap.set(inners, { yPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
+          }
+        }
+        playhead.f = Math.max(0, playhead.f);
+        renderMobileSlide(playhead.f);
       }
       isPointerDown = true;
       startX = clientX;
@@ -365,13 +396,176 @@
 
     window.addEventListener('resize', onResize, { passive: true });
 
-    // Initial render at project 0
-    renderMobileSlide(0);
+    // ─── Viewport Scroll Entry Choreography ───
+    function initMobileEntrance() {
+      if (typeof ScrollTrigger === 'undefined' || typeof gsap === 'undefined') {
+        renderMobileSlide(0);
+        hasCompletedEntrance = true;
+        return;
+      }
+
+      const stageEl = section.querySelector('.project-sticky-stage') || section;
+      const stageRect = stageEl.getBoundingClientRect();
+      const isAlreadyInView = stageRect.top < window.innerHeight * 0.75 && stageRect.bottom > 0;
+
+      if (isAlreadyInView) {
+        hasCompletedEntrance = true;
+        renderMobileSlide(0);
+        if (vlineRight) {
+          vlineRight.style.transform = '';
+        }
+        if (imageViewport) {
+          imageViewport.style.transform = '';
+        }
+        return;
+      }
+
+      // Initial resting DOM state before entrance
+      renderMobileSlide(0);
+
+      const vw = window.innerWidth;
+      const spotlightLeftPx = vw * LEFT_COL_RATIO;
+
+      // 1. Both vlineRight and imageViewport start from OUTSIDE the right of the screen (luar kanan layar)
+      // vlineRight resting position is at 92vw; shifting by +12vw puts it at 104vw (outside screen)
+      const vlineStartX = vw * 0.12;
+      if (vlineRight) {
+        gsap.set(vlineRight, { x: vlineStartX, opacity: 1 });
+      }
+
+      // imageViewport resting position is centered (left 8vw, right 92vw); shifting by +vw puts left edge at 108vw (completely outside screen)
+      const vpStartX = vw;
+      if (imageViewport) {
+        gsap.set(imageViewport, { x: vpStartX });
+      }
+
+      if (slideImgs[0]) {
+        gsap.set(slideImgs[0], { scale: 1.15, xPercent: -15 });
+      }
+
+      // Title band tracks start outside the right of the screen in lockstep
+      const titleStartX = vw * 1.02;
+      gsap.set([trackDim, trackLit], { x: titleStartX, opacity: 1 });
+
+      // Info panel lines start masked below
+      const infoInner = section.querySelector('#projectInfoInner');
+      if (infoInner) {
+        const inners = infoInner.querySelectorAll('.text-line-inner');
+        if (inners.length) {
+          gsap.set(inners, { yPercent: 110, opacity: 0 });
+        }
+      }
+
+      entranceTrigger = ScrollTrigger.create({
+        trigger: stageEl,
+        start: 'top 78%',
+        once: true,
+        onEnter: () => {
+          if (hasCompletedEntrance) return;
+
+          entranceTween = gsap.timeline({
+            onComplete: () => {
+              hasCompletedEntrance = true;
+              entranceTween = null;
+              if (vlineRight) {
+                gsap.set(vlineRight, { clearProps: 'transform' });
+              }
+              if (imageViewport) {
+                gsap.set(imageViewport, { clearProps: 'transform' });
+              }
+              if (slideImgs[0]) {
+                gsap.set(slideImgs[0], { clearProps: 'transform' });
+              }
+              gsap.set([trackDim, trackLit], { clearProps: 'x' });
+              renderMobileSlide(0);
+            }
+          });
+
+          // 1. Right vertical hairline glides in from outside right into 92%
+          if (vlineRight) {
+            entranceTween.to(
+              vlineRight,
+              {
+                x: 0,
+                duration: 0.95,
+                ease: 'power3.out'
+              },
+              0
+            );
+          }
+
+          // 2. Project image viewport glides in from outside right to center (8%)
+          if (imageViewport) {
+            entranceTween.to(
+              imageViewport,
+              {
+                x: 0,
+                duration: 1.0,
+                ease: 'power3.out'
+              },
+              0.03
+            );
+          }
+
+          if (slideImgs[0]) {
+            entranceTween.to(
+              slideImgs[0],
+              {
+                scale: 1.0,
+                xPercent: 0,
+                duration: 1.0,
+                ease: 'power3.out'
+              },
+              0.03
+            );
+          }
+
+          // 3. Title band glides in from outside right into the spotlight
+          entranceTween.to(
+            [trackDim, trackLit],
+            {
+              x: spotlightLeftPx,
+              duration: 1.0,
+              ease: 'power3.out'
+            },
+            0.03
+          );
+
+          // 4. Info panel lines cascade reveal as image settles
+          if (infoInner) {
+            const inners = infoInner.querySelectorAll('.text-line-inner');
+            if (inners.length) {
+              entranceTween.to(
+                inners,
+                {
+                  yPercent: 0,
+                  opacity: 1,
+                  duration: 0.48,
+                  stagger: 0.05,
+                  ease: 'power3.out'
+                },
+                0.45
+              );
+            }
+          }
+        }
+      });
+    }
+
+    initMobileEntrance();
 
     cleanupMobileCarouselController = () => {
       if (snapTween) {
         snapTween.kill();
         snapTween = null;
+      }
+      if (entranceTween) {
+        entranceTween.kill();
+        entranceTween = null;
+      }
+      if (entranceTrigger) {
+        entranceTrigger.kill();
+        entranceTrigger = null;
       }
       if (suppressClickTimer) {
         clearTimeout(suppressClickTimer);
@@ -401,6 +595,14 @@
       if (vlineRight) {
         vlineRight.style.left = '';
         vlineRight.style.opacity = '';
+        vlineRight.style.transform = '';
+      }
+      const infoInner = section.querySelector('#projectInfoInner');
+      if (infoInner) {
+        const inners = infoInner.querySelectorAll('.text-line-inner');
+        if (inners.length) {
+          gsap.set(inners, { yPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
+        }
       }
       if (layerLit) {
         layerLit.style.clipPath = '';
@@ -410,6 +612,12 @@
         imageViewport.style.clipPath = '';
         imageViewport.style.webkitClipPath = '';
         imageViewport.style.transform = '';
+      }
+      if (trackDim) {
+        trackDim.style.transform = '';
+      }
+      if (trackLit) {
+        trackLit.style.transform = '';
       }
       slideFrames.forEach((frame, i) => {
         frame.style.display = '';
