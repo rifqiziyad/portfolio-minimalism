@@ -99,7 +99,7 @@
         <div class="project-grid-overlay" aria-hidden="true">
           <div class="project-grid-vline project-vline-center" id="projectVlineCenter"></div>
           <div class="project-grid-vline project-vline-right" id="projectVlineRight"></div>
-          <div class="project-grid-hline"></div>
+          <div class="project-grid-hline" id="projectGridHline"></div>
         </div>
 
         <!-- Horizontal Sliding Title Band (Above 32% Midline: Full Stage Width with Dim Overflow & Lit Current Title) -->
