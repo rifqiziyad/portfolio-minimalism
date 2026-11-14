@@ -94,8 +94,24 @@
   }
   </script>
 
-  <!-- Bundled Modular Stylesheet -->
-  <link rel="stylesheet" href="css/bundle.min.css?v=f1e4ad01">
+  <!-- BUILD:CSS_START -->
+  <!-- Modular Stylesheets (Development Mode — replaced with build/css/bundle.min.css on build) -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/preloader.css">
+  <link rel="stylesheet" href="css/cursor.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="stylesheet" href="css/portfolio-mobile.css">
+  <link rel="stylesheet" href="css/carousel.css">
+  <link rel="stylesheet" href="css/career.css">
+  <link rel="stylesheet" href="css/skills.css">
+  <link rel="stylesheet" href="css/education.css">
+  <link rel="stylesheet" href="css/contact.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <!-- BUILD:CSS_END -->
 </head>
 
 <body>
@@ -474,11 +490,31 @@
     integrity="sha384-eD5ubmuCcvTdCADWuSchJYE7wcj2nzNr0itbrh6w/KJyBiltSZ8w3VFRBSWu5YQ8"
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-  <!-- Portfolio Data (JSON-structured data module) -->
+  <!-- BUILD:JS_START -->
+  <!-- Portfolio Data & Modular Scripts (Development Mode — replaced with bundled & split chunks on build) -->
   <script defer src="data/portfolio-data.js"></script>
-
-  <!-- Bundled Application Script (21 Modules — works on both file:// and HTTP) -->
-  <script defer src="js/bundle.min.js?v=86aecb8e"></script>
+  <script defer src="js/core/scroll.js"></script>
+  <script defer src="js/core/renderer.js"></script>
+  <script defer src="js/renderers/portfolio.js"></script>
+  <script defer src="js/renderers/career.js"></script>
+  <script defer src="js/renderers/skills.js"></script>
+  <script defer src="js/renderers/education.js"></script>
+  <script defer src="js/components/preloader.js"></script>
+  <script defer src="js/components/crystal-backgrounds.js"></script>
+  <script defer src="js/components/cursor.js"></script>
+  <script defer src="js/components/navigation.js"></script>
+  <script defer src="js/components/carousel.js"></script>
+  <script defer src="js/animations/hero.js"></script>
+  <script defer src="js/animations/project-info.js"></script>
+  <script defer src="js/animations/project-showcase.js"></script>
+  <script defer src="js/animations/project-mobile.js"></script>
+  <script defer src="js/animations/outline-text.js"></script>
+  <script defer src="js/animations/scroll-reveal.js"></script>
+  <script defer src="js/animations/parallax.js"></script>
+  <script defer src="js/animations/skills.js"></script>
+  <script defer src="js/animations/contact.js"></script>
+  <script defer src="js/main.js"></script>
+  <!-- BUILD:JS_END -->
 </body>
 
 </html>
