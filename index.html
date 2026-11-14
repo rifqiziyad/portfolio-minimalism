@@ -37,6 +37,7 @@
     @font-face{font-family:'Syne';font-style:normal;font-weight:600 800;font-display:swap;src:url('assets/fonts/syne-latin.woff2') format('woff2')}
     :root{--bg-main:#070707;--text-main:#fafafa;--text-muted:#8e8e96;--font-heading:'Syne',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'Space Grotesk',monospace}
     html,body{margin:0;padding:0;background:#070707;color:#fafafa;font-family:var(--font-body)}
+    .loading-overlay{position:fixed;inset:0;width:100vw;height:100vh;background:#000;z-index:10000;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
   </style>
 
@@ -98,6 +99,14 @@
 </head>
 
 <body>
+  <!-- Full-Screen Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay" aria-live="polite" aria-label="Loading">
+    <div class="loading-content" id="loadingContent">
+      <div class="loading-outline-title" id="loadingTitle" data-text="PLEASE WAIT">PLEASE WAIT</div>
+      <div class="loading-percentage" id="loadingPercentage">0%</div>
+    </div>
+  </div>
+
   <!-- Shared SVG Icon Sprite -->
   <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
     <defs>
@@ -469,7 +478,7 @@
   <script defer src="data/portfolio-data.js"></script>
 
   <!-- Bundled Application Script (21 Modules — works on both file:// and HTTP) -->
-  <script defer src="js/bundle.min.js?v=56ec92d4"></script>
+  <script defer src="js/bundle.min.js?v=c4b012a1"></script>
 </body>
 
 </html>

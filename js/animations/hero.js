@@ -22,24 +22,20 @@
     const heroSection = document.getElementById('hero');
     if (!heroSection) return;
 
-    const reducedMotion =
+    const isReduced =
       window.Portfolio.utils &&
       typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
       window.Portfolio.utils.prefersReducedMotion();
 
-    if (reducedMotion) {
+    if (isReduced) {
       activeIntroTl = null;
-      gsap.set('#heroImageWrapper, #heroImageBox, #heroFrontend, #heroDeveloper, #heroFrontendInner, #heroDeveloperInner', {
-        opacity: 1,
-        clearProps: 'transform,opacity'
-      });
+      gsap.set('#heroImageBox', { scale: 1.0, opacity: 1, clearProps: 'transform,opacity' });
+      gsap.set('#heroFrontendInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
+      gsap.set('#heroDeveloperInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
       return;
     }
 
     // 1. SCROLL PARALLAX: ACTIVE IMMEDIATELY FROM TOP SCROLL (scrollY = 0)
-    // Controls the outer elements (#heroFrontend, #heroDeveloper, #heroImageWrapper)
-
-    // FRONTEND text translates LEFT as you scroll down
     gsap.fromTo(
       '#heroFrontend',
       { xPercent: 30 },
@@ -56,7 +52,6 @@
       }
     );
 
-    // DEVELOPER text translates RIGHT as you scroll down
     gsap.fromTo(
       '#heroDeveloper',
       { xPercent: -30 },
@@ -73,7 +68,6 @@
       }
     );
 
-    // Central Portrait Photo scales up smoothly as you scroll past
     gsap.fromTo(
       '#heroImageWrapper',
       {
@@ -103,52 +97,55 @@
     }
 
     // 2. ENTRANCE TRANSITION: ONLY WHEN PAGE IS FIRST OPENED AT THE TOP
-    // Operates on the inner elements (#heroFrontendInner, #heroDeveloperInner, #heroImageBox)
-    // so it never interferes with or delays the scroll parallax!
     const isAtTop = window.scrollY < 80;
 
     if (isAtTop && !skipIntro) {
-      // Transform-only entrance without hiding LCP hero image (opacity remains 1 at first paint)
-      gsap.set('#heroImageBox', { scale: 1.08, opacity: 1 });
-      gsap.set('#heroFrontendInner', { xPercent: 24, opacity: 1 });
-      gsap.set('#heroDeveloperInner', { xPercent: -24, opacity: 1 });
+      gsap.set('#heroImageBox', { scale: 1.45, opacity: 0 });
+      gsap.set('#heroFrontendInner', { xPercent: 90, opacity: 0 });
+      gsap.set('#heroDeveloperInner', { xPercent: -90, opacity: 0 });
+
+      const isPreloaderActive =
+        window.Portfolio.preloader && typeof window.Portfolio.preloader.isActive === 'function'
+          ? window.Portfolio.preloader.isActive()
+          : false;
 
       const introTl = gsap.timeline({
-        paused: false,
-        defaults: { ease: 'expo.out' }
+        paused: isPreloaderActive,
+        defaults: { ease: 'power3.out' },
+        delay: 0.1
       });
       activeIntroTl = introTl;
 
-      // 1. Central photo settles smoothly from 1.08x to 1.0x
+      // 1. Central photo zooms down from large (1.45x) to normal scale (1.0)
       introTl.to('#heroImageBox', {
         scale: 1.0,
-        duration: 0.85,
-        ease: 'expo.out',
-        clearProps: 'transform'
+        opacity: 1,
+        duration: 1.4,
+        ease: 'expo.out'
       });
 
-      // 2. FRONTEND text glides in from RIGHT into its resting position
+      // 2. FRONTEND text slides in from RIGHT into its resting position
       introTl.to(
         '#heroFrontendInner',
         {
           xPercent: 0,
-          duration: 0.85,
-          ease: 'power3.out',
-          clearProps: 'transform'
+          opacity: 1,
+          duration: 1.3,
+          ease: 'power3.out'
         },
-        0
+        '<0.08'
       );
 
-      // 3. DEVELOPER text glides in from LEFT into its resting position
+      // 3. DEVELOPER text slides in from LEFT into its resting position
       introTl.to(
         '#heroDeveloperInner',
         {
           xPercent: 0,
-          duration: 0.85,
-          ease: 'power3.out',
-          clearProps: 'transform'
+          opacity: 1,
+          duration: 1.3,
+          ease: 'power3.out'
         },
-        0
+        '<'
       );
 
       // If user scrolls during the opening intro, gently speed up the intro completion
@@ -171,7 +168,6 @@
       }
     } else {
       activeIntroTl = null;
-      // If already scrolled down or skipIntro, ensure inner elements are fully visible and neutral
       gsap.set('#heroImageBox', { scale: 1.0, opacity: 1, clearProps: 'transform,opacity' });
       gsap.set('#heroFrontendInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });
       gsap.set('#heroDeveloperInner', { xPercent: 0, opacity: 1, clearProps: 'transform,opacity' });

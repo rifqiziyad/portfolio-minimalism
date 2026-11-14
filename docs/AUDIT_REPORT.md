@@ -21,7 +21,7 @@
 ## 1. [HIGH PRIORITY] — [DONE]
 
 > Status: Seluruh temuan `[HIGH-1]` sampai `[HIGH-5]` telah diimplementasikan (`[DONE]`).
-> - `[DONE]` **[HIGH-1]** — Preloader blocking & hidden hero LCP dihilangkan; hero `#heroImageBox` & `#heroProfileImg` tampil langsung (`opacity: 1`).
+> - `[DONE]` **[HIGH-1]** — *(Diperbarui sesuai desain awal atas permintaan user)*: `#loadingOverlay` (`PLEASE WAIT` `0%–100%`) dan koreografi entrance Hero dipulihkan sebagai bagian dari identitas visual situs, dengan kecepatan pemuatan lebih optimal berkat self-hosted font `Syne` (`34 KB`), foto Hero teroptimasi (`53–68 KB`), dan bundling `esbuild`. Tetap menonaktifkan overlay otomatis pada mode `prefers-reduced-motion`.
 > - `[DONE]` **[HIGH-2]** — Font di-self-host (`assets/fonts/*.woff2` + `css/fonts.css`), Critical CSS inline + bundle `css/bundle.min.css` & `js/bundle.min.js` (`scripts/build-assets.mjs`), plus `defer` + `sha384` SRI pada CDN GSAP/Lenis.
 > - `[DONE]` **[HIGH-3]** — DOM read/write batching pada `formatTextLinesBatch()` & `fitSkillTextsToTriangles()`, cached metrics pada Scroll-Spy & showcase desktop, `transform: translate3d(...)` untuk `.project-vline-right`, dan debounce `150ms` listener `resize`.
 > - `[DONE]` **[HIGH-4]** — Single `<h1 class="sr-only">`, canonical URL, Open Graph, Twitter Card, JSON-LD, pre-rendered fallback HTML (`#careerTable`, `#educationTable`, `<noscript>` di `#portfolioList`), `robots.txt`, dan `sitemap.xml`.
