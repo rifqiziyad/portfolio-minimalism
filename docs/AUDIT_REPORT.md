@@ -25,7 +25,7 @@
 > - `[DONE]` **[HIGH-2]** — Font di-self-host (`assets/fonts/*.woff2` + `css/fonts.css`), Critical CSS inline + bundle `css/bundle.min.css` & `js/bundle.min.js` (`scripts/build-assets.mjs`), plus `defer` + `sha384` SRI pada CDN GSAP/Lenis.
 > - `[DONE]` **[HIGH-3]** — DOM read/write batching pada `formatTextLinesBatch()` & `fitSkillTextsToTriangles()`, cached metrics pada Scroll-Spy & showcase desktop, `transform: translate3d(...)` untuk `.project-vline-right`, dan debounce `150ms` listener `resize`.
 > - `[DONE]` **[HIGH-4]** — Single `<h1 class="sr-only">`, canonical URL, Open Graph, Twitter Card, JSON-LD, pre-rendered fallback HTML (`#careerTable`, `#educationTable`, `<noscript>` di `#portfolioList`), `robots.txt`, dan `sitemap.xml`.
-> - `[DONE]` **[HIGH-5]** — Dukungan `prefers-reduced-motion`, penghapusan `cursor: none !important` global, perbaikan kontras WCAG AA, `:focus-visible`, focus trap + `aria-hidden` + `inert` di modal carousel & mobile drawer, serta akses keyboard + `aria-pressed` di shard SVG Skills.
+> - `[DONE]` **[HIGH-5]** — Dukungan `prefers-reduced-motion`, perbaikan kontras WCAG AA, `:focus-visible`, focus trap + `aria-hidden` + `inert` di modal carousel & mobile drawer, serta akses keyboard + `aria-pressed` di shard SVG Skills *(catatan: `cursor: none !important` di `css/cursor.css` dipertahankan sesuai desain awal atas permintaan user)*.
 
 Temuan pada kelompok ini berdampak langsung terhadap metrik Core Web Vitals (**LCP** dan **INP**), keterindeksan **SEO**, serta hambatan akses (**A11y**) bagi pengguna keyboard/screen reader.
 

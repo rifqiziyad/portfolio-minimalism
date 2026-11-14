@@ -312,6 +312,11 @@ line-height: 1;
 color: #ffffff;
 font-variant-numeric: tabular-nums;
 }
+@media (pointer: fine) {
+html, body, *, *::before, *::after, a, button, input, select, textarea {
+cursor: none !important;
+}
+}
 #cursor-dot {
 position: fixed;
 top: 0;
