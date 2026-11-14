@@ -128,6 +128,8 @@
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
       const entryT = f < 0 ? Math.max(0, Math.min(1, (f + entrySpan) / entrySpan)) : 1;
+      const entryHalfT = (100 - (baseRightColPct - colWidthPct * 0.5)) / (100 - leftColPct);
+      const linesEntryT = f < 0 ? Math.max(0, Math.min(1, entryT / entryHalfT)) : 1;
       const title0ScreenPct = f < 0 ? 100 - entryT * (100 - leftColPct) : leftColPct;
 
       let rightLinePct = baseRightColPct;
@@ -154,14 +156,16 @@
         vlineRight.style.opacity = '1';
       }
 
+      let vlineCenterX = 0;
       if (vlineCenter) {
         const stageW = cachedStageWidth || vw;
-        const vlineCenterX = -(1 - entryT) * (((leftColPct + 2) / 100) * stageW);
+        vlineCenterX = -(1 - linesEntryT) * (((leftColPct + 2) / 100) * stageW);
         vlineCenter.style.transform = vlineCenterX < -0.1 ? `translate3d(${vlineCenterX.toFixed(2)}px, 0, 0)` : '';
       }
 
+      let hlineY = 0;
       if (hline) {
-        const hlineY = -(1 - entryT) * (0.32 * (cachedStageHeight || window.innerHeight));
+        hlineY = -(1 - linesEntryT) * (0.32 * (cachedStageHeight || window.innerHeight));
         hline.style.transform = hlineY < -0.1 ? `translate3d(0, ${hlineY.toFixed(2)}px, 0)` : '';
       }
 
@@ -301,7 +305,7 @@
 
       if (f < 0) {
         const revealProgress = Math.max(0, Math.min(1, (baseRightColPct - title0ScreenPct) / colWidthPct));
-        stageAlpha = Math.min(1, revealProgress * 1.6);
+        stageAlpha = revealProgress < 0.5 ? 0 : Math.min(1, (revealProgress - 0.5) / 0.35);
       } else if (f > total - 1) {
         const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
         const infoExitRatio = Math.min(1, exitRatio / (pinnedExitSpan / totalExitSpan));
@@ -309,7 +313,8 @@
       }
 
       if (projectInfoCtrl) {
-        projectInfoCtrl.setInfoOpacity(stageAlpha, cushionY > 0.2 ? cushionY * 0.75 : 0);
+        const infoOffsetY = hlineY < -0.1 ? hlineY : cushionY > 0.2 ? cushionY * 0.75 : 0;
+        projectInfoCtrl.setInfoOpacity(stageAlpha, infoOffsetY, vlineCenterX);
         projectInfoCtrl.updateActiveProjectInfo(nearestIdx);
       }
     }

@@ -456,7 +456,7 @@
           scrollTrigger: {
             trigger: stageEl,
             start: 'top 95%',
-            end: 'top 52%',
+            end: 'top 74%',
             scrub: 0.5,
             invalidateOnRefresh: true
           }
@@ -607,7 +607,7 @@
                   stagger: 0.05,
                   ease: 'power3.out'
                 },
-                0.45
+                0.24
               );
             }
           }

@@ -144,10 +144,14 @@
       }
     }
 
-    function setInfoOpacity(alpha, cushionY) {
+    function setInfoOpacity(alpha, offsetY, offsetX = 0) {
       if (infoPanel) {
         infoPanel.style.opacity = alpha.toFixed(2);
-        infoPanel.style.transform = cushionY && cushionY > 0.2 ? `translate3d(0, ${cushionY.toFixed(1)}px, 0)` : '';
+        infoPanel.style.pointerEvents = alpha < 0.05 ? 'none' : '';
+        const tx = Math.abs(offsetX) > 0.1 ? offsetX : 0;
+        const ty = Math.abs(offsetY) > 0.2 ? offsetY : 0;
+        infoPanel.style.transform =
+          tx !== 0 || ty !== 0 ? `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(1)}px, 0)` : '';
       }
       const elBottomRight = section.querySelector('.project-bottom-right');
       if (elBottomRight) {
@@ -168,6 +172,7 @@
       }
       if (infoPanel) {
         infoPanel.style.opacity = '';
+        infoPanel.style.pointerEvents = '';
         infoPanel.style.transform = '';
       }
       if (infoInner) {
