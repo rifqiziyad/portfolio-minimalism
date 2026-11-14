@@ -120,7 +120,7 @@
 
 @media (max-width: 768px) {
   .section-skills {
-    padding-bottom: 2rem;
+    padding-bottom: 3rem;
   }
 
   .skills-container {
@@ -129,31 +129,44 @@
   }
 
   .skills-crystal-stage {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    aspect-ratio: auto;
+    min-height: 116vw;
+    padding-top: 0.75rem;
+    padding-bottom: 1.25rem;
     overflow: visible;
   }
 
   .skills-crystal-svg {
-    width: 138%;
-    max-width: 560px;
-    margin-left: -19%;
-    margin-right: -19%;
+    flex-shrink: 0;
+    width: 130%;
+    max-width: 500px;
+    margin-left: 0;
+    margin-right: 0;
     rotate: -15deg;
   }
 }
 
 @media (max-width: 480px) {
+  .section-skills {
+    padding-bottom: 2.75rem;
+  }
+
   .skills-container {
     padding-left: 0.25rem;
     padding-right: 0.25rem;
   }
 
+  .skills-crystal-stage {
+    min-height: 120vw;
+    padding-top: 0.5rem;
+    padding-bottom: 1.25rem;
+  }
+
   .skills-crystal-svg {
-    width: 152%;
-    max-width: 580px;
-    margin-left: -26%;
-    margin-right: -26%;
+    width: 136%;
+    max-width: 500px;
+    margin-left: 0;
+    margin-right: 0;
     rotate: -15deg;
   }
 }
