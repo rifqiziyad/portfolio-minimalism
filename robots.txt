@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rifqiziyad.github.io/portfolio-minimalism/sitemap.xml

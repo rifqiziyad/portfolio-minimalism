@@ -13,7 +13,11 @@
 
   function fitSkillTextsToTriangles(stage) {
     if (!stage) return;
-    const shards = stage.querySelectorAll('.skill-tri-shard');
+    const shards = Array.from(stage.querySelectorAll('.skill-tri-shard'));
+    if (!shards.length) return;
+
+    // Pass 1 (Read-only): measure natural SVG text length for all shards in one pass
+    const measuredEntries = [];
     shards.forEach((el) => {
       const textEl = el.querySelector('.skill-tri-text');
       const textWrap = el.querySelector('.skill-tri-text-wrap');
@@ -22,13 +26,11 @@
 
       const pts = ptsData.split(';').map((pair) => pair.split(',').map(Number));
       if (pts.length !== 3) return;
-      const [p1, p2, p3] = pts;
 
       const angle = Number(el.dataset.angle) || 0;
       const safeSpan = Number(el.dataset.safeSpan) || 120;
-      let fontSize = parseFloat(textEl.getAttribute('font-size')) || Number(el.dataset.fontSize) || 11;
+      const baseFontSize = parseFloat(textEl.getAttribute('font-size')) || Number(el.dataset.fontSize) || 11;
 
-      // Real rendered SVG width in the browser (accounting for loaded 'Syne' font & letter-spacing)
       let measuredW = 0;
       try {
         measuredW = textEl.getComputedTextLength();
@@ -36,13 +38,44 @@
         measuredW = 0;
       }
 
-      if (measuredW > safeSpan && safeSpan > 20) {
-        fontSize = Math.max(8.5, Math.round((fontSize * (safeSpan / measuredW)) * 10) / 10);
-        textEl.setAttribute('font-size', fontSize + 'px');
-        try {
-          measuredW = textEl.getComputedTextLength();
-        } catch (e) {}
+      let nextFontSize = baseFontSize;
+      const needsResize = measuredW > safeSpan && safeSpan > 20;
+      if (needsResize) {
+        nextFontSize = Math.max(8.5, Math.round((baseFontSize * (safeSpan / measuredW)) * 10) / 10);
       }
+
+      measuredEntries.push({
+        el,
+        textEl,
+        textWrap,
+        pts,
+        angle,
+        fontSize: nextFontSize,
+        measuredW,
+        needsResize: needsResize && nextFontSize !== baseFontSize
+      });
+    });
+
+    // Pass 2 (Write font-size): batch attribute updates before re-reading
+    const resizedEntries = [];
+    measuredEntries.forEach((entry) => {
+      if (entry.needsResize) {
+        entry.textEl.setAttribute('font-size', entry.fontSize + 'px');
+        resizedEntries.push(entry);
+      }
+    });
+
+    // Pass 3 (Conditional Read): re-measure only resized entries
+    resizedEntries.forEach((entry) => {
+      try {
+        entry.measuredW = entry.textEl.getComputedTextLength();
+      } catch (e) {}
+    });
+
+    // Pass 4 (Compute & Write transforms): batch final SVG transforms and data attributes
+    measuredEntries.forEach((entry) => {
+      const { el, textEl, textWrap, pts, angle, fontSize, measuredW } = entry;
+      const [p1, p2, p3] = pts;
 
       const W = measuredW || (fontSize * (textEl.textContent.length * 0.94));
       const H = fontSize * 1.35;
@@ -146,16 +179,21 @@
     const svg = document.getElementById('skillsCrystalSvg');
     if (!stage || !skillsSection || !svg) return;
 
+    const reducedMotion =
+      window.Portfolio.utils &&
+      typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
+      window.Portfolio.utils.prefersReducedMotion();
+
     // Auto-fit label typography inside triangles (immediate + after Syne font loads)
     fitSkillTextsToTriangles(stage);
-    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready) {
+    if (typeof document !== 'undefined' && document.fonts && document.fonts.ready && document.fonts.status !== 'loaded') {
       document.fonts.ready.then(() => fitSkillTextsToTriangles(stage));
     }
 
     const shardEls = Array.from(stage.querySelectorAll('.skill-tri-shard'));
     if (!shardEls.length) return;
 
-    const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+    const hasGSAP = !reducedMotion && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
 
     // Exact #bgContactCrystal tier scatter vectors (scaled 2x to 1000x960 coordinate space)
     const TIER_SCATTER = {
@@ -375,6 +413,7 @@
 
       shardState.forEach((it) => {
         it.el.classList.remove('is-active');
+        it.el.setAttribute('aria-pressed', 'false');
         tweenShardTo(it, 0, 0, 1, 0, 0.52);
       });
     }
@@ -398,6 +437,20 @@
       clickScrollY = window.scrollY || window.pageYOffset || 0;
       stage.classList.add('has-active-shard');
 
+      // Highlight active shard & sync ARIA pressed state
+      shardState.forEach((it, idx) => {
+        const isCurrent = idx === clickedIndex;
+        it.el.classList.toggle('is-active', isCurrent);
+        it.el.setAttribute('aria-pressed', isCurrent ? 'true' : 'false');
+      });
+
+      if (reducedMotion) {
+        clickResetTimer = setTimeout(() => {
+          resetAllShardsTransform();
+        }, 2500);
+        return;
+      }
+
       // Adaptive scale: smaller shards scale up more (up to 1.55x) so small labels become easy to read
       const hoverScale = Math.max(1.35, Math.min(1.55, 1.62 - clicked.inradius / 180));
       // Counter-rotate by -angle so embedded skill text becomes strictly horizontal (0 deg)
@@ -407,15 +460,6 @@
 
       // Exact 2D vertices of the clicked triangle after scaling & rotating to horizontal (from its rest state)
       const clickedPoly = transformTriangle(clicked.pts, ox, oy, hoverScale, targetRot, 0, 0);
-
-      // Highlight active shard
-      shardState.forEach((it, idx) => {
-        if (idx === clickedIndex) {
-          it.el.classList.add('is-active');
-        } else {
-          it.el.classList.remove('is-active');
-        }
-      });
 
       // Animate clicked shard to x=0, y=0, scale=hoverScale, rot=targetRot around (ox, oy)
       tweenShardTo(clicked, 0, 0, hoverScale, targetRot, 0.44);
@@ -499,6 +543,18 @@
         it.hitEl.addEventListener('click', (e) => {
           e.stopPropagation();
           handleShardClick(idx);
+        });
+        it.el.addEventListener('focus', () => handleShardHoverEnter(idx));
+        it.el.addEventListener('blur', () => handleShardHoverLeave());
+        it.el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            handleShardClick(idx);
+          } else if (e.key === 'Escape' && activeClickIdx !== -1) {
+            e.preventDefault();
+            resetAllShardsTransform();
+          }
         });
       });
 

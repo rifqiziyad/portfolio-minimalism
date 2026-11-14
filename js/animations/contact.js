@@ -18,6 +18,15 @@
     const contactSection = document.getElementById('contact');
     if (!crystal || !contactSection) return;
 
+    if (
+      window.Portfolio.utils &&
+      typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
+      window.Portfolio.utils.prefersReducedMotion()
+    ) {
+      crystal.style.opacity = '0.75';
+      return;
+    }
+
     const svg = crystal.querySelector('.cyber-cluster-svg');
     const fractures = crystal.querySelectorAll('.outline-fracture');
 

@@ -10,9 +10,16 @@
 
   let lenisInstance = null;
 
+  function isReducedMotion() {
+    return (
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    );
+  }
+
   function initScroll() {
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
-    const hasLenis = typeof Lenis !== 'undefined';
+    const hasLenis = typeof Lenis !== 'undefined' && !isReducedMotion();
 
     if (hasGSAP) {
       gsap.registerPlugin(ScrollTrigger);
@@ -72,7 +79,7 @@
 
       window.scrollTo({
         top: offsetPosition,
-        behavior: 'smooth'
+        behavior: isReducedMotion() ? 'auto' : 'smooth'
       });
     }
   }
@@ -80,6 +87,7 @@
   window.Portfolio.scroll = {
     initScroll,
     getLenis,
-    scrollTo
+    scrollTo,
+    isReducedMotion
   };
 })(window, document);

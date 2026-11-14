@@ -271,6 +271,10 @@
 
         return `
           <g class="skill-shard skill-tri-shard"
+             role="button"
+             tabindex="0"
+             aria-label="Skill: ${item.skill.name}"
+             aria-pressed="false"
              data-index="${idx}"
              data-size="${item.skill.size}"
              data-name="${item.skill.name}"
@@ -320,6 +324,8 @@
            height="100%"
            class="skills-crystal-svg cyber-cluster-svg"
            id="skillsCrystalSvg"
+           role="region"
+           aria-label="Interactive Technical Skills Crystal"
            overflow="visible">
         <defs>
           <linearGradient id="skills-g-shard-orange-intense" x1="0%" y1="0%" x2="100%" y2="100%">

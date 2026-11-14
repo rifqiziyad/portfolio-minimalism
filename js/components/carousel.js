@@ -34,8 +34,27 @@
     let currentSlideIdx = 0;
     let activeSourceFrame = null;
     let activeParallaxState = null;
+    let lastFocusedElement = null;
     let isOpen = false;
     let isAnimating = false;
+
+    const backgroundContainers = [
+      document.getElementById('mainContent'),
+      document.getElementById('header'),
+      document.querySelector('.site-footer')
+    ].filter(Boolean);
+
+    function setBackgroundInert(isInert) {
+      backgroundContainers.forEach((el) => {
+        el.inert = Boolean(isInert);
+      });
+    }
+
+    function getFocusableModalElements() {
+      return Array.from(
+        modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+      ).filter((el) => !el.disabled && el.offsetParent !== null);
+    }
 
     // Helper: measure target bounding rect of #carouselSlideCard in its neutral centered state
     function getTargetRect(sourceFrame) {
@@ -295,12 +314,21 @@
       updateMeta(currentSlideIdx);
       renderThumbs();
 
-      // Lock background scroll without layout shift
+      // Lock background scroll without layout shift & isolate modal focus
+      lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       lockScroll();
+      setBackgroundInert(true);
 
+      modal.setAttribute('aria-hidden', 'false');
       modal.classList.add('is-active');
       isOpen = true;
       isAnimating = true;
+
+      requestAnimationFrame(() => {
+        if (closeBtn && typeof closeBtn.focus === 'function') {
+          closeBtn.focus({ preventScroll: true });
+        }
+      });
 
       // Animate modal open with FLIP from clicked portfolio thumbnail
       if (typeof gsap !== 'undefined') {
@@ -536,11 +564,19 @@
           gsap.set(slideCard, { clearProps: 'transform,opacity,visibility,clipPath,borderRadius' });
           gsap.set(mainImg, { clearProps: 'transform' });
           gsap.set(modal, { autoAlpha: 0 });
+          modal.setAttribute('aria-hidden', 'true');
           modal.classList.remove('is-active');
           activeSourceFrame = null;
           activeParallaxState = null;
           isAnimating = false;
           unlockScroll();
+          setBackgroundInert(false);
+
+          const focusTarget = lastFocusedElement || sourceFrame;
+          lastFocusedElement = null;
+          if (focusTarget && focusTarget.isConnected && typeof focusTarget.focus === 'function') {
+            focusTarget.focus({ preventScroll: true });
+          }
         };
 
         if (flip) {
@@ -604,11 +640,19 @@
         }
         modal.style.opacity = '0';
         modal.style.visibility = 'hidden';
+        modal.setAttribute('aria-hidden', 'true');
         modal.classList.remove('is-active');
         activeSourceFrame = null;
         activeParallaxState = null;
         isAnimating = false;
         unlockScroll();
+        setBackgroundInert(false);
+
+        const focusTarget = lastFocusedElement || sourceFrame;
+        lastFocusedElement = null;
+        if (focusTarget && focusTarget.isConnected && typeof focusTarget.focus === 'function') {
+          focusTarget.focus({ preventScroll: true });
+        }
       }
     }
 
@@ -626,11 +670,24 @@
       });
     }
 
-    // 3. Global Keyboard Navigation (ArrowLeft, ArrowRight, Escape)
+    // 3. Global Keyboard Navigation (Tab focus trap, ArrowLeft, ArrowRight, Escape)
     window.addEventListener('keydown', (e) => {
       if (!isOpen) return;
 
-      if (e.key === 'Escape' || e.key === 'Esc') {
+      if (e.key === 'Tab') {
+        const focusables = getFocusableModalElements();
+        if (!focusables.length) return;
+        const firstEl = focusables[0];
+        const lastEl = focusables[focusables.length - 1];
+
+        if (e.shiftKey && (document.activeElement === firstEl || !modal.contains(document.activeElement))) {
+          e.preventDefault();
+          lastEl.focus({ preventScroll: true });
+        } else if (!e.shiftKey && (document.activeElement === lastEl || !modal.contains(document.activeElement))) {
+          e.preventDefault();
+          firstEl.focus({ preventScroll: true });
+        }
+      } else if (e.key === 'Escape' || e.key === 'Esc') {
         e.preventDefault();
         closeGallery();
       } else if (e.key === 'ArrowRight' || e.key === 'Right') {

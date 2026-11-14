@@ -1,10 +1,4 @@
 /* ─── MINIMAL DOT CURSOR ─── */
-@media (pointer: fine) {
-  html, body, *, *::before, *::after, a, button, input, select, textarea {
-    cursor: none !important;
-  }
-}
-
 #cursor-dot {
   position: fixed;
   top: 0;

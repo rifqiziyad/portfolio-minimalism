@@ -13,28 +13,54 @@
   let hasEducationResizeListener = false;
   let resizeTimer = null;
 
+  const LINE_OPTIONS = {
+    useBoundingRect: true,
+    threshold: 3,
+    fallbackLength: 60
+  };
+
+  function isReducedMotion() {
+    return (
+      window.Portfolio.utils &&
+      typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
+      window.Portfolio.utils.prefersReducedMotion()
+    );
+  }
+
   function formatTextLines(containerEl, text) {
     if (window.Portfolio.utils && typeof window.Portfolio.utils.formatTextLines === 'function') {
-      window.Portfolio.utils.formatTextLines(containerEl, text, {
-        useBoundingRect: true,
-        threshold: 3,
-        fallbackLength: 60
-      });
+      window.Portfolio.utils.formatTextLines(containerEl, text, LINE_OPTIONS);
+    }
+  }
+
+  function formatRowsBatch(rows, titleSelector, descSelector) {
+    const utils = window.Portfolio.utils;
+    if (!utils || !rows.length) return;
+
+    const batchItems = [];
+    rows.forEach((row) => {
+      const titleEl = row.querySelector(titleSelector);
+      const descEl = row.querySelector(descSelector);
+      if (titleEl) batchItems.push({ containerEl: titleEl, options: LINE_OPTIONS });
+      if (descEl) batchItems.push({ containerEl: descEl, options: LINE_OPTIONS });
+    });
+
+    if (typeof utils.formatTextLinesBatch === 'function') {
+      utils.formatTextLinesBatch(batchItems);
+    } else {
+      batchItems.forEach((item) => formatTextLines(item.containerEl));
     }
   }
 
   function handleMaskedRowsResize() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      const rows = document.querySelectorAll('.education-row, .career-row');
+      const rows = Array.from(document.querySelectorAll('.education-row, .career-row'));
+      formatRowsBatch(rows, '.education-school, .career-company-name', '.education-desc, .career-desc');
+
+      const reduced = isReducedMotion();
       rows.forEach((row) => {
-        const isRevealed = row.classList.contains('is-revealed');
-        const titleEl = row.querySelector('.education-school, .career-company-name');
-        const descEl = row.querySelector('.education-desc, .career-desc');
-
-        if (titleEl) formatTextLines(titleEl);
-        if (descEl) formatTextLines(descEl);
-
+        const isRevealed = reduced || row.classList.contains('is-revealed');
         const inners = row.querySelectorAll('.text-line-inner');
         if (typeof gsap !== 'undefined') {
           gsap.set(inners, {
@@ -55,15 +81,12 @@
     const rows = Array.from(targetScope.querySelectorAll(rowSelector));
     if (!rows.length) return;
 
-    const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+    formatRowsBatch(rows, titleSelector, descSelector);
+
+    const reduced = isReducedMotion();
+    const hasGSAP = !reduced && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
 
     rows.forEach((row) => {
-      const titleEl = row.querySelector(titleSelector);
-      const descEl = row.querySelector(descSelector);
-
-      if (titleEl) formatTextLines(titleEl);
-      if (descEl) formatTextLines(descEl);
-
       const inners = Array.from(row.querySelectorAll('.text-line-inner'));
       if (!inners.length) return;
 
@@ -103,42 +126,50 @@
 
   function initScrollReveal(scope) {
     const targetScope = scope || document;
-    const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+    const reduced = isReducedMotion();
 
-    // 1. Generic .reveal elements batch
-    if (hasGSAP) {
-      const revealTargets = Array.from(targetScope.querySelectorAll('.reveal:not(.revealed)'));
-      if (revealTargets.length) {
-        ScrollTrigger.batch(revealTargets, {
-          start: 'top 88%',
-          once: true,
-          onEnter: (batch) => {
-            batch.forEach((el) => {
-              el.classList.add('revealed');
-            });
-          }
-        });
-      }
+    if (reduced) {
+      targetScope.querySelectorAll('.reveal').forEach((el) => {
+        el.classList.add('revealed');
+      });
     } else {
-      const revealElements = targetScope.querySelectorAll('.reveal');
-      const revealObserver = new IntersectionObserver(
-        (entries, observer) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('revealed');
-              observer.unobserve(entry.target);
+      const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
+
+      // 1. Generic .reveal elements batch
+      if (hasGSAP) {
+        const revealTargets = Array.from(targetScope.querySelectorAll('.reveal:not(.revealed)'));
+        if (revealTargets.length) {
+          ScrollTrigger.batch(revealTargets, {
+            start: 'top 88%',
+            once: true,
+            onEnter: (batch) => {
+              batch.forEach((el) => {
+                el.classList.add('revealed');
+              });
             }
           });
-        },
-        {
-          threshold: 0.12,
-          rootMargin: '0px 0px -40px 0px'
         }
-      );
+      } else {
+        const revealElements = targetScope.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver(
+          (entries, observer) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
+          }
+        );
 
-      revealElements.forEach((el) => {
-        revealObserver.observe(el);
-      });
+        revealElements.forEach((el) => {
+          revealObserver.observe(el);
+        });
+      }
     }
 
     // 2. Specialized Masked Line-Reveal for 3-Column Career & Education Sections

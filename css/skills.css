@@ -41,6 +41,15 @@
   will-change: transform, opacity;
 }
 
+.skill-tri-shard:focus {
+  outline: none;
+}
+
+.skill-tri-shard:focus-visible .skill-tri-poly {
+  stroke: var(--accent-orange);
+  stroke-width: 3.5px;
+}
+
 .skill-tri-poly {
   pointer-events: all;
   cursor: pointer;

@@ -11,6 +11,13 @@
 
   function initOutlineTextParallax(scope) {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    if (
+      window.Portfolio.utils &&
+      typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
+      window.Portfolio.utils.prefersReducedMotion()
+    ) {
+      return;
+    }
 
     const targetScope = scope || document;
     const outlineTexts = targetScope.querySelectorAll('.bg-outline-text');

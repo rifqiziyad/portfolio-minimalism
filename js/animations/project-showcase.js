@@ -44,8 +44,14 @@
       ? projectInfo.createController(section, projects)
       : null;
 
+    const stageEl = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
+
     let itemOffsets = [];
     let spotlightLeftPx = 0;
+    let cachedVw = window.innerWidth;
+    let cachedStageWidth = window.innerWidth;
+    let cachedLastTitleWidth = 0;
+    let resizeTimer = null;
     let projectPinTrigger = null;
     let projectScrollTrigger = null;
     let projectScrubTween = null;
@@ -60,17 +66,27 @@
     const fRange = fMax - fMin;
 
     function measureMetrics() {
-      const vw = window.innerWidth;
-      const isMobile = vw <= 768;
+      cachedVw = window.innerWidth;
+      cachedStageWidth = (stageEl && stageEl.clientWidth) || cachedVw;
+      const isMobile = cachedVw <= 768;
 
       // Spotlight column left boundary: 33% on desktop/tablet, 28% on mobile
-      spotlightLeftPx = vw * (isMobile ? 0.28 : 0.33);
+      spotlightLeftPx = cachedVw * (isMobile ? 0.28 : 0.33);
 
       // Column width matches .project-image-viewport (55vw on desktop, 68vw on mobile)
-      const colWidthPx = vw * (isMobile ? 0.68 : 0.55);
+      const colWidthPx = cachedVw * (isMobile ? 0.68 : 0.55);
+
+      // Cache last title span width so renderFrame avoids offsetWidth reads during scroll
+      const lastTitleEl = dimItems[total - 1];
+      const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
+      cachedLastTitleWidth = (lastTextSpan && lastTextSpan.offsetWidth) || cachedVw * 0.18;
 
       // Record exact anchor offset of each title item to stay strictly in line (sebaris) with slide frames
       itemOffsets = dimItems.map((el, idx) => idx * colWidthPx);
+    }
+
+    if (vlineRight) {
+      vlineRight.style.left = '0';
     }
 
     function renderFrame(rawProgress) {
@@ -78,7 +94,7 @@
         measureMetrics();
       }
 
-      const vw = window.innerWidth;
+      const vw = cachedVw;
       const isMobile = vw <= 768;
       const leftColPct = isMobile ? 28 : 33;
       const baseRightColPct = isMobile ? 96 : 88;
@@ -129,7 +145,8 @@
       }
 
       if (vlineRight) {
-        vlineRight.style.left = `${rightLinePct.toFixed(2)}%`;
+        const rightLinePx = (rightLinePct / 100) * (cachedStageWidth || vw);
+        vlineRight.style.transform = `translate3d(${rightLinePx.toFixed(2)}px, 0, 0)`;
         vlineRight.style.opacity = '1';
       }
 
@@ -162,9 +179,7 @@
         trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
         const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
-        const lastTitleEl = dimItems[total - 1];
-        const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
-        const textWidth = (lastTextSpan && lastTextSpan.offsetWidth) || vw * 0.18;
+        const textWidth = cachedLastTitleWidth || vw * 0.18;
         const exitShiftPx = exitRatio * (textWidth * 0.55);
         trackX = spotlightLeftPx - lastOffset - exitShiftPx;
       } else {
@@ -206,10 +221,12 @@
         }
 
         if (!isVisible) {
-          frame.style.display = 'none';
+          frame.style.visibility = 'hidden';
+          frame.style.pointerEvents = 'none';
           continue;
         }
-        frame.style.display = '';
+        frame.style.visibility = '';
+        frame.style.pointerEvents = '';
 
         let frameXPercent = 0;
         let imgXPercent = 0;
@@ -384,20 +401,24 @@
     }
 
     const onResize = () => {
-      measureMetrics();
-      if (projectInfoCtrl) {
-        projectInfoCtrl.onResize();
-      }
-      if (projectScrollTrigger) {
-        renderFrame(playhead.progress);
-      } else {
-        renderFrame(0);
-      }
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        measureMetrics();
+        if (projectInfoCtrl) {
+          projectInfoCtrl.onResize();
+        }
+        if (projectScrollTrigger) {
+          renderFrame(playhead.progress);
+        } else {
+          renderFrame(0);
+        }
+      }, 150);
     };
 
     window.addEventListener('resize', onResize, { passive: true });
 
     cleanupProjectShowcaseController = () => {
+      clearTimeout(resizeTimer);
       section.removeEventListener('click', onSectionClick);
       if (elGalleryBtn) {
         elGalleryBtn.removeEventListener('click', openActiveGallery);
@@ -425,9 +446,12 @@
         titleBand.style.transform = '';
       }
       slideFrames.forEach((frame) => {
-        frame.style.display = '';
+        frame.style.visibility = '';
+        frame.style.pointerEvents = '';
       });
       if (vlineRight) {
+        vlineRight.style.left = '';
+        vlineRight.style.transform = '';
         vlineRight.style.opacity = '';
       }
     };

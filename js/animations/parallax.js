@@ -16,6 +16,7 @@
   let currentProjectMode = null; // 'mobile' | 'desktop' | null
   let lastScope = null;
   let resizeModeListenerBound = false;
+  let breakpointResizeTimer = null;
 
   function initActiveProjectController(scope) {
     const app = window.Portfolio;
@@ -42,14 +43,17 @@
   }
 
   function onBreakpointCheck() {
-    const isMobile = window.innerWidth <= 768;
-    const nextMode = isMobile ? 'mobile' : 'desktop';
-    if (currentProjectMode && nextMode !== currentProjectMode) {
-      initActiveProjectController(lastScope || document);
-      if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.refresh();
+    clearTimeout(breakpointResizeTimer);
+    breakpointResizeTimer = setTimeout(() => {
+      const isMobile = window.innerWidth <= 768;
+      const nextMode = isMobile ? 'mobile' : 'desktop';
+      if (currentProjectMode && nextMode !== currentProjectMode) {
+        initActiveProjectController(lastScope || document);
+        if (typeof ScrollTrigger !== 'undefined') {
+          ScrollTrigger.refresh();
+        }
       }
-    }
+    }, 150);
   }
 
   function initParallaxAnimations(container) {

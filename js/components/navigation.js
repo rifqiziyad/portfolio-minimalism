@@ -34,27 +34,49 @@
       window.addEventListener('scroll', handleHeaderScroll, { passive: true });
     }
 
-    // 2. Mobile menu drawer controller
+    // 2. Mobile menu drawer controller (with ARIA state, inert background, Escape & resize close)
+    const mainEl = document.getElementById('mainContent');
+    const footerEl = document.querySelector('.site-footer');
+
+    function setMobileMenuOpen(nextOpen) {
+      if (!mobileToggle || !navMenu) return;
+      const isActive = Boolean(nextOpen);
+      mobileToggle.classList.toggle('is-active', isActive);
+      mobileToggle.setAttribute('aria-expanded', String(isActive));
+      navMenu.classList.toggle('is-active', isActive);
+      if (header) {
+        header.classList.toggle('is-menu-open', isActive);
+      }
+      document.body.style.overflow = isActive ? 'hidden' : '';
+      if (mainEl) mainEl.inert = isActive;
+      if (footerEl) footerEl.inert = isActive;
+    }
+
     if (mobileToggle && navMenu) {
+      mobileToggle.setAttribute('aria-expanded', 'false');
+
       mobileToggle.addEventListener('click', () => {
-        const isActive = mobileToggle.classList.toggle('is-active');
-        navMenu.classList.toggle('is-active', isActive);
-        if (header) {
-          header.classList.toggle('is-menu-open', isActive);
+        const nextOpen = !mobileToggle.classList.contains('is-active');
+        setMobileMenuOpen(nextOpen);
+        if (nextOpen && navLinks.length) {
+          navLinks[0].focus({ preventScroll: true });
         }
-        document.body.style.overflow = isActive ? 'hidden' : '';
       });
 
       // Close menu when clicking any nav link
       navLinks.forEach((link) => {
         link.addEventListener('click', () => {
-          mobileToggle.classList.remove('is-active');
-          navMenu.classList.remove('is-active');
-          if (header) {
-            header.classList.remove('is-menu-open');
-          }
-          document.body.style.overflow = '';
+          setMobileMenuOpen(false);
         });
+      });
+
+      // Close menu on Escape key and return focus to toggle
+      window.addEventListener('keydown', (e) => {
+        if ((e.key === 'Escape' || e.key === 'Esc') && navMenu.classList.contains('is-active')) {
+          e.preventDefault();
+          setMobileMenuOpen(false);
+          mobileToggle.focus({ preventScroll: true });
+        }
       });
     }
 
@@ -103,17 +125,50 @@
       }
 
       let currentActiveId = null;
-      let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
       let isLeaping = false;
+      let cachedSectionMetrics = [];
+      let cachedLinkMetrics = new Map();
+      let cachedViewportHeight = window.innerHeight || 0;
+      let cachedDocScrollHeight = document.documentElement.scrollHeight || 0;
+      let cachedIsDesktop = window.innerWidth > 768;
+      let scrollRafId = null;
+      let navResizeTimer = null;
+
+      function measureScrollSpyMetrics() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        cachedViewportHeight = window.innerHeight || 0;
+        cachedDocScrollHeight = document.documentElement.scrollHeight || 0;
+        cachedIsDesktop = window.innerWidth > 768;
+
+        cachedSectionMetrics = sectionElements.map((sec) => {
+          const spacer = sec.element.parentElement && sec.element.parentElement.classList.contains('pin-spacer')
+            ? sec.element.parentElement
+            : null;
+          const target = spacer || sec.element;
+          const rect = target.getBoundingClientRect();
+          return {
+            id: sec.id,
+            element: sec.element,
+            top: rect.top + scrollY,
+            height: target.offsetHeight || rect.height
+          };
+        });
+
+        const nextLinkMetrics = new Map();
+        const listRect = navList.getBoundingClientRect();
+        navLinks.forEach((link) => {
+          const linkRect = link.getBoundingClientRect();
+          nextLinkMetrics.set(link, {
+            left: linkRect.left - listRect.left,
+            width: linkRect.width
+          });
+        });
+        cachedLinkMetrics = nextLinkMetrics;
+      }
 
       function getLinkMetrics(link) {
-        if (!link || !navList) return { left: 0, width: 0 };
-        const linkRect = link.getBoundingClientRect();
-        const listRect = navList.getBoundingClientRect();
-        return {
-          left: linkRect.left - listRect.left,
-          width: linkRect.width
-        };
+        if (!link) return { left: 0, width: 0 };
+        return cachedLinkMetrics.get(link) || { left: 0, width: 0 };
       }
 
       function calculateIndicatorTarget(metrics, sectionProgress) {
@@ -125,55 +180,38 @@
         return { x: targetX, width: targetW };
       }
 
-      function getElementAbsoluteMetrics(el) {
-        if (!el) return { top: 0, height: 0 };
-        // If element is wrapped inside a GSAP pin-spacer, use the spacer's absolute position and full runway height
-        const spacer = el.parentElement && el.parentElement.classList.contains('pin-spacer')
-          ? el.parentElement
-          : null;
-        const target = spacer || el;
-        const rect = target.getBoundingClientRect();
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-        return {
-          top: rect.top + scrollY,
-          height: target.offsetHeight || rect.height
-        };
-      }
-
       function updateActiveNav(forcedSectionId) {
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
-        const triggerPoint = scrollY + viewportHeight * 0.35;
-        const scrollDelta = scrollY - lastScrollY;
-        const scrollDirection = scrollDelta >= 0 ? 1 : -1; // 1 = down, -1 = up
-        lastScrollY = scrollY;
+        if (!cachedSectionMetrics.length) {
+          measureScrollSpyMetrics();
+        }
+
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        const triggerPoint = scrollY + cachedViewportHeight * 0.35;
 
         let activeSection = null;
         let activeSectionProgress = 0;
 
         if (typeof forcedSectionId === 'string' && forcedSectionId !== 'hero' && forcedSectionId !== '#hero') {
           const forcedClean = forcedSectionId.replace('#', '');
-          const forcedEl = document.getElementById(forcedClean);
-          if (forcedEl) {
-            activeSection = { id: forcedClean, element: forcedEl };
+          const forcedMatch = cachedSectionMetrics.find((sec) => sec.id === forcedClean);
+          if (forcedMatch) {
+            activeSection = forcedMatch;
             activeSectionProgress = 0;
           }
         } else {
-          // Check if user has reached the bottom of the page
-          const isAtBottom = (window.innerHeight + scrollY) >= (document.documentElement.scrollHeight - 60);
+          const isAtBottom = (cachedViewportHeight + scrollY) >= (cachedDocScrollHeight - 60);
 
           if (isAtBottom) {
-            activeSection = sectionElements[sectionElements.length - 1];
+            activeSection = cachedSectionMetrics[cachedSectionMetrics.length - 1];
             activeSectionProgress = 1;
           } else {
-            for (let i = 0; i < sectionElements.length; i++) {
-              const sec = sectionElements[i];
-              const metrics = getElementAbsoluteMetrics(sec.element);
-              const top = metrics.top;
-              const height = metrics.height;
-              if (triggerPoint >= top && triggerPoint < top + height) {
+            for (let i = 0; i < cachedSectionMetrics.length; i++) {
+              const sec = cachedSectionMetrics[i];
+              if (triggerPoint >= sec.top && triggerPoint < sec.top + sec.height) {
                 activeSection = sec;
-                activeSectionProgress = Math.min(1, Math.max(0, (triggerPoint - top) / height));
+                activeSectionProgress = sec.height > 0
+                  ? Math.min(1, Math.max(0, (triggerPoint - sec.top) / sec.height))
+                  : 0;
                 break;
               }
             }
@@ -181,7 +219,7 @@
         }
 
         const newActiveId = activeSection ? activeSection.id : null;
-        const isDesktop = window.innerWidth > 768;
+        const isDesktop = cachedIsDesktop;
 
         // Find active link element and toggle CSS classes
         let activeLink = null;
@@ -285,32 +323,65 @@
         }
       }
 
-      if (lenis) {
-        lenis.on('scroll', () => updateActiveNav());
-      } else {
-        window.addEventListener('scroll', () => updateActiveNav(), { passive: true });
-      }
-
-      // Sync with ScrollTrigger refresh if available
-      if (typeof ScrollTrigger !== 'undefined') {
-        ScrollTrigger.addEventListener('refresh', () => updateActiveNav());
-      }
-
-      // Window resize handler
-      window.addEventListener('resize', () => {
-        if (window.innerWidth <= 768) {
-          if (indicator) {
-            gsap.set(indicator, { autoAlpha: 0 });
-          }
-        } else {
+      function scheduleNavUpdate() {
+        if (scrollRafId !== null) return;
+        scrollRafId = requestAnimationFrame(() => {
+          scrollRafId = null;
           updateActiveNav();
-        }
-      });
+        });
+      }
+
+      if (lenis) {
+        lenis.on('scroll', scheduleNavUpdate);
+      } else {
+        window.addEventListener('scroll', scheduleNavUpdate, { passive: true });
+      }
+
+      // Sync cached bounds with ScrollTrigger refresh and font load
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.addEventListener('refresh', () => {
+          measureScrollSpyMetrics();
+          updateActiveNav();
+        });
+      }
+
+      if (document.fonts && document.fonts.ready && document.fonts.status !== 'loaded') {
+        document.fonts.ready.then(() => {
+          measureScrollSpyMetrics();
+          updateActiveNav();
+        });
+      }
+
+      // Debounced window resize handler
+      window.addEventListener(
+        'resize',
+        () => {
+          clearTimeout(navResizeTimer);
+          navResizeTimer = setTimeout(() => {
+            measureScrollSpyMetrics();
+            if (!cachedIsDesktop) {
+              if (indicator && typeof gsap !== 'undefined') {
+                gsap.set(indicator, { autoAlpha: 0 });
+              }
+            } else {
+              if (navMenu && navMenu.classList.contains('is-active')) {
+                setMobileMenuOpen(false);
+              }
+              updateActiveNav();
+            }
+          }, 150);
+        },
+        { passive: true }
+      );
 
       // Expose navigation sync helper
-      window.Portfolio.navigation.syncActiveState = updateActiveNav;
+      window.Portfolio.navigation.syncActiveState = (forcedId) => {
+        measureScrollSpyMetrics();
+        updateActiveNav(forcedId);
+      };
 
       // Initial check on load
+      measureScrollSpyMetrics();
       updateActiveNav();
     }
 

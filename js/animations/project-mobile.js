@@ -387,11 +387,16 @@
       elGalleryBtn.addEventListener('click', openActiveGallery);
     }
 
+    let mobileResizeTimer = null;
+
     function onResize() {
-      if (projectInfoCtrl) {
-        projectInfoCtrl.onResize();
-      }
-      renderMobileSlide(playhead.f);
+      clearTimeout(mobileResizeTimer);
+      mobileResizeTimer = setTimeout(() => {
+        if (projectInfoCtrl) {
+          projectInfoCtrl.onResize();
+        }
+        renderMobileSlide(playhead.f);
+      }, 150);
     }
 
     window.addEventListener('resize', onResize, { passive: true });
@@ -555,6 +560,7 @@
     initMobileEntrance();
 
     cleanupMobileCarouselController = () => {
+      clearTimeout(mobileResizeTimer);
       if (snapTween) {
         snapTween.kill();
         snapTween = null;

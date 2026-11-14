@@ -1,263 +1,300 @@
-# AUDIT REPORT — Web Profile (`portfolio-minimalism`)
+# Laporan Audit Kode & Performa (Production-Grade) — Web Profile Portfolio
 
-Audit kode dan performa *production-grade* terhadap proyek **Web Profile — RIFQI ZIYAD IMTINAN** (Vanilla HTML/CSS/JS + GSAP 3.12.5 + Lenis 1.1.20, tanpa bundler/framework). Laporan ini disusun murni berdasarkan inspeksi statis kode sumber dan struktur direktori tanpa memodifikasi kode aplikasi.
+**Scope & Baseline Audit:** Audit mendalam ini mengevaluasi kondisi codebase **aktual pasca-refaktor single-page** (commit `c5fed4d` telah menghapus arsitektur SPA `router.js` / `all-project` serta file dead code historis `timeline.js` & `404.html`). Dokumen lama pada [`docs/AUDIT_REPORT.md`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/docs/AUDIT_REPORT.md) berasal dari kondisi pra-refaktor dan tidak digunakan sebagai sumber temuan di laporan ini; seluruh metrik, lokasi baris kode, dan temuan di bawah ini diverifikasi langsung pada file aktif di root workspace saat ini.
 
 ---
 
-## Ringkasan Eksekutif & Inventori Kode
+## Ringkasan Eksekutif & Inventori Aktual
 
-| Aspek | Kondisi Saat Ini | Status |
+| Dimensi Audit | Fakta Terukur di Codebase Saat Ini | Status Utama |
 | :--- | :--- | :--- |
-| **Stack & Build** | Static Vanilla HTML/CSS/JS (`0` build config / bundler / minifier), CDN GSAP `3.12.5` & Lenis `1.1.20` | ⚠️ Perlu Optimasi |
-| **Jejak Aset Kode** | `10,152` baris total (seluruh file HTML, CSS, JS di repo); `325,560 bytes` pada `index.html`, `data/portfolio-data.js`, `css/*.css` & `js/**/*.js` unminified (`14` `<link rel="stylesheet">`, `27` `<script>` di `index.html`) | 🔴 Terfragmentasi |
-| **CWV — LCP** | Terhambat full-screen preloader (`z-index: 10000`), animasi masuk `#heroImageBox` dari `opacity: 0` (`1.4s`), render-blocking Google Fonts CSS, & 4 blocking scripts | 🔴 High Risk |
-| **CWV — INP** | Forced synchronous reflow (`offsetTop`, `getBoundingClientRect()`, `getComputedTextLength()`), layout write pada scroll/mousemove (`left`/`top`), animasi `drop-shadow` + `backdrop-filter`, event listener leak | 🔴 High Risk |
-| **CWV — CLS** | Kontainer CSR kosong tanpa `min-height`, fallback `@font-face` (`local('sans-serif')`), dan beberapa `<img>` dinamis tanpa atribut `width`/`height` | 🟡 Medium Risk |
-| **Technical SEO** | Tidak ada `<h1>` di `#viewHome`, tidak ada OG/Twitter Card/Canonical/JSON-LD, tidak ada `robots.txt` & `sitemap.xml`, konten utama kosong sebelum eksekusi JS | 🔴 Critical Gap |
-| **Aksesibilitas** | Dialog lightbox & mobile drawer tanpa focus trap, SVG skills tidak fokusabel keyboard, `cursor: none !important` global, nol aturan `:focus-visible` & `prefers-reduced-motion`, kontras teks di bawah standar | 🔴 Critical Gap |
-| **Code Quality** | API overwrite di `carousel.js`, `innerHTML` tanpa escaping lengkap, `23,218 bytes` CSS/JS timeline mati + SVG yatim + `style.css` lama + route `/all-project` tanpa tautan masuk | 🟡 Perlu Pembersihan |
+| **Arsitektur Rendering** | Pure Client-Side Rendering (CSR) pada [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html) (`356` baris) yang me-mount konten dinamis dari [`data/portfolio-data.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/data/portfolio-data.js) ke kontainer kosong via IIFE `window.Portfolio` | **Perlu Perbaikan (LCP/SEO/CLS)** |
+| **Jejak Kode Sumber** | `37` file aktif (`index.html`, `1` file data, `14` file CSS, `21` file JS internal) dengan total **`8.007` baris** / **`257.404` bytes** unminified | **Perlu Bundling & Minifikasi** |
+| **Request Jaringan Kritis** | **`14`** tag `<link rel="stylesheet">`, **`25`** tag `<script>` (`4` blocking + `21` `defer`), plus Google Fonts render-blocking CSS & preload `v24` | **Risiko LCP & Waterfall** |
+| **Aset Media (`assets/`)** | Total **`3,3 MB`** WebP + SVG; gambar terbesar mencapai **`249 KB`** (`2880×1628`) dan hero `my-photo.webp` **`145 KB`** (`1000×962`) | **Perlu Responsive Sizing (`srcset`)** |
+| **Technical SEO** | **`0` elemen `<h1>`**, teks hero tersembunyi di `aria-hidden="true"`, `0` Open Graph / Twitter Card / `canonical` / JSON-LD, tidak ada `robots.txt` & `sitemap.xml` | **Kritis (High Priority)** |
+| **Aksesibilitas (WCAG 2.1)** | **`0` aturan `:focus-visible`**, **`0` aturan `@media (prefers-reduced-motion: reduce)`**, shard skill SVG tanpa akses keyboard, modal tanpa focus trap, `cursor: none !important` global, serta elemen dengan rasio kontras `1.61:1` – `3.74:1` | **Kritis (High Priority)** |
+| **GPU & Main-Thread** | **`37` deklarasi `will-change`** permanen di CSS, forced reflow per kata di `formatTextLines()`, `getBoundingClientRect()` di setiap event scroll, dan animasi scrub `filter: drop-shadow(...)` di atas SVG `<feGaussianBlur>` | **Risiko INP & Frame Drop** |
 
 ---
 
-## 🔴 [HIGH PRIORITY]
+## 1. [HIGH PRIORITY] — [DONE]
 
-### H1. `[CWV — LCP]` Preloader Penuh-Layar (`z-index: 10000`) & Hero Intro (`opacity: 0`) Menunda Paint LCP
-- **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `46–61`, `115–117`
-  - `css/preloader.css` baris `9–28`
-  - `js/components/preloader.js` baris `59–88`, `119–171`, `240–278`
-  - `js/animations/hero.js` baris `96–120`
-- **(b) Akar Masalah & Dampak:**
-  - `#loadingOverlay` (`100vw × 100vh`, `background-color: #000000`, `z-index: 10000`) menutupi seluruh halaman dan menahan visual utama sampai `document.fonts.ready` dan `window.load` selesai (dengan safety timeout `1800ms` di `preloader.js:277`), lalu baru menjalankan exit timeline (`0.65s` di `preloader.js:163`).
-  - Saat preloader keluar (`preloader.js:133`), `window.Portfolio.hero.playIntro()` baru memicu `hero.js:98-120` di mana elemen kandidat LCP `#heroImageBox` (`#heroProfileImg`, `assets/my-photo.webp`) sebelumnya di-set `opacity: 0; scale: 1.45` dan baru bertransisi ke `opacity: 1` selama `1.4s` (`delay: 0.1s`).
-  - Browser hanya mencatat LCP ketika elemen kandidat terbesar benar-benar ter-paint dan terlihat (`opacity > 0`). Komposisi preloader + animasi fade-in dari `0` secara langsung memperburuk metrik LCP meskipun gambar hero (`145K`) sudah tersedia di cache.
-  - Selain itu, `applySyneWithTransition()` (`preloader.js:65-67`) membaca `titleEl.offsetWidth` tepat sebelum dan sesudah `titleEl.classList.add('is-syne-loaded')`, memicu *forced synchronous layout* di awal pemuatan.
-- **(c) Solusi Teknis Konkret:**
-  1. Hilangkan preloader full-screen blocking pada *first load*, atau jadikan transisi ringan non-blocking yang tidak menutupi `#heroProfileImg`.
-  2. Biarkan `#heroImageBox` ter-render pada `opacity: 1` secara default di HTML/CSS (hindari `gsap.set('#heroImageBox', { opacity: 0 })` di above-the-fold hero); cukup animasikan properti transform ringan seperti *subtle scale settle* tanpa menyembunyikan LCP candidate.
-  3. Pertahankan `fetchpriority="high" loading="eager"` pada `#heroProfileImg`.
+> Status: Seluruh temuan `[HIGH-1]` sampai `[HIGH-5]` telah diimplementasikan (`[DONE]`).
+> - `[DONE]` **[HIGH-1]** — Preloader blocking & hidden hero LCP dihilangkan; hero `#heroImageBox` & `#heroProfileImg` tampil langsung (`opacity: 1`).
+> - `[DONE]` **[HIGH-2]** — Font di-self-host (`assets/fonts/*.woff2` + `css/fonts.css`), Critical CSS inline + bundle `css/bundle.min.css` & `js/bundle.min.js` (`scripts/build-assets.mjs`), plus `defer` + `sha384` SRI pada CDN GSAP/Lenis.
+> - `[DONE]` **[HIGH-3]** — DOM read/write batching pada `formatTextLinesBatch()` & `fitSkillTextsToTriangles()`, cached metrics pada Scroll-Spy & showcase desktop, `transform: translate3d(...)` untuk `.project-vline-right`, dan debounce `150ms` listener `resize`.
+> - `[DONE]` **[HIGH-4]** — Single `<h1 class="sr-only">`, canonical URL, Open Graph, Twitter Card, JSON-LD, pre-rendered fallback HTML (`#careerTable`, `#educationTable`, `<noscript>` di `#portfolioList`), `robots.txt`, dan `sitemap.xml`.
+> - `[DONE]` **[HIGH-5]** — Dukungan `prefers-reduced-motion`, penghapusan `cursor: none !important` global, perbaikan kontras WCAG AA, `:focus-visible`, focus trap + `aria-hidden` + `inert` di modal carousel & mobile drawer, serta akses keyboard + `aria-pressed` di shard SVG Skills.
+
+Temuan pada kelompok ini berdampak langsung terhadap metrik Core Web Vitals (**LCP** dan **INP**), keterindeksan **SEO**, serta hambatan akses (**A11y**) bagi pengguna keyboard/screen reader.
 
 ---
 
-### H2. `[CWV — LCP / Bundle]` Render-Blocking External Fonts, Preload Versioned Rapuh, & Waterfall 14 CSS + 27 Script Tanpa Bundling / SRI
+### [HIGH-1] [DONE] CWV (LCP): Preloader Full-Screen Memblokir Viewport & Gambar LCP Disembunyikan dengan `opacity: 0` hingga Animasi Intro Selesai
+
 - **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `17–40` (Google Fonts CSS + preload + 14 `<link rel="stylesheet">`)
-  - `index.html` baris `359–391` (4 synchronous `<script>` + 23 `<script defer>`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L46-L51) (`#loadingOverlay`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L103) (`#heroProfileImg` — elemen LCP utama `width="1000" height="962" fetchpriority="high" loading="eager"`)
+  - [`css/preloader.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/preloader.css#L9-L28) (`.loading-overlay` fixed `100vw × 100vh`, `z-index: 10000`, `background-color: #000000`)
+  - [`js/components/preloader.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/preloader.js#L119-L171), [`L180-L278`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/preloader.js#L180-L278)
+  - [`js/animations/hero.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/hero.js#L96-L144)
+  - [`js/main.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/main.js#L77-L80)
+
 - **(b) Akar Masalah & Dampak:**
-  - `<link href="https://fonts.googleapis.com/css2?..." rel="stylesheet">` (`index.html:22-24`) merupakan request eksternal yang *render-blocking*.
-  - `<link rel="preload" href="https://fonts.gstatic.com/s/syne/v24/8vIS7w4qzmVxsWxjBZRjr0FKM_24vg6jTY_vDE5YfqU.woff2">` (`index.html:19-21`) meng-hardcode URL hash versi `v24` dari Google Fonts; jika Google Fonts memperbarui versi/subset, browser akan mengunduh font dua kali dan memicu warning unused preload.
-  - Tanpa bundler/minifier, browser harus memproses `14` request CSS terpisah dan `27` request JS (`325,560 bytes` unminified HTML/CSS/JS). Empat script pada baris `359–366` (`gsap.min.js`, `ScrollTrigger.min.js`, `lenis.min.js`, `data/portfolio-data.js`) dimuat secara sinkron tanpa `defer` dan tanpa atribut keamanan `integrity` (Subresource Integrity) / `crossorigin="anonymous"`, memblokir parser HTML sebelum mencapai `DOMContentLoaded`.
+  - Meskipun `#heroProfileImg` sudah memakai `fetchpriority="high" loading="eager"`, elemen `.loading-overlay` menutupi seluruh viewport secara solid (`z-index: 10000`) dan mengunci scroll saat startup. `initPreloader()` menunggu seluruh gambar non-lazy (termasuk `assets/logo.svg` serta slide pertama pada `#portfolioList` yang diset `loading="eager"` di [`js/renderers/portfolio.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/portfolio.js#L70)), `document.fonts.ready`, dan event `window load` (dengan safety timeout `1800ms` di `preloader.js:277`), kemudian menjalankan animasi exit berdurasi `0.65s` (`preloader.js:163`).
+  - Sebelum overlay terbuka, `hero.js:98-100` men-set `#heroImageBox` (pembungkus gambar LCP), `#heroFrontendInner`, dan `#heroDeveloperInner` ke `opacity: 0` dengan timeline `paused: isPreloaderActive` (`hero.js:108`), `delay: 0.1` (`hero.js:110`), dan durasi animasi foto `1.4s` (`hero.js:118`) yang baru dijalankan oleh `playIntro()` (`preloader.js:133`). Dalam pengukuran CrUX/Lighthouse, elemen yang tertutupi overlay atau masih `opacity: 0` belum dihitung sebagai LCP selesai hingga benar-benar tampil ke pengguna — menambah penalti buatan ±`1–2+` detik pada LCP.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Self-host file `.woff2` (Syne, Inter, Space Grotesk) di direktori `/fonts` proyek dengan `@font-face { font-display: swap; }` lokal serta `<link rel="preload" as="font" type="font/woff2" crossorigin>` yang deterministik.
-  2. Gunakan bundler (mis. Vite / Rollup / esbuild) untuk menggabungkan dan me-minify CSS menjadi satu bundle kritis (`dist/app.min.css`) + mengekstrak *critical above-the-fold CSS*, serta menggabungkan 23 modul aplikasi JS menjadi `dist/app.min.js`.
-  3. Tambahkan `defer`, `crossorigin="anonymous"`, dan `integrity="sha384-..."` pada script CDN eksternal (atau bundle langsung via npm).
+  - Hilangkan `#loadingOverlay` blocking pada initial load (atau tampilkan indikator non-blocking yang tidak menutupi area hero), dan pastikan `#heroImageBox`, `#heroProfileImg`, serta teks hero langsung dirender dengan `opacity: 1` pada first paint (`hero.js:98-100`).
+  - Bila menginginkan animasi masuk pada hero, terapkan gerakan `transform: translate3d(...)` / `scale(...)` ringan tanpa pernah menurunkan `opacity` gambar LCP ke `0` atau menundanya di balik `paused` preloader.
 
 ---
 
-### H3. `[CWV — INP]` Synchronous Forced Reflow & Layout Thrashing di Text-Splitting, SVG Fitting, ScrollSpy, dan Showcase Scroll
+### [HIGH-2] [DONE] CWV (LCP & FCP) + Keamanan: Render-Blocking Google Fonts, Preload `v24` Rapuh, 4 Blocking `<script>` Tanpa `defer`/SRI, & Waterfall 39 Asset CSS/JS
+
 - **(a) Lokasi File & Baris Kode:**
-  - `js/animations/project-info.js` baris `40–86`, `152–154`, `197–201`
-  - `js/animations/scroll-reveal.js` baris `20–68`, `70–91`, `142–145`
-  - `js/animations/skills.js` baris `14–80`, `150–153`
-  - `js/animations/project-showcase.js` baris `131–168`, `386–398`
-  - `js/animations/project-mobile.js` baris `390–397`
-  - `js/components/navigation.js` baris `151–207`, `254–324`
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L16-L24) (Google Fonts `preconnect`, `<link rel="preload" ... syne/v24/...woff2">`, dan `<link rel="stylesheet" href="https://fonts.googleapis.com/css2?...">`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L27-L40) (`14` tag `<link rel="stylesheet">` terpisah)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L323-L330) (`4` blocking `<script>`: `gsap.min.js`, `ScrollTrigger.min.js` di `cdnjs.cloudflare.com`, `lenis.min.js` di `cdn.jsdelivr.net`, dan `data/portfolio-data.js` tanpa `defer` maupun atribut `integrity`/`crossorigin`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L333-L353) (`21` `<script defer>` lokal terpisah)
+
 - **(b) Akar Masalah & Dampak:**
-  - **Text-line splitter berulang (`project-info.js` & `scroll-reveal.js`)**: `formatTextLines()` menulis `containerEl.innerHTML` per kata (`<span class="temp-word">`), lalu mengiterasi seluruh node untuk membaca `el.offsetTop` (`project-info.js:59`) atau `el.getBoundingClientRect()` (`scroll-reveal.js:40`), lalu menulis ulang `containerEl.innerHTML`. Fungsi ini dipanggil saat inisialisasi seluruh baris Career/Education, setiap pergantian project aktif (`project-info.js:153`), dan setiap event `resize` di `project-showcase.js:386-398` & `project-mobile.js:390-397` **tanpa debounce**.
-  - **SVG text width measurement (`skills.js:14-80`)**: Loop `fitSkillTextsToTriangles()` pada `22` shard memanggil `textEl.getComputedTextLength()`, mengubah atribut `font-size`, lalu memanggil `getComputedTextLength()` kembali di loop yang sama — dipanggil saat inisialisasi dan dipanggil ulang ketika `document.fonts.ready` resolve (`skills.js:150-153`).
-  - **ScrollSpy pada setiap frame scroll (`navigation.js:151-324`)**: `updateActiveNav()` dipanggil pada setiap callback scroll Lenis/window (`navigation.js:320-324`). Di dalamnya, `getElementAbsoluteMetrics()` membaca `target.getBoundingClientRect()` + `target.offsetHeight` (`L158-L162`), membaca metrik link `getLinkMetrics()`, dan pada hampir setiap scroll step men-spawn tween baru `gsap.to(indicator, { x, width, ... })` (`L309-L316`). Mengubah properti layout `width` pada scroll handler menyumbang kerja main-thread berkelanjutan dan *input delay* saat interaksi bersamaan dengan scroll.
-  - **Reflow di tengah scroll render (`project-showcase.js:131-168`)**: `renderFrame()` menulis `vlineRight.style.left` (`L132`, properti layout) dan `frame.style.display` (`L209-L212`), lalu pada fase exit membaca `lastTextSpan.offsetWidth` (`L167`) di dalam frame yang sama — memicu sinkronisasi layout sebelum browser siap me-render frame.
+  - Tag `<link href="https://fonts.googleapis.com/css2?..." rel="stylesheet">` di baris `22-24` memblokir rendering halaman terhadap domain eksternal. Sementara itu, `<link rel="preload">` di baris `19-21` men-hardcode URL hash font Google Fonts `v24`; jika Google Fonts memperbarui revisi/hash font atau browser meminta subset berbeda berdasar UA, file font terunduh dua kali atau gagal cocok sehingga membuang bandwidth kritis.
+  - Sebanyak `14` stylesheet lokal di baris `27-40` memaksa browser melakukan banyak round-trip (terutama pada HTTP/1.1 atau koneksi high-latency) sebelum CSSOM selesai dibangun.
+  - Empat skrip di baris `323-330` tanpa `defer` memblokir penyelesaian parser HTML dan menunda event `DOMContentLoaded` / `load`. Selain itu, ketiadaan Subresource Integrity (`integrity="sha384-..."`) pada skrip pihak ketiga dari CDN publik membuat aplikasi rentan terhadap risiko manipulasi file CDN (*supply-chain risk*).
+
 - **(c) Solusi Teknis Konkret:**
-  1. **ScrollSpy (`navigation.js`)**: Cache seluruh posisi top/height section dan koordinat navbar link dalam `ResizeObserver` / saat `ScrollTrigger.refresh`; gunakan `IntersectionObserver` atau cek angka tersimpan saat scroll; animasikan `.nav-indicator` menggunakan CSS `transform: translate3d(x, 0, 0) scaleX(...)` saja (bukan `width`).
-  2. **Showcase (`project-showcase.js`)**: Ganti `vlineRight.style.left` menjadi `transform: translate3d(...)`, ganti toggle `display: none` di dalam scrub dengan `visibility: hidden` / `opacity: 0` + `pointer-events: none`, dan hitung `lastTextSpan.offsetWidth` sekali di `measureMetrics()` (bukan di dalam `renderFrame()`).
-  3. **Text Splitter & SVG Fitter**: Berikan debounce `150ms` + pengecekan perubahan `innerWidth` pada listener `resize` di `project-showcase.js` & `project-mobile.js`; gunakan `canvas.getContext('2d').measureText()` atau animasi reveal per paragraf/kalimat yang sudah dibentuk renderer (`portfolio.js`) alih-alih injeksi DOM sementara `.temp-word` pada interaksi.
+  - Self-host file `.woff2` (`Syne`, `Inter`, `Space Grotesk`) di `assets/fonts/` dengan `@font-face { font-display: swap; }` lokal, dan preload hanya 1–2 file font lokal di atas fold agar stabil serta bebas render-blocking stylesheet pihak ketiga.
+  - Tambahkan atribut `defer`, `integrity`, dan `crossorigin="anonymous"` pada `gsap.min.js`, `ScrollTrigger.min.js`, dan `lenis.min.js` (atau bundel seluruh vendor ke produksi), serta tambahkan `defer` pada `data/portfolio-data.js` karena seluruh konsumen eksekusinya juga `defer` (`js/main.js`).
+  - Terapkan bundler (seperti Vite atau esbuild) untuk menggabungkan & me-minify `14` CSS menjadi 1 stylesheet (plus Critical CSS inline untuk header/hero) dan menggabungkan modul JS internal.
 
 ---
 
-### H4. `[Technical SEO]` `#viewHome` Tidak Memiliki `<h1>`, Heading Hero Disembunyikan via `aria-hidden`, & Kekosongan Infrastruktur SEO
+### [HIGH-3] [DONE] CWV (INP & Main-Thread): Forced Synchronous Reflow (`formatTextLines`, SVG `getComputedTextLength`, Scroll-Spy) & Listener `resize` Tanpa Debounce
+
 - **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `1–25` (`<head>`), `108–146` (`#hero` & `<h2>PROJECT</h2>`), `160` (`<a id="timeline">`), `281–290` (`#viewPortfolio` `<h1>`)
-  - `css/global.css` baris `52–54` (`.spa-view:not(.is-active) { display: none; }`)
-  - `data/portfolio-data.js` baris `114`, `195`
-  - Root proyek: `robots.txt` dan `sitemap.xml` tidak ada (terkonfirmasi via inspeksi direktori)
+  - [`js/core/renderer.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/core/renderer.js#L38-L62) (`formatTextLines()`: write `containerEl.innerHTML` -> baca `getBoundingClientRect().top`/`offsetTop` tiap `.temp-word` -> write ulang `containerEl.innerHTML`)
+  - [`js/animations/scroll-reveal.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/scroll-reveal.js#L26-L47), [`L60-L66`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/scroll-reveal.js#L60-L66) (memanggil `formatTextLines()` berulang untuk `.education-row` dan `.career-row` saat startup & resize)
+  - [`js/animations/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/skills.js#L14-L45) (`fitSkillTextsToTriangles()`: write `textEl.setAttribute('font-size', ...)` -> read ulang `textEl.getComputedTextLength()` dalam loop semua shard SVG)
+  - [`js/components/navigation.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/navigation.js#L109-L141), [`L169-L185`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/navigation.js#L169-L185), [`L288-L306`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/navigation.js#L288-L306) (`updateActiveNav` memanggil `getBoundingClientRect()` & `offsetHeight` pada setiap tick `lenis.on('scroll')`)
+  - [`js/animations/project-showcase.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js#L132), [`L167`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js#L167), [`L208-L212`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js#L208-L212), [`L398`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js#L398) (`vlineRight.style.left`, `lastTextSpan.offsetWidth`, dan `frame.style.display = 'none'`/`''` di dalam `renderFrame` scrub)
+  - 4 listener `resize` tanpa debounce/throttle: [`js/components/navigation.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/navigation.js#L300), [`js/animations/parallax.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/parallax.js#L69), [`js/animations/project-showcase.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js#L398), [`js/animations/project-mobile.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-mobile.js#L397)
+  - [`js/components/preloader.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/preloader.js#L65-L67) (`oldWidth = titleEl.offsetWidth` -> add class -> `newWidth = titleEl.offsetWidth`)
+
 - **(b) Akar Masalah & Dampak:**
-  - `#viewHome` (halaman aktif default) **tidak memiliki elemen `<h1>`**: teks hero `"FRONTEND"` dan `"DEVELOPER"` (`index.html:108-131`) ditulis sebagai `<span>` di dalam kontainer `aria-hidden="true"`, sehingga heading pertama yang terlihat oleh crawler dan screen reader adalah `<h2>PROJECT</h2>` (`index.html:146`). Satu-satunya `<h1>` justru berada di dalam `#viewPortfolio` (`index.html:288`) yang disembunyikan oleh CSS `display: none`.
-  - Metadata `<head>` tidak memiliki tag Open Graph (`og:title`, `og:description`, `og:image`, `og:url`, `og:type`), Twitter Cards (`twitter:card`, dll.), `<link rel="canonical">`, maupun *Structured Data* JSON-LD (`Person` / `ProfilePage`).
-  - Tidak ada `robots.txt` maupun `sitemap.xml` di root domain.
-  - Konten inti (`#portfolioList`, `#careerTable`, `#skillsCrystalStage`, `#educationTable`) kosong pada HTML mentah dan bergantung sepenuhnya pada JS CSR (`js/core/renderer.js`), sehingga crawler non-JS / social link unfurler tidak melihat portofolio, riwayat karier, skill, atau pendidikan.
-  - Terdapat elemen anchor kosong `<a id="timeline" class="sr-only" aria-hidden="true"></a>` (`index.html:160`) serta typo konten terindeks (`'jQuert'` pada `portfolio-data.js:114` dan `'Analisys'` pada `portfolio-data.js:195`).
+  - `formatTextLines()` memecah teks menjadi span `.temp-word`, menyuntikkannya ke DOM, langsung membaca metrik layout tiap kata dalam loop, lalu menulis ulang `innerHTML` dengan `.text-line-mask` — memicu *Forced Synchronous Layout* berantai untuk seluruh baris Career dan Education di fase boot (`main.js` -> `parallax.js` -> `scroll-reveal.js`) dan tiap kali window di-resize.
+  - Pada runtime scroll, `navigation.js:128-140` memanggil `target.getBoundingClientRect()` dan `target.offsetHeight` bagi section maupun link di setiap callback scroll (`navigation.js:289`), sementara `project-showcase.js:132, 167, 209` memodifikasi properti layout `style.left` & `style.display` sekaligus membaca `offsetWidth` di tengah `renderFrame`. Pada perangkat berspesifikasi menengah/rendah, antrean kalkulasi layout ulang di tiap frame memblokir main-thread sehingga menaikkan *Total Blocking Time (TBT)* dan latensi input (**INP**).
+  - Empat listener `resize` langsung mengeksekusi ulang kalkulasi/DOM teardown pada setiap pixel perubahan ukuran jendela (hanya `scroll-reveal.js:27-28` yang di-debounce `150ms`).
+
 - **(c) Solusi Teknis Konkret:**
-  1. Jadikan headline hero utama sebagai `<h1>` yang dapat diakses crawler & screen reader (misalnya membungkus teks `"FRONTEND DEVELOPER"` atau menyediakan heading utama terstruktur tanpa `aria-hidden="true"` pada konten utama), serta turunkan heading `#viewPortfolio` atau pastikan masing-masing view semantik.
-  2. Tambahkan `<link rel="canonical">`, meta Open Graph (`og:*`), Twitter Cards (`twitter:*`), JSON-LD `schema.org/Person`, `robots.txt`, dan `sitemap.xml`.
-  3. Lakukan *static site generation* (SSG / pre-render build step) agar isi `#portfolioList`, `#careerTable`, dan `#educationTable` sudah tersedia langsung di HTML statis sebelum JS terhidrasi.
-  4. Perbaiki typo `'jQuert'` -> `'jQuery'` (`data/portfolio-data.js:114`) dan `'Analisys'` -> `'Analysis'` (`data/portfolio-data.js:195`), serta hapus anchor yatim `index.html:160`.
+  - Pada `renderer.js`, pisahkan fase penulisan `.temp-word` (semua container) dari fase pembacaan `offsetTop`/`getBoundingClientRect()` (*batch read/write*) atau gunakan `Intl.Segmenter` + estimasi off-DOM tanpa manipulasi `innerHTML` berulang; batasi `fitSkillTextsToTriangles()` pada `skills.js` agar membaca seluruh panjang teks terlebih dulu sebelum menerapkan atribut `font-size`.
+  - Di `navigation.js`, cache array `{ id, top, height }` section serta metrik `{ left, width }` link hanya saat init, `ScrollTrigger.refresh`, dan debounced `resize`, lalu pada listener `scroll` hanya lakukan komparasi numerik terhadap `scrollY` (dengan flag `rAF`).
+  - Di `project-showcase.js`, cache lebar `lastTextSpan` di dalam `measureMetrics()`, ganti `vlineRight.style.left` menjadi GPU `transform: translate3d(...)`, dan ganti `frame.style.display` dengan `visibility: hidden` + `pointer-events: none`.
+  - Bungkus keempat handler `resize` (`navigation.js`, `parallax.js`, `project-showcase.js`, `project-mobile.js`) dengan `debounce` (`120–150ms`) atau gabungkan ke dalam satu observer resize terpusat.
 
 ---
 
-### H5. `[Aksesibilitas]` Modal Lightbox, Mobile Drawer, SVG Interaktif, Global `cursor: none`, & Kontras Gagal Standar WCAG AA
+### [HIGH-4] [DONE] Technical SEO: Halaman Aktif Kehilangan Elemen `<h1>`, Headline Hero Tersembunyi (`aria-hidden`), Konten CSR Kosong pada Raw HTML, & Meta/Crawling Tidak Lengkap
+
 - **(a) Lokasi File & Baris Kode:**
-  - `js/components/carousel.js` baris `290–305`, `532–545`, `629–643` & `index.html` baris `320–356`
-  - `js/components/navigation.js` baris `38–59` & `index.html` baris `78–91`
-  - `js/renderers/skills.js` baris `273–312` & `js/animations/skills.js` baris `494–505`
-  - `css/cursor.css` baris `2–6`
-  - `css/variables.css` baris `10`; `css/footer.css` baris `8`; `css/portfolio.css` baris `379`, `465`; `css/career.css` baris `85`; `css/education.css` baris `85`
-  - Seluruh direktori `css/` & `js/core/scroll.js` (0 aturan `:focus-visible` dan 0 dukungan `prefers-reduced-motion`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L1-L15) (Hanya ada `<title>`, `<meta name="description">`, `<meta name="keywords">`, dan favicon; tidak ada `canonical`, Open Graph `og:*`, Twitter Card `twitter:*`, maupun JSON-LD)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L94-L117) (`#heroLayerTop` berisi `<span ...>FRONTEND</span>` & `#heroLayerBottom` berisi `<span ...>DEVELOPER</span>`, keduanya dibungkus `aria-hidden="true"`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L132), [`L151`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L151), [`L169`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L169), [`L187`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L187), [`L207`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L207) (Semua section utama memakai `<h2 class="section-main-title">` tanpa ada `<h1>` satu pun, lalu lompat ke `<h3>` di [`L216-L254`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L216-L254), [`L291`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L291), [`js/renderers/career.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/career.js#L35), [`js/renderers/education.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/education.js#L30))
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L139), [`L156`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L156), [`L174`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L174), [`L192`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L192) (Kontainer CSR kosong `#portfolioList`, `#careerTable`, `#skillsCrystalStage`, `#educationTable`)
+  - Root proyek: tidak ditemukan `robots.txt` maupun `sitemap.xml`
+
 - **(b) Akar Masalah & Dampak:**
-  - **Modal Lightbox (`carousel.js`)**: Walau memiliki handler `Escape` + panah kiri/kanan (`carousel.js:629-643`), `openGallery()` tidak memindahkan fokus keyboard ke dalam dialog modal, tidak mengimplementasikan *focus trap* (`Tab` keluar ke elemen halaman di balik backdrop), dan `finalizeClose()` (`L532-L544`) tidak mengembalikan fokus ke elemen pemicu (`activeSourceFrame`). Selain itu, `index.html:327` memakai `<h3 id="carouselProjectTitle">` tanpa parent `<h2>` di dialog.
-  - **Mobile Drawer (`navigation.js:38-59`, `index.html:88`)**: Tombol `#mobileToggle` tidak mengatur `aria-expanded="true/false"` maupun `aria-controls="navMenu"`; drawer tidak bisa ditutup lewat `Escape`; toggle hanya memodifikasi `document.body.style.overflow` sementara halaman di-manage oleh Lenis (`lenis.stop()` tidak dipanggil), berbeda dengan `preloader.js` (`documentElement.overflow` + `lenis.stop()`) dan `carousel.js` (`body.overflow` + `lenis.stop()`).
-  - **SVG Skills Interaktif (`skills.js:494-503`, `renderers/skills.js`)**: Ke-22 pecahan segitiga skill hanya memasang `mouseenter`/`mouseleave`/`click` pada `<g>` SVG tanpa `tabindex="0"`, `role="button"`, `aria-label`, atau `keydown` (`Enter`/`Space`) — tidak terjangkau oleh pengguna keyboard maupun screen reader.
-  - **Global `cursor: none !important` & Ketiadaan `:focus-visible` / `prefers-reduced-motion`**: `css/cursor.css:2-6` memaksa `cursor: none !important` di semua elemen pada perangkat `@media (pointer: fine)`; apabila pengguna bernavigasi via `Tab` (atau cursor JS gagal berjalan), tidak ada `:focus-visible` ring di seluruh stylesheet. Selain itu tidak ada satu pun media query `prefers-reduced-motion: reduce` pada CSS maupun inisialisasi Lenis/GSAP.
-  - **Kontras Warna Rendah**: `--text-muted: #606066` pada latar `--bg-primary: #070707` (`footer.css:8`), `rgba(255, 255, 255, 0.18)` (`portfolio.css:379`), `rgba(255, 255, 255, 0.4)` (`portfolio.css:465`), dan `rgba(255, 255, 255, 0.52)` (`career.css:85`, `education.css:85`) berada di bawah standar kontras WCAG AA `4.5:1` untuk teks berukuran normal/kecil.
+  - Ketika halaman SPA `all-project` (yang sebelumnya menampung `<h1>`) dihapus saat refaktor, halaman utama `index.html` menjadi tidak memiliki elemen **`<h1>` sama sekali**. Selain itu, judul utama Hero ("FRONTEND DEVELOPER") tidak menggunakan tag heading dan justru disematkan di dalam container `aria-hidden="true"`, sehingga bot pencarian dan pembaca layar kehilangan hierarki topik utama halaman.
+  - Seluruh portofolio proyek, pengalaman kerja, skills, dan pendidikan bergantung 100% pada eksekusi JS (`portfolio-data.js` + `renderer.js`), sehingga HTML awal hampir kosong di bagian isi.
+  - Ketiadaan `<link rel="canonical">`, tag `og:*` & `twitter:*`, schema JSON-LD `Person`/`ProfilePage`, serta absennya `robots.txt` dan `sitemap.xml` mengurangi relevansi rich snippets, kontrol URL kanonik, dan pratinjau tautan saat dibagikan di media sosial/rekruter. Sebaliknya, `<meta name="keywords">` sudah usang dan tidak memberi nilai SEO modern.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Pada `carousel.js`: simpan `document.activeElement` sebelum modal terbuka, pindahkan fokus ke `#carouselCloseBtn`, trap tombol `Tab`/`Shift+Tab` di dalam `#portfolioCarouselModal`, dan kembalikan fokus ke pemicu saat `finalizeClose()`; gunakan `<h2>` pada judul modal.
-  2. Pada `navigation.js`: sinkronkan `aria-expanded` pada `#mobileToggle`, tambahkan `aria-controls="navMenu"`, tutup drawer dengan tombol `Escape`, serta satukan utilitas scroll-lock (`lenis.stop()`/`start()` + scroll gutter compensation).
-  3. Tambahkan `tabindex="0"`, `role="button"`, `aria-label="Highlight capability: ..."`, serta keyboard handler (`Enter`/`Space`) pada setiap `.skill-shard-body`.
-  4. Hapus `cursor: none !important` global pada elemen interaktif standar, tambahkan gaya fokus global (`a:focus-visible, button:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--accent-orange); outline-offset: 3px; }`), matikan Lenis/scroll animations saat `window.matchMedia('(prefers-reduced-motion: reduce)').matches`, dan naikkan luminansi warna teks label/subjudul/footer minimal ke `#9a9aa3` / `rgba(255, 255, 255, 0.68)`.
+  - Sediakan satu `<h1>` tunggal yang jelas di section Hero (mis. menjadikan wrapper teks hero atau elemen `<h1 class="sr-only">Rifqi Ziyad Imtinan — Frontend Developer</h1>` bila layer grafis tetap dekoratif, sehingga screen reader dan crawler langsung menemukan `<h1>` tanpa duplikasi pembacaan).
+  - Tambahkan `<link rel="canonical" href="https://...">`, meta `og:title`, `og:description`, `og:type`, `og:url`, `og:image` (minimal `1200×630px`), `twitter:card="summary_large_image"`, JSON-LD `<script type="application/ld+json">` untuk profil `Person`, serta hapus `<meta name="keywords">`.
+  - Buat `robots.txt` dan `sitemap.xml` di root deploy, dan tambahkan tahap *static pre-rendering* saat build (atau fallback HTML statis) agar data `portfolio`, `career`, dan `education` sudah ada di dokumen HTML awal sebelum JS berjalan.
 
 ---
 
-### H6. `[Code Quality]` Public API Overwrite (`window.Portfolio.carousel`) & Event Listener Leak pada SPA Re-mount (`skills.js`)
+### [HIGH-5] [DONE] Aksesibilitas (WCAG 2.1 Level A/AA): Focus Trap Modal & Drawer Absen, Shard SVG Tidak Bisa Diakses Keyboard, `cursor: none !important` Global, Zero `prefers-reduced-motion`/`focus-visible`, & Kontras Gagal AA
+
 - **(a) Lokasi File & Baris Kode:**
-  - `js/components/carousel.js` baris `733–746`
-  - `js/animations/skills.js` baris `494–542`
-  - `js/animations/parallax.js` baris `70–73`
+  - [`css/cursor.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/cursor.css#L2-L6) (`@media (pointer: fine) { html, body, *, *::before, *::after, a, button, input, select, textarea { cursor: none !important; } }`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L78-L81) & [`js/components/navigation.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/navigation.js#L38-L59) (`#mobileToggle` tidak memiliki `aria-expanded` / `aria-controls="navMenu"`; drawer tidak punya mekanisme tutup `Escape` maupun focus management)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L284-L320) & [`js/components/carousel.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/carousel.js#L298-L320), [`L600-L643`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/carousel.js#L600-L643) (Modal lightbox `role="dialog" aria-modal="true"` tidak memindahkan fokus saat dibuka, tidak memiliki focus trap `Tab`/`Shift+Tab`, dan tidak mengembalikan fokus ke tombol pemicu saat ditutup)
+  - [`js/renderers/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/skills.js#L272-L323) & [`js/animations/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/skills.js#L496-L505) (`<g class="skill-tri-shard">` interaktif saat klik/hover hanya mengikat `mouseenter`/`mouseleave`/`click` tanpa `role="button"`, `tabindex="0"`, `aria-label`, atau `keydown`)
+  - Global seluruh file CSS & JS: **`0` aturan `:focus-visible`** dan **`0` aturan `prefers-reduced-motion`**
+  - Pelanggaran rasio kontras WCAG AA (`>= 4.5:1` teks normal) di latar `#070707`:
+    - [`css/variables.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/variables.css#L10) + [`css/footer.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/footer.css#L8): `--text-muted: #606066` pada `#070707` memiliki rasio kontras **`3.23:1`**
+    - [`css/portfolio.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/portfolio.css#L238): `.project-spec-label` menggunakan `rgba(255, 255, 255, 0.4)` pada `#070707` -> rasio **`3.74:1`**
+    - [`css/portfolio.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/portfolio.css#L152): `.project-title-layer-dim .project-title-item` (tombol navigasi proyek interaktif) menggunakan `rgba(255, 255, 255, 0.18)` -> rasio **`1.61:1`**
+
 - **(b) Akar Masalah & Dampak:**
-  - **`carousel.js` menimpa namespace publiknya sendiri**: Saat modul dimuat, baris `743–745` men-set `window.Portfolio.carousel = { initCarousel }`. Namun ketika `initCarousel()` dijalankan di `js/main.js:40`, baris `734–740` menimpa seluruh objek dengan `{ openGallery, closeGallery, nextSlide, prevSlide, goToSlide }`, menghapus method `initCarousel`. Jika bagian lain aplikasi memanggil ulang `window.Portfolio.carousel.initCarousel()`, akan terjadi `TypeError: initCarousel is not a function`.
-  - **`skills.js` event listener leak & stale closure**: Pada baris `494–542`, flag `stage.dataset.hoverBound = 'true'` menahan binding listener pertama selamanya — sementara saat SPA router memanggil `homeContext.revert()` dan menginisialisasi ulang `initSkillsCrystalAnimation()`, closure `shardState` dan `activeClickIdx` yang baru tidak lagi terikat ke `hitEl`/`document.click`/`window.wheel`/`window.touchmove`/`window.scroll`. Selain itu listener `document` dan `window` tidak pernah dibersihkan melalui mekanisme cleanup.
-  - Di `parallax.js:70-73`, `resizeModeListenerBound` mempertahankan closure `lastScope` selamanya tanpa fungsi unbind.
+  - `cursor: none !important` di semua elemen menghapus kursor sistem bagi seluruh pengguna desktop (termasuk pengguna dengan tremor/disabilitas motorik atau magnifier OS yang mengandalkan kursor pointer/text native), sementara `#cursor-dot` baru tampil setelah `mousemove` (`cursor.js:27-30`) dan ukurannya hanya `6×6px` (`cursor.css:12-13`).
+  - Pengguna keyboard tidak memiliki indikator fokus yang konsisten (`:focus-visible`), terjebak saat melintasi dialog `#portfolioCarouselModal` (fokus Tab lolos ke elemen belakang modal dan saat modal ditutup fokus hilang di `document.body`), tidak mendapatkan status `aria-expanded` pada `#mobileToggle`, serta tidak bisa mengeksplorasi keahlian di kristal `#skillsCrystalStage`.
+  - Pengguna dengan sensitivitas gerak (*vestibular disorder*) tetap menerima paralaks horizontal/vertikal penuh dan scrub GSAP karena tidak ada dukungan `@media (prefers-reduced-motion: reduce)`.
+  - Teks beropasitas rendah (`1.61:1` hingga `3.74:1`) gagal memenuhi standar keterbacaan WCAG 2.1 AA.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Ganti assignment pada `js/components/carousel.js:734` dengan `Object.assign(window.Portfolio.carousel, { openGallery, closeGallery, nextSlide, prevSlide, goToSlide })`.
-  2. Gunakan `AbortController` di dalam `initSkillsCrystalAnimation()` dan kembalikan cleanup callback ke `router.js` (`gsap.context().add(() => controller.abort())` atau cleanup hook eksplisit) untuk melepas seluruh listener secara deterministik ketika view di-unmount.
+  - Hapus aturan `cursor: none !important` pada seluruh selector (`*`) dan kembalikan kursor native (atau jadikan `#cursor-dot` murni elemen dekoratif mengikuti pointer tanpa menyembunyikan kursor bawaan OS).
+  - Tambahkan `:focus-visible { outline: 2px solid var(--accent-orange); outline-offset: 3px; }` di [`css/global.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/global.css).
+  - Lengkapi `#mobileToggle` dengan `aria-controls="navMenu"` & `aria-expanded`, tambahkan dukungan tombol `Escape` untuk menutup menu mobile, serta implementasikan fokus trap lengkap (`Tab`/`Shift+Tab`, simpan `lastFocusedElement`, kembalikan fokus setelah tutup) + toggle `inert` pada `<main>` di `carousel.js`.
+  - Jadikan setiap `.skill-tri-shard` aksesibel (`role="button"`, `tabindex="0"`, `aria-label`, event `keydown` `Enter`/` ` + `focus`/`blur`), serta tambahkan `role="img"` / `aria-label` deskriptif pada `#skillsCrystalSvg`.
+  - Terapkan `@media (prefers-reduced-motion: reduce)` di CSS dan cek `window.matchMedia('(prefers-reduced-motion: reduce)').matches` di `main.js` / `scroll.js` untuk menonaktifkan Lenis smooth wheel, paralaks, dan intro transform besar.
+  - Perbaiki token/opasitas kontras: naikkan `--text-muted` ke minimal `#8E8E96` (`>= 4.5:1`), `.project-spec-label` ke `rgba(255, 255, 255, 0.62)`, dan `.project-title-layer-dim .project-title-item` ke minimal `rgba(255, 255, 255, 0.48)` (rasio `>= 4.5:1`).
 
 ---
 
-## 🟡 [MEDIUM PRIORITY]
+## 2. [MEDIUM PRIORITY]
 
-### M1. `[CWV — CLS]` Kontainer CSR Kosong Tanpa `min-height`, Fallback Font Tidak Valid (`local('sans-serif')`), & Beberapa `<img>` Tanpa Dimensi
-- **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `153`, `171`, `189`, `207` (`#portfolioList`, `#careerTable`, `#skillsCrystalStage`, `#educationTable`)
-  - `css/preloader.css` baris `3–7`
-  - `js/renderers/portfolio.js` baris `230–232`
-  - `js/components/carousel.js` baris `198`
-- **(b) Akar Masalah & Dampak:**
-  - Keempat kontainer data utama di `index.html` berawal sebagai `<div></div>` kosong tanpa aturan `min-height` cadangan; bila JS gagal atau terlambat tereksekusi setelah first paint, tinggi dokumen akan melompat saat data disuntikkan.
-  - Pada `css/preloader.css:5`, deklarasi `@font-face { font-family: 'SyneFallback'; src: local('Arial Black'), local('Impact'), local('sans-serif'); size-adjust: 135%; }` menggunakan keyword generik CSS `sans-serif` di dalam `local()`, yang tidak valid dan diabaikan browser. Selain itu, pada perangkat yang tidak memiliki `Arial Black` atau `Impact` (seperti banyak distribusi Linux/Android), fallback jatuh ke font sistem dengan metrik lebar jauh lebih kecil, menyebabkan pergeseran ukuran teks saat font `Syne` selesai dimuat (`preloader.js:65-86`).
-  - Tag `<img>` pada daftar arsip (`portfolio.js:231`) dan thumbnail carousel (`carousel.js:198`) tidak menyertakan atribut `width` dan `height` eksplisit.
-- **(c) Solusi Teknis Konkret:**
-  1. Pre-render HTML utama saat build-time atau tambahkan placeholder `min-height` / `aspect-ratio` pada kontainer showcase dan tabel section.
-  2. Hapus `local('sans-serif')` dari `@font-face` dan sesuaikan descriptor `ascent-override`, `descent-override`, dan `line-gap-override` pada font fallback yang tersedia lintas OS, atau selesaikan dengan self-hosted `Syne` ber-preload.
-  3. Tambahkan atribut `width` dan `height` sesuai aspek rasio asli pada `<img>` di `portfolio.js:231` dan `carousel.js:198`.
+Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & decoder gambar, menciptakan *paint/compositing overhead* pada GPU, serta melemahkan keandalan event/DOM injection.
 
 ---
 
-### M2. `[CWV — LCP / Media Sizing]` Gambar Hero Tidak Menggunakan `srcset` & Rasio Asli (`1000×962`) Tidak Sama dengan Kontainer (`aspect-ratio: 3/4`)
+### [MEDIUM-1] CWV (CLS): Kontainer CSR Kosong Tanpa Reserved Height, Definisi Font Fallback Invalid `local('sans-serif')`, & Thumbnail Carousel Tanpa Dimensi
+
 - **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `117` (`width="1000" height="962"`, `assets/my-photo.webp` = `145K`)
-  - `css/hero.css` baris `63–82` (`.hero-image-box` max `460px`, `.image-inner` `aspect-ratio: 3/4`)
-  - `data/portfolio-data.js` & `assets/*/*.webp` (aset gambar proyek hingga `249K` per file, misalnya `assets/smartbox/s1.webp` dan `assets/ignica/Screenshot 2023-09-13 at 09.33.01.webp`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L139) (`#portfolioList`), [`L156`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L156) (`#careerTable`), [`L174`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L174) (`#skillsCrystalStage`), [`L192`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L192) (`#educationTable`)
+  - [`css/preloader.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/preloader.css#L3-L7) (`@font-face { font-family: 'SyneFallback'; src: local('Arial Black'), local('Impact'), local('sans-serif'); size-adjust: 135%; }`)
+  - [`js/components/preloader.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/preloader.js#L59-L88) (`applySyneWithTransition`)
+  - [`js/components/carousel.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/carousel.js#L198) (`<img src="${src}" alt="Thumbnail ${idx + 1}" loading="lazy">`)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L307) (`#carouselMainImg` memakai `src="" width="1200" height="800"`)
+
 - **(b) Akar Masalah & Dampak:**
-  - Foto hero beresolusi `1000×962` (`145 KB`), padahal lebar maksimal `.hero-image-box` adalah `460px` (`clamp(260px, 32vw, 460px)`) dan di-crop ke `aspect-ratio: 3/4`. Pengunjung mobile (`<= 390px`) mengunduh lebih dari 2x piksel lebar yang dibutuhkan serta ~25% area foto terpotong sia-sia oleh `object-fit: cover`.
-  - Aset galeri di `assets/` (misalnya file `249K` di `assets/smartbox/` dan `assets/ignica/`) juga belum memiliki varian responsif (`srcset`/`sizes`).
+  - Keempat blok utama `#portfolioList`, `#careerTable`, `#skillsCrystalStage`, dan `#educationTable` tidak memiliki isi HTML statis maupun `min-height` / `aspect-ratio` cadangan di CSS; ketika DOM dirender oleh JS `defer` setelah parsing HTML, tinggi halaman mendadak meluas dari hampir nol ke ribuan pixel — berisiko menimbulkan CLS besar dan membuat anchor scroll hash (`#skills`, `#contact` pada [`js/main.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/main.js#L63-L72)) bergeser sebelum `ScrollTrigger.refresh()` stabil.
+  - Pada `@font-face 'SyneFallback'`, nilai `local('sans-serif')` tidak valid menurut spesifikasi CSS Fonts karena `local()` hanya mencocokkan nama PostScript/full font lokal spesifik, bukan keyword famili generik. Apabila mesin klien tidak memasang Arial Black/Impact (mis. banyak distro Linux/Android), aturan `local()` gagal seluruhnya dan jatuh ke system font dengan ukuran tak disesuaikan hingga `Syne` selesai dimuat (*FOUT* / pergeseran teks).
+  - Elemen `<img>` thumbnail galeri yang dibuat oleh `carousel.js:198` tidak mencantumkan atribut `width` dan `height`.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Crop `assets/my-photo.webp` agar sesuai proporsi `3:4` (`460×613` & `920×1226` untuk Retina `2x`) dan gunakan `<img srcset="assets/my-photo-480.webp 480w, assets/my-photo-920.webp 920w" sizes="(max-width: 768px) 320px, 460px">`.
-  2. Terapkan kompresi ulang serta varian responsif `srcset` untuk aset galeri di folder `assets/`.
+  - Tambahkan `aspect-ratio: 1000 / 960` / `min-height` proporsional di CSS pada `#skillsCrystalStage` dan kontainer placeholder CSR lainnya (atau pre-render HTML statis saat build).
+  - Hapus `local('sans-serif')` dari `@font-face`, gunakan metrik font-face override yang valid (`size-adjust`, `ascent-override`, `descent-override`) terhadap font terpasang seperti `Arial` / `Roboto` / `Helvetica Neue`, lalu preload `Syne` lokal.
+  - Tambahkan `width="72" height="46" decoding="async"` pada template `<img>` di `carousel.js:198`.
 
 ---
 
-### M3. `[CWV — INP / Paint & GPU Memory]` Layer Berat (`backdrop-filter`, `<feGaussianBlur>`, `drop-shadow` Teranimasi, Noise SVG, & 50+ `will-change` Permanen)
+### [MEDIUM-2] Optimasi Media: Hero & Cover Project Oversized (`2880px` / `145–249 KB`), Aspect Ratio Tidak Selaras, & Nama File Mengandung Spasi
+
 - **(a) Lokasi File & Baris Kode:**
-  - `css/carousel.css` baris `39–42`, `58`, `70`, `142`, `153`, `169–177`, `232`
-  - `css/contact.css` baris `18–35`, `54–55`
-  - `css/skills.css` baris `22–23`, `41`, `65`, `73–76`, `88–90`
-  - `js/animations/skills.js` baris `264–271` & `js/animations/contact.js` baris `48–55`
-  - `js/components/crystal-backgrounds.js` baris `179–190` (`<feGaussianBlur>`)
-  - `css/global.css` baris `49`, `87–97` (`.noise-overlay`), `133`, `161`
-  - `css/hero.css`, `css/header.css`, `css/career.css`, `css/education.css`, `css/portfolio.css`, `css/portfolio-mobile.css`, `css/preloader.css`, `css/cursor.css` (total `50+` deklarasi `will-change` statis di CSS)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L103) + [`css/hero.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/hero.css#L63-L82) (`assets/my-photo.webp` berukuran asli `1000×962`, `145 KB`, dimuat ke box lebar `clamp(260px, 32vw, 460px)` dengan `aspect-ratio: 3/4`)
+  - [`js/renderers/portfolio.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/portfolio.js#L79) & [`data/portfolio-data.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/data/portfolio-data.js#L21-L135):
+    - `assets/smartbox/s1.webp`: `2880×1628`, `249 KB` (dan `s2.webp` `170 KB`, `s4.webp` `153 KB`, `s3.webp` `140 KB`, `s5.webp` `132 KB`)
+    - `assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp`: `2880×1632`, `79 KB` (plus `Screenshot 2023-09-13 at 09.33.01.webp` `249 KB`, `ignica.com_(iPad Air).webp` `129 KB`)
+    - `assets/btn/Screenshot 2025-04-25 at 16.07.25.webp`: `2852×1624`, `91 KB` (plus `16.09.24.webp` `155 KB`)
+    - `assets/cimb/c1.webp`: `2880×1624`, `123 KB` (plus `c3.webp` `149 KB`, `c5.webp` `128 KB`)
+    - `assets/kasumi/home page.webp`: `2880×1518`, `53 KB` (plus `form recruitment.webp` `131 KB`)
+    - `assets/bni/bni1.webp`: `1600×900`, `58 KB`
+    - `assets/hibank/1745218296927.webp`: `1270×796`, `56 KB`
+
 - **(b) Akar Masalah & Dampak:**
-  - Saat scroll melewati section `#skills` dan `#contact`, GSAP ScrollTrigger mengubah nilai CSS `filter: drop-shadow(...)` di setiap tick scroll (`skills.js:265-269`, `contact.js:49-53`) pada SVG besar (`22` shard / poligon) yang di dalamnya juga memakai SVG `<feGaussianBlur>` (`crystal-backgrounds.js:179-190`), sekaligus di `#contact` tertumpuk oleh `.bento-card { backdrop-filter: blur(6px); }` (`contact.css:54`). Animasi `drop-shadow` pada SVG kompleks memaksa rasterisasi ulang GPU/offscreen buffer setiap frame.
-  - `.carousel-backdrop` menggunakan `backdrop-filter: blur(20px)` di atas seluruh viewport (`carousel.css:39-40`) dan `.carousel-nav-btn` memakai `blur(12px)` (`L169-L170`).
-  - Puluhan selector memiliki `will-change` permanen di CSS (termasuk `.spa-view`, `.bg-outline-text`, `.reveal`, `.project-title-item`, `.bento-card`, `.skill-tri-shard`, dll.), memboroskan VRAM GPU walaupun elemen sedang diam.
-  - `.noise-overlay` (`global.css:87-97`) merender filter SVG `<feTurbulence>` penuh `100vw × 100vh` secara fixed di `z-index: 999`.
+  - Foto Hero (`1000×962`, mendekati `1:1`, `145 KB`) melebihi lebar render `32vw` (`~460px` maksimal di desktop, `~260–360px` di mobile) dan berbeda rasio dari container `aspect-ratio: 3/4` di `hero.css:75`, sehingga sekitar separuh byte tidak terpakai pada layar 1x/mobile dan bagian kiri-kanan terpotong oleh `object-fit: cover`.
+  - Seluruh cover project di `portfolio.js:79` menempelkan `width="1200" height="800"` (rasio `3:2`) secara hardcoded, padahal mayoritas asset berdimensi `~2880×1624` (`~16:9`) dengan ukuran file hingga `249 KB`. Mendekode beberapa bitmap beresolusi `2880px` ke GPU memakan memori VRAM besar (khususnya di iOS/Android) dan memperlambat transfer jaringan. Beberapa nama file juga memakai spasi literal (`Screenshot ...`, `home page.webp`).
+
 - **(c) Solusi Teknis Konkret:**
-  1. Ganti animasi scroll `filter: drop-shadow(...)` pada `skills.js` & `contact.js` dengan animasi `opacity` pada elemen glow / radial-gradient statis terpisah (yang di-composite langsung oleh GPU tanpa re-blur setiap frame).
-  2. Hapus `will-change` permanen pada CSS untuk elemen yang animasinya hanya berjalan singkat (seperti `.reveal`, `.spa-view`, `.text-line-inner`); biarkan GSAP mengelola promosi layer saat animasi berlangsung.
-  3. Ganti SVG `<feTurbulence>` full-viewport pada `.noise-overlay` dengan pattern raster WebP/PNG kecil (`128×128px`, `background-repeat: repeat`).
+  - Potong dan ekspor ulang `my-photo` ke rasio `3:4` dengan beberapa varian lebar (`srcset="... 480w, ... 720w, ... 960w"`), serta optimasi kompresi WebP/AVIF agar target ukuran hero `< 60 KB`.
+  - Turunkan resolusi maksimal gambar galeri proyek ke `1600px` lebar (plus `800w` & `1200w` via `srcset`/`sizes`), simpan `width`/`height` aktual masing-masing proyek di `portfolio-data.js`, dan ubah seluruh nama file asset menjadi *kebab-case* tanpa spasi.
 
 ---
 
-### M4. `[CWV — INP]` Event `mousemove` Tanpa `requestAnimationFrame` Mengubah Properti Layout `left`/`top`
+### [MEDIUM-3] Beban GPU Paint & Compositing: Interpolasi Scrub `filter: drop-shadow(...)`, Dual SVG `<feGaussianBlur>`, Noise `<feTurbulence>`, `backdrop-filter`, & 37 Deklarasi `will-change`
+
 - **(a) Lokasi File & Baris Kode:**
-  - `js/components/cursor.js` baris `20–49`
-  - `css/cursor.css` baris `13–28`
+  - [`js/animations/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/skills.js#L261-L272) & [`js/animations/contact.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/contact.js#L45-L56) (Scrub tween `filter: drop-shadow(...)` pada `#skillsCrystalStage` dan `#bgContactCrystal`)
+  - [`js/components/crystal-backgrounds.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/crystal-backgrounds.js#L17-L33) (Filter SVG `#contact-gem-shard-laser` dengan dual `feGaussianBlur` & `#contact-gem-shard-core` `stdDeviation="7"`)
+  - [`css/global.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/global.css#L75-L85) (`.noise-overlay` full-viewport `fixed` `100vw × 100vh` `z-index: 999` berisi SVG `<feTurbulence numOctaves="3">`)
+  - [`css/contact.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/contact.css#L53-L55) (`.bento-card` memakai `backdrop-filter: blur(6px)` di atas `.bg-contact-crystal`) dan [`css/carousel.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/carousel.css#L39-L40), [`L169-L170`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/carousel.css#L169-L170) (`backdrop-filter: blur(20px)` & `blur(12px)`)
+  - `37` deklarasi `will-change` statis tersebar di `12` file CSS: `carousel.css` (`7`), `portfolio.css` (`7`, termasuk `will-change: left` di [`L77`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/portfolio.css#L77) & `will-change: clip-path` di [`L315`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/portfolio.css#L315)), `portfolio-mobile.css` (`5`), `hero.css` (`4`), `preloader.css` (`4`, termasuk `will-change: clip-path` di [`L76`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/preloader.css#L76)), `global.css` (`2`), `skills.css` (`2`), `contact.css` (`2`), `cursor.css` (`1`), `header.css` (`1`), `career.css` (`1`), `education.css` (`1`).
+
 - **(b) Akar Masalah & Dampak:**
-  - `window.addEventListener('mousemove', ...)` di `cursor.js:20-31` langsung menulis `dot.style.left` dan `dot.style.top` pada setiap event pointer tanpa throttling/RAF, sementara CSS-nya justru mendeklarasikan `will-change: transform` (`cursor.css:27`) dan memakai `transition: opacity 0.3s, transform 0.2s` (`L26`). Penulisan `left`/`top` membebani tahap layout/composite secara berulang.
-  - Listener hover (`L39-L48`) hanya dipasang sekali pada `document.querySelectorAll('a, button')` saat `DOMContentLoaded` tanpa event delegation, sehingga elemen yang dirender dinamis setelahnya atau tanpa tag `<a>`/`<button>` tidak konsisten terikat.
+  - Menganimasikan `filter: drop-shadow(...)` setiap frame saat user men-scroll di atas SVG kompleks berisi banyak `<polygon>` dan `<feGaussianBlur>` memicu rasterisasi shadow ulang secara kontinu. Selain itu, `.bento-card` memakai `backdrop-filter: blur(6px)` di atas layer `#bgContactCrystal` yang ikut bergerak & ter-filter, menggandakan beban *render pass* kompositor.
+  - Memasang `37` aturan `will-change` secara permanen — termasuk pada elemen tak terlihat (`carousel-modal`, `loading-overlay`) dan properti non-compositor (`left`, `clip-path`) — mengonsumsi memori GPU secara berlebih dan berpotensi menimbulkan *jank* pada mobile Safari/Android.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Ubah positioning `#cursor-dot` agar mutlak menggunakan `transform: translate3d(x, y, 0)` (atau `gsap.quickTo`) yang disinkronkan di dalam `requestAnimationFrame` hanya saat pointer bergerak.
-  2. Ganti binding statis `querySelectorAll('a, button')` dengan event delegation `mouseover`/`mouseout` di `document`.
+  - Hapus interpolasi `filter: drop-shadow(...)` dari timeline GSAP `skills.js` & `contact.js`; gantikan efek pendar dengan layer CSS `radial-gradient` terpisah di belakang SVG dan animasikan hanya properti `opacity` & `transform` (compositor-only).
+  - Ganti `.noise-overlay` data-URI `<feTurbulence>` dengan tile pattern PNG/WebP statis berukuran kecil (mis. `128×128px`) ber-`background-repeat: repeat`.
+  - Hapus `will-change: left`, `will-change: clip-path`, serta deklarasi `will-change` permanen pada `.reveal` & modal; terapkan `will-change` secara dinamis hanya saat animasi berlangsung (atau biarkan GSAP mengelola layer compositing otomatis via `force3D: true`).
 
 ---
 
-### M5. `[Code Quality / Keamanan]` Interpolasi HTML Mentah via `innerHTML` Tanpa Escaping Lengkap
+### [MEDIUM-4] Efisiensi Event & Hardening DOM Rendering: Kursor `mousemove` Memicu Mutasi `left`/`top` + Sanitasi `escapeAttr` Parsial
+
 - **(a) Lokasi File & Baris Kode:**
-  - `js/renderers/portfolio.js` baris `80`, `115–145`, `216–240`
-  - `js/renderers/career.js` baris `14–16`, `33–53`
-  - `js/renderers/education.js` baris `14–16`, `28–44`
-  - `js/components/carousel.js` baris `198`
-  - `js/animations/project-info.js` baris `49–85`
-  - `js/animations/scroll-reveal.js` baris `30–66`
+  - [`js/components/cursor.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/cursor.js#L20-L48) (`dot.style.left = ...`, `dot.style.top = ...`, plus `querySelectorAll('a, button').forEach`)
+  - [`js/core/renderer.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/core/renderer.js#L18-L20) (`escapeAttr` hanya memfilter `"`)
+  - [`js/renderers/portfolio.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/portfolio.js#L54-L162), [`js/renderers/career.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/career.js#L27-L53), [`js/renderers/education.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/education.js#L23-L48), [`js/renderers/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/skills.js#L273-L303), [`js/components/carousel.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/carousel.js#L198)
+
 - **(b) Akar Masalah & Dampak:**
-  - `career.js` dan `education.js` hanya menyediakan `escapeAttr()` untuk tanda kutip ganda (`"`), sedangkan isi teks (`title`, `description`, `school`, `stack`, `src`, `linkUrl`) disisipkan mentah ke template literal `innerHTML`. Begitu pula `formatTextLines()` memecah teks mentah dan menyisipkannya kembali ke `innerHTML`. Pola ini rapuh bila data mengandung karakter `<`/`&` dan membuka vektor XSS apabila `portfolio-data.js` kelak diisi dari sumber eksternal/API.
+  - `cursor.js:24-25` memperbarui `left` dan `top` pada setiap event `mousemove` tanpa `requestAnimationFrame` maupun GPU `transform: translate3d(...)`, sehingga menimbulkan kalkulasi layout & paint ekstra ketika pointer digerakkan cepat. Selain itu, binding `mouseenter`/`mouseleave` dilakukan di boot via `querySelectorAll('a, button')` sehingga elemen yang dibuat dinamis (seperti `.carousel-thumb-item` di modal) tidak terdeteksi.
+  - Fungsi `escapeAttr` di `renderer.js:18-20` hanya me-replace karakter `"`, dan sebagian besar isi HTML di renderer disuntikkan mentah ke `innerHTML` tanpa `escapeHtml()` maupun sanitasi protokol `linkUrl`. Saat ini aman karena data lokal statis (`portfolio-data.js`), tetapi berisiko DOM-based XSS jika sumber data diperluas ke CMS/query string.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Buat helper bersama `escapeHtml(str)` (meng-escape `&`, `<`, `>`, `"`, `'`) serta validator skema URL (`/^https?:\/\/|^assets\//i`), atau bangun node menggunakan `document.createElement` + `textContent`.
+  - Ganti pembaruan posisi `cursor.js` dengan `dot.style.transform = \`translate3d(\${mouseX}px, \${mouseY}px, 0) translate(-50%, -50%)\`` yang di-coalesce ke 1 pembaruan per `requestAnimationFrame`, dan gunakan event delegation (`mouseover`/`mouseout` pada `document` dengan `closest('a, button, [role="button"]')`).
+  - Lengkapi utilitas `escapeHtml` & `escapeAttr` (escape `&`, `<`, `>`, `"`, `'`) dan validasi skema `linkUrl` (whitelist `https:`, `http:`, `mailto:`, atau path relatif) di semua renderer serta `carousel.js`.
 
 ---
 
-## 🟢 [LOW PRIORITY]
+## 3. [LOW PRIORITY]
 
-### L1. `[Code Quality — Dead Code]` File & Kode Yatim (Orphaned) Tanpa Pemanggil Runtime
-- **(a) Lokasi File & Baris Kode:**
-  - `style.css` baris `1–28` (`@import` entry point lama yang tidak direferensikan di `index.html`)
-  - `css/timeline.css` (`291` baris, `5,608 bytes`)
-  - `js/renderers/timeline.js` (`84` baris, `2,657 bytes`, merujuk `assets/cluster-apex.svg` & `assets/cluster-gem.svg`)
-  - `js/animations/timeline.js` (`392` baris, `14,953 bytes`)
-  - `assets/cluster-apex.svg` (`11K`), `assets/cluster-gem.svg` (`12K`), `arrow-right-duotone.svg` (`1.0K`, sudah di-inline di `portfolio.js:135`)
-  - `js/components/crystal-backgrounds.js` baris `13–172` (`SHARD_RIGHT_SVG`, `SHARD_LEFT_SVG`) & `333–341` (`#bgShardRight`, `#bgShardLeft`)
-  - `css/cursor.css` baris `8–11` (`#cursor-blob, #cursor-glow`)
-  - `js/animations/scroll-reveal.js` baris `163–165` (`window.renderTimelinePath`), `js/components/carousel.js` baris `698` (`#worksList`), `js/renderers/career.js` baris `19`, `65` (`#timelineStream`, `renderTimeline`)
-- **(b) Akar Masalah & Dampak:**
-  - Total `23,218 bytes` kode CSS/JS legacy timeline (`css/timeline.css` `5,608 B` + `js/renderers/timeline.js` `2,657 B` + `js/animations/timeline.js` `14,953 B`), aset SVG tak terpakai (`cluster-apex.svg` `11K`, `cluster-gem.svg` `12K`, `arrow-right-duotone.svg` `1.0K`), `160` baris string template SVG mati (`SHARD_RIGHT_SVG`/`SHARD_LEFT_SVG`) yang masih ikut diunduh client di dalam `crystal-backgrounds.js`, serta `style.css` tersisa dari iterasi arsitektur lama tanpa dipakai saat runtime.
-- **(c) Solusi Teknis Konkret:**
-  1. Hapus `style.css`, `css/timeline.css`, `js/renderers/timeline.js`, `js/animations/timeline.js`, `assets/cluster-apex.svg`, `assets/cluster-gem.svg`, `arrow-right-duotone.svg`, serta `SHARD_RIGHT_SVG`/`SHARD_LEFT_SVG` (`crystal-backgrounds.js:13-172, 333-341`) beserta selector/fallback yatim di `cursor.css`, `scroll-reveal.js`, `carousel.js`, dan `career.js`.
+Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jangka panjang, penghapusan sisa token tak terpakai, serta efisiensi bundling/code-splitting.
 
 ---
 
-### L2. `[Code Quality — Routing & Bundle Bloat]` Rute Archive `/all-project` Tanpa Tautan UI Masuk dari Home
+### [LOW-1] Dead Code Tersisa: Token CSS & Class Utility Tak Terpakai serta Komentar Historis Pra-Refaktor
+
 - **(a) Lokasi File & Baris Kode:**
-  - `index.html` baris `281–296` (`#viewPortfolio`), `404.html` baris `1–24`, `all-project/index.html` baris `1–15`, `portfolio.html` baris `1–14`
-  - `js/core/router.js` (`575` baris, `20,037 bytes`, baris `58–86`, `408–454`)
-  - `js/animations/archive-parallax.js` (`50` baris, `1,268 bytes`)
-  - `js/animations/parallax.js` baris `81–84`
-  - `js/renderers/portfolio.js` baris `172–257`
+  - [`css/variables.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/variables.css#L6), [`L14-L15`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/variables.css#L14-L15) (`--bg-card-hover`, `--accent-red`, `--accent-amber` tidak direferensikan oleh selector mana pun)
+  - [`css/global.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/global.css#L160-L166) (`.reveal-left` dan `.reveal-right` memiliki 0 pemanggil di HTML maupun JS)
+  - [`js/animations/contact.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/contact.js#L4) (Komentar JSDoc masih merujuk `js/animations/timeline.js` yang sudah dihapus)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L10-L11) (`<meta name="keywords">` usang)
+
 - **(b) Akar Masalah & Dampak:**
-  - Hasil penelusuran referensi di seluruh `index.html`, `js/`, dan `data/` menunjukkan tidak ada tautan aktif dari halaman Home yang mengarah ke `/all-project` maupun `[data-spa-link="portfolio"]`. Namun demikian, pada setiap pemuatan awal, aplikasi tetap mengunduh seluruh `router.js` (`20,037 bytes`), `archive-parallax.js` (`1,268 bytes`), serta mengeksekusi `renderProjectListTo` (`portfolio.js:255-257`) yang merender daftar DOM tersembunyi ke dalam `#portfolioFullList` (`display: none`).
+  - Meskipun refaktor besar sebelumnya sudah membersihkan router SPA dan file mati, sisa variabel tema, class helper CSS, serta referensi komentar modul yang sudah dihapus menambah noise kognitif bagi pengembang dan menimbulkan asumsi keliru bahwa token/animasi tersebut masih aktif dipakai.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Tentukan arsitektur final: bila `/all-project` memang ingin tetap tersedia, tampilkan kembali tautan `"EXPLORE ALL PROJECTS"` di `#project` dan render/load `#portfolioFullList` + `archive-parallax.js` secara *lazy* ketika route diakses; bila tidak lagi digunakan, pangkas `#viewPortfolio`, `archive-parallax.js`, dan logika redirect SPA untuk menyederhanakan router secara signifikan.
+  - Hapus `--bg-card-hover`, `--accent-red`, `--accent-amber` dari `variables.css` serta `.reveal-left`/`.reveal-right` dari `global.css` jika tidak masuk rencana desain aktif.
+  - Perbarui komentar di `js/animations/contact.js:4` dan hapus `<meta name="keywords">` dari `index.html`.
 
 ---
 
-### L3. `[CSS & Code Quality]` Variabel CSS Tidak Terdefinisi (`--font-sans`, `--font-label`), Konflik Responsive `!important`, & Duplikasi Modul
+### [LOW-2] Duplikasi Kode: CSS & DOM Renderer `career` vs `education` Identik serta Duplikasi SVG Panah Inline
+
 - **(a) Lokasi File & Baris Kode:**
-  - `css/variables.css` baris `22–24` (hanya mendefinisikan `--font-display`, `--font-body`, `--font-mono`)
-  - `css/portfolio.css` baris `177` (`var(--font-label)`), `364`, `417`, `600` (`var(--font-sans)`), dan `638–715` (`@media (max-width: 768px)`)
-  - `css/career.css` baris `96` (`var(--font-sans)`) & `css/education.css` baris `96` (`var(--font-sans)`)
-  - `css/portfolio-mobile.css` baris `21`, `40`, `44`, `45`, `76`, `77`, `100`, `101`, `172` (9 aturan `!important`)
-  - Duplikasi aturan 3-kolom identik antara `css/career.css` (`198` baris) dan `css/education.css` (`191` baris), renderer `js/renderers/career.js` vs `education.js`, `formatTextLines()` di `project-info.js` vs `scroll-reveal.js`, serta `document.fonts.check` di `index.html:52-61` vs `preloader.js:90-106`.
+  - [`css/career.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/career.css#L21-L100) vs [`css/education.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/education.css#L21-L100) (Struktur layout 3 kolom `grid-template-columns: minmax(130px, 1fr) minmax(220px, 1.8fr) 2.4fr`, padding, border, hover, dan tipografi berulang hampir 1:1)
+  - [`js/renderers/career.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/career.js#L14-L59) vs [`js/renderers/education.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/education.js#L14-L54)
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L302), [`L312`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L312) vs [`js/renderers/portfolio.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/renderers/portfolio.js#L134) (Markup SVG panah duotone beserta `<defs><mask>` disalin ulang di 3 tempat)
+
 - **(b) Akar Masalah & Dampak:**
-  - Enam aturan CSS memakai `var(--font-sans)` atau `var(--font-label)` yang tidak pernah dideklarasikan pada `:root` di `variables.css`, sehingga browser mengabaikannya atau mewarisi nilai parent secara tidak eksplisit.
-  - Blok `@media (max-width: 768px)` lama di `portfolio.css:638-715` masih aktif dan menuntut 9 deklarasi `!important` di `portfolio-mobile.css` untuk menimpanya, memperumit spesifisitas CSS.
-  - Duplikasi CSS/JS antar section identik (`career` vs `education`, `formatTextLines`) meningkatkan ukuran payload dan risiko bug inkonsisten saat salah satu diubah.
+  - Perubahan kecil pada grid, jarak antar-kolom, atau breakpoint tabel 3-kolom mengharuskan penyuntingan sinkron pada 2 file CSS dan 2 renderer JS terpisah sehingga rawan inkonsistensi visual. Duplikasi ikon SVG `<mask>` inline juga memperbesar ukuran HTML/JS tanpa guna.
+
 - **(c) Solusi Teknis Konkret:**
-  1. Ganti semua referensi `--font-sans` -> `var(--font-body)` dan `--font-label` -> `var(--font-mono)` (atau tambahkan alias di `variables.css`).
-  2. Hapus media query mobile lama di `portfolio.css:638-715` dan pisahkan aturan desktop ke `@media (min-width: 769px)` agar seluruh `!important` di `portfolio-mobile.css` dapat dihapus.
-  3. Konsolidasikan `.career-table`/`.education-table` ke class shared (`.section-table` / `.section-row`) dan ekstrak `window.Portfolio.utils.formatTextLines` serta helper renderer 3-kolom bersama.
+  - Konsolidasikan style tabel 3 kolom menjadi satu modul class bersama (mis. `.timeline-table`, `.timeline-row`, `.timeline-period`, `.timeline-title`, `.timeline-subtitle`, `.timeline-desc`) dan satu fungsi renderer generik `renderTimelineTable(containerId, items, mapping)` di `js/renderers/`.
+  - Pindahkan definisi ikon panah ke `<symbol id="icon-shard-arrow">` terpusat (atau helper template tunggal) dan panggil dengan `<use href="#icon-shard-arrow" />`.
+
+---
+
+### [LOW-3] Peluang Code-Splitting, Dynamic Imports, & Cache Busting untuk Produksi
+
+- **(a) Lokasi File & Baris Kode:**
+  - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L27-L40), [`L333-L353`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L333-L353)
+  - [`js/animations/parallax.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/parallax.js#L20-L42) (Mengorkestrasi antara [`js/animations/project-showcase.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-showcase.js) `446` baris dan [`js/animations/project-mobile.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/project-mobile.js) `641` baris)
+  - [`js/components/carousel.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/carousel.js) (`745` baris) & [`css/carousel.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/carousel.css) (`316` baris)
+
+- **(b) Akar Masalah & Dampak:**
+  - Karena aplikasi menggunakan pola IIFE sinkron tanpa ES Modules (`<script type="module">`) maupun bundler, seluruh skrip — termasuk controller modal `carousel.js` (`745` baris) yang belum tentu dibuka oleh pengunjung serta kedua modul viewport eksklusif (`project-showcase.js` desktop + `project-mobile.js` mobile) — selalu diunduh dan di-parse pada initial page load.
+  - Nama asset CSS/JS bersifat statis tanpa content hash, membatasi strategi caching `Cache-Control: public, max-age=31536000, immutable` pada CDN/reverse proxy.
+
+- **(c) Solusi Teknis Konkret:**
+  - Pertimbangkan konversi bertahap ke ES Modules (`type="module"`) dengan bundler ringan (Vite / Rollup):
+    1. Gunakan dynamic `import()` on-demand untuk `carousel.js` & `carousel.css` ketika tombol galeri/thumbnail pertama kali diklik atau di-hover.
+    2. Muat kondisional antara controller desktop (`project-showcase.js`) vs mobile (`project-mobile.js`) sesuai media query awal (`window.matchMedia('(max-width: 768px)')`).
+    3. Aktifkan output filename berbasis hash (`[name].[hash].js/css`) agar cache browser optimal pasca-rilis.
+
+---
+
+## Matriks Prioritas Tindak Lanjut Rekomendasi
+
+| Fase | Fokus Utama | Item Terkait | Status | Estimasi Dampak Produksi |
+| :--- | :--- | :--- | :--- | :--- |
+| **Fase 1 (Quick Wins)** | Perbaikan SEO & A11y Kritis + Unblock LCP | `[HIGH-1]`, `[HIGH-4]`, `[HIGH-5]` | `[DONE]` | LCP turun signifikan, lolos struktur heading `<h1>`, kepatuhan WCAG keyboard/kontras/reduced-motion, indeksabilitas SEO & Social Share |
+| **Fase 2 (CWV Tuning)** | Self-host Fonts + Defer CDN/Data + Debounce Resize/Batch DOM Reads | `[HIGH-2]`, `[HIGH-3]`, `[MEDIUM-1]`, `[MEDIUM-4]` | `[HIGH DONE]` / `[MEDIUM PENDING]` | Eliminasi render-blocking CSS font & script parser block, stabilisasi INP saat scroll/resize, minim CLS |
+| **Fase 3 (Asset & GPU)** | Optimasi resolusi `assets/` (`srcset`) + Hapus scrub `drop-shadow` & berlebihnya `will-change` | `[MEDIUM-2]`, `[MEDIUM-3]` | `[PENDING]` | Payload halaman & memori VRAM turun drastis pada perangkat mobile, scroll lebih stabil 60fps |
+| **Fase 4 (Maintainability & Build)** | Bundling Vite/esbuild + Dynamic Import Modal + Konsolidasi Career/Education | `[LOW-1]`, `[LOW-2]`, `[LOW-3]` | `[PENDING]` | Pengurangan HTTP requests (`39 -> 2-4` asset), penghapusan duplikasi & dead code tersisa |

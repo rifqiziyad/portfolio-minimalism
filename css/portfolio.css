@@ -73,8 +73,9 @@
 }
 
 .project-vline-right {
-  left: 100%;
-  will-change: left;
+  left: 0;
+  transform: translate3d(100vw, 0, 0);
+  will-change: transform;
 }
 
 .project-grid-hline {
@@ -149,11 +150,11 @@
 
 /* Dimmed titles: stay visible when overflowing before and after is-current-frame */
 .project-title-layer-dim .project-title-item {
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.48);
 }
 
 .project-title-layer-dim .project-title-item:hover {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* Lit titles: pure white inside spotlight clip-path with constant opacity */
@@ -235,7 +236,7 @@
 .project-spec-label {
   font-size: 0.65rem;
   letter-spacing: 0.14em;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .project-spec-val {
@@ -332,6 +333,11 @@
 
 .project-image-viewport .project-slide-frame.is-current-frame {
   pointer-events: auto;
+}
+
+.project-image-viewport .project-slide-frame:focus-visible {
+  outline: 2px solid var(--accent-orange);
+  outline-offset: -3px;
 }
 
 .project-image-viewport .project-slide-frame .project-img {
