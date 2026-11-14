@@ -53,23 +53,17 @@ const CORE_JS_FILES = [
   'js/components/navigation.js',
   'js/animations/hero.js',
   'js/animations/project-info.js',
+  'js/animations/project-showcase.js',
+  'js/animations/project-mobile.js',
   'js/animations/outline-text.js',
   'js/animations/scroll-reveal.js',
   'js/animations/parallax.js',
   'js/animations/skills.js',
   'js/animations/contact.js',
   'js/main.js'
-].filter(Boolean);
+];
 
 const ASYNC_JS_CHUNKS = {
-  showcase: {
-    relOutFile: 'js/chunk-showcase.min.js',
-    files: ['js/animations/project-showcase.js']
-  },
-  mobile: {
-    relOutFile: 'js/chunk-mobile.min.js',
-    files: ['js/animations/project-mobile.js']
-  },
   carousel: {
     relOutFile: 'js/chunk-carousel.min.js',
     files: ['js/components/carousel.js']

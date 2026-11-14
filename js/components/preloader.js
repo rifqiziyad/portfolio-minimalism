@@ -150,7 +150,8 @@
             overlay.classList.add('is-hidden');
             overlay.setAttribute('aria-hidden', 'true');
             if (typeof ScrollTrigger !== 'undefined') {
-              ScrollTrigger.refresh();
+              ScrollTrigger.sort();
+              ScrollTrigger.refresh(true);
             }
           }
         });

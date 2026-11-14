@@ -360,7 +360,14 @@
     const stage = section.querySelector('#projectStickyStage') || section.querySelector('#portfolioList') || section;
 
     if (typeof ScrollTrigger !== 'undefined' && typeof gsap !== 'undefined') {
-      const getPinStart = () => (projectPinTrigger ? projectPinTrigger.start : stage.offsetTop);
+      const getPinStart = () => {
+        if (projectPinTrigger && typeof projectPinTrigger.start === 'number') {
+          return projectPinTrigger.start;
+        }
+        const rect = stage.getBoundingClientRect();
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        return rect.top + scrollY;
+      };
       const getStepPx = () => window.innerHeight * 0.78;
       const getPrePinPx = () => entrySpan * getStepPx();
       const getTotalPinnedScrollPx = () => (entrySpan + (total - 1) + pinnedExitSpan) * getStepPx();
@@ -378,26 +385,30 @@
         invalidateOnRefresh: true
       });
 
-      projectScrubTween = gsap.to(playhead, {
-        progress: 1,
-        ease: 'none',
-        onUpdate: () => {
-          renderFrame(playhead.progress);
-        },
-        scrollTrigger: {
-          trigger: stage,
-          start: () => Math.max(0, getPinStart() - getPrePinPx()),
-          end: () => (projectPinTrigger ? projectPinTrigger.end + getPostPinPx() : getPinStart() + getPinDurationPx() + getPostPinPx()),
-          scrub: 0.25,
-          refreshPriority: 0,
-          invalidateOnRefresh: true,
-          onRefresh: (self) => {
-            measureMetrics();
-            playhead.progress = self.progress;
+      projectScrubTween = gsap.fromTo(
+        playhead,
+        { progress: 0 },
+        {
+          progress: 1,
+          ease: 'none',
+          onUpdate: () => {
             renderFrame(playhead.progress);
+          },
+          scrollTrigger: {
+            trigger: stage,
+            start: () => Math.max(0, getPinStart() - getPrePinPx()),
+            end: () => (projectPinTrigger ? projectPinTrigger.end + getPostPinPx() : getPinStart() + getPinDurationPx() + getPostPinPx()),
+            scrub: 0.25,
+            refreshPriority: 0,
+            invalidateOnRefresh: true,
+            onRefresh: (self) => {
+              measureMetrics();
+              playhead.progress = self.progress;
+              renderFrame(playhead.progress);
+            }
           }
         }
-      });
+      );
 
       projectScrollTrigger = projectScrubTween.scrollTrigger;
     }
