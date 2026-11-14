@@ -15,7 +15,7 @@
     const container = document.getElementById('careerTable');
     if (!container || !Array.isArray(career)) return;
 
-    const escapeAttr = window.Portfolio.utils.escapeAttr;
+    const { escapeAttr, escapeHtml } = window.Portfolio.utils;
 
     const html = career
       .map((item, index) => {
@@ -28,25 +28,25 @@
           <div class="career-row" data-index="${index}">
             <div class="career-col-year">
               <span class="text-line-mask">
-                <span class="text-line-inner career-year">${period}</span>
+                <span class="text-line-inner career-year">${escapeHtml(period)}</span>
               </span>
             </div>
             <div class="career-col-company">
               <h3 class="career-company-name" data-raw-text="${escapeAttr(company)}">
                 <span class="text-line-mask">
-                  <span class="text-line-inner">${company}</span>
+                  <span class="text-line-inner">${escapeHtml(company)}</span>
                 </span>
               </h3>
               <p class="career-role" data-raw-text="${escapeAttr(role)}">
                 <span class="text-line-mask">
-                  <span class="text-line-inner">${role}</span>
+                  <span class="text-line-inner">${escapeHtml(role)}</span>
                 </span>
               </p>
             </div>
             <div class="career-col-desc">
               <p class="career-desc" data-raw-text="${escapeAttr(description)}">
                 <span class="text-line-mask">
-                  <span class="text-line-inner">${description}</span>
+                  <span class="text-line-inner">${escapeHtml(description)}</span>
                 </span>
               </p>
             </div>

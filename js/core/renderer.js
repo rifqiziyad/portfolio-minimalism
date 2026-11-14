@@ -15,8 +15,27 @@
     return num < 10 ? `0${num}` : `${num}`;
   }
 
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function escapeAttr(str) {
-    return String(str || '').replace(/"/g, '&quot;');
+    return escapeHtml(str);
+  }
+
+  function sanitizeUrl(url, allowHash = true) {
+    const raw = String(url ?? '').trim();
+    if (!raw) return '#';
+    if (allowHash && raw.startsWith('#')) return raw;
+    if (raw.startsWith('//')) return '#';
+    const hasScheme = /^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(raw);
+    if (!hasScheme) return raw;
+    return /^(https?:|mailto:)/i.test(raw) ? raw : '#';
   }
 
   function prefersReducedMotion() {
@@ -121,7 +140,9 @@
 
   window.Portfolio.utils = {
     formatIndex,
+    escapeHtml,
     escapeAttr,
+    sanitizeUrl,
     formatTextLines,
     formatTextLinesBatch,
     prefersReducedMotion

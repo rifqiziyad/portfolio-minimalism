@@ -109,7 +109,7 @@
   pointer-events: none;
   opacity: 0;
   transform-origin: left center;
-  will-change: transform, width, opacity;
+  will-change: transform, opacity;
   z-index: 2;
 }
 

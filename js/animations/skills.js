@@ -300,11 +300,13 @@
           stage,
           {
             opacity: 0.55,
-            filter: 'drop-shadow(0 0 35px rgba(255, 85, 0, 0.14))'
+            '--skills-glow-opacity': 0.25,
+            '--skills-glow-scale': 0.9
           },
           {
             opacity: 1,
-            filter: 'drop-shadow(0 0 85px rgba(255, 115, 0, 0.42))'
+            '--skills-glow-opacity': 0.85,
+            '--skills-glow-scale': 1.08
           },
           0
         );

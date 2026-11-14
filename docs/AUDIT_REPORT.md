@@ -145,13 +145,19 @@ Temuan pada kelompok ini berdampak langsung terhadap metrik Core Web Vitals (**L
 
 ---
 
-## 2. [MEDIUM PRIORITY]
+## 2. [MEDIUM PRIORITY] — [DONE]
+
+> Status: Seluruh temuan `[MEDIUM-1]` sampai `[MEDIUM-4]` telah diimplementasikan (`[DONE]`).
+> - `[DONE]` **[MEDIUM-1]** — Reservasi dimensi `.skills-crystal-stage` (`aspect-ratio: 1000 / 960`) & `.project-showcase-mount` (`min-height: 100vh`), perbaikan `@font-face 'SyneFallback'` (menghapus `local('sans-serif')` invalid + menambahkan metrik override), serta penambahan `width="72" height="46" decoding="async"` pada thumbnail carousel.
+> - `[DONE]` **[MEDIUM-2]** — Crop hero ke `3:4` (`480w` `53 KB` & `720w` `68 KB`) + `srcset`/`sizes`, resize cover/galeri proyek maks `1600px` beserta varian `800w`/`1200w`, metadata `imageWidth`/`imageHeight`/`imageSrcset` aktual di `data/portfolio-data.js`, dan rename seluruh file asset ke *kebab-case* tanpa spasi.
+> - `[DONE]` **[MEDIUM-3]** — Penghapusan scrub `filter: drop-shadow(...)` dari `skills.js` & `contact.js` (diganti CSS `radial-gradient` `::before` compositor-only), penggantian `.noise-overlay` `<feTurbulence>` dengan tile statis `assets/noise-tile.webp`, dan pembersihan `will-change` statis/non-compositor (`clip-path`, `width`, `filter`, modal/reveal idle).
+> - `[DONE]` **[MEDIUM-4]** — Pembaruan `cursor.js` ke `rAF` + `transform: translate3d(...)` + event delegation (`mouseover`/`mouseout` & class `.is-hovering`), serta hardening utilitas `escapeHtml`, `escapeAttr`, dan `sanitizeUrl` di `renderer.js` dan seluruh renderer/carousel.
 
 Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & decoder gambar, menciptakan *paint/compositing overhead* pada GPU, serta melemahkan keandalan event/DOM injection.
 
 ---
 
-### [MEDIUM-1] CWV (CLS): Kontainer CSR Kosong Tanpa Reserved Height, Definisi Font Fallback Invalid `local('sans-serif')`, & Thumbnail Carousel Tanpa Dimensi
+### [MEDIUM-1] [DONE] CWV (CLS): Kontainer CSR Kosong Tanpa Reserved Height, Definisi Font Fallback Invalid `local('sans-serif')`, & Thumbnail Carousel Tanpa Dimensi
 
 - **(a) Lokasi File & Baris Kode:**
   - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L139) (`#portfolioList`), [`L156`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L156) (`#careerTable`), [`L174`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L174) (`#skillsCrystalStage`), [`L192`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L192) (`#educationTable`)
@@ -172,7 +178,7 @@ Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & dec
 
 ---
 
-### [MEDIUM-2] Optimasi Media: Hero & Cover Project Oversized (`2880px` / `145–249 KB`), Aspect Ratio Tidak Selaras, & Nama File Mengandung Spasi
+### [MEDIUM-2] [DONE] Optimasi Media: Hero & Cover Project Oversized (`2880px` / `145–249 KB`), Aspect Ratio Tidak Selaras, & Nama File Mengandung Spasi
 
 - **(a) Lokasi File & Baris Kode:**
   - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L103) + [`css/hero.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/hero.css#L63-L82) (`assets/my-photo.webp` berukuran asli `1000×962`, `145 KB`, dimuat ke box lebar `clamp(260px, 32vw, 460px)` dengan `aspect-ratio: 3/4`)
@@ -195,7 +201,7 @@ Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & dec
 
 ---
 
-### [MEDIUM-3] Beban GPU Paint & Compositing: Interpolasi Scrub `filter: drop-shadow(...)`, Dual SVG `<feGaussianBlur>`, Noise `<feTurbulence>`, `backdrop-filter`, & 37 Deklarasi `will-change`
+### [MEDIUM-3] [DONE] Beban GPU Paint & Compositing: Interpolasi Scrub `filter: drop-shadow(...)`, Dual SVG `<feGaussianBlur>`, Noise `<feTurbulence>`, `backdrop-filter`, & 37 Deklarasi `will-change`
 
 - **(a) Lokasi File & Baris Kode:**
   - [`js/animations/skills.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/skills.js#L261-L272) & [`js/animations/contact.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/animations/contact.js#L45-L56) (Scrub tween `filter: drop-shadow(...)` pada `#skillsCrystalStage` dan `#bgContactCrystal`)
@@ -215,7 +221,7 @@ Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & dec
 
 ---
 
-### [MEDIUM-4] Efisiensi Event & Hardening DOM Rendering: Kursor `mousemove` Memicu Mutasi `left`/`top` + Sanitasi `escapeAttr` Parsial
+### [MEDIUM-4] [DONE] Efisiensi Event & Hardening DOM Rendering: Kursor `mousemove` Memicu Mutasi `left`/`top` + Sanitasi `escapeAttr` Parsial
 
 - **(a) Lokasi File & Baris Kode:**
   - [`js/components/cursor.js`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/js/components/cursor.js#L20-L48) (`dot.style.left = ...`, `dot.style.top = ...`, plus `querySelectorAll('a, button').forEach`)
@@ -295,6 +301,6 @@ Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jang
 | Fase | Fokus Utama | Item Terkait | Status | Estimasi Dampak Produksi |
 | :--- | :--- | :--- | :--- | :--- |
 | **Fase 1 (Quick Wins)** | Perbaikan SEO & A11y Kritis + Unblock LCP | `[HIGH-1]`, `[HIGH-4]`, `[HIGH-5]` | `[DONE]` | LCP turun signifikan, lolos struktur heading `<h1>`, kepatuhan WCAG keyboard/kontras/reduced-motion, indeksabilitas SEO & Social Share |
-| **Fase 2 (CWV Tuning)** | Self-host Fonts + Defer CDN/Data + Debounce Resize/Batch DOM Reads | `[HIGH-2]`, `[HIGH-3]`, `[MEDIUM-1]`, `[MEDIUM-4]` | `[HIGH DONE]` / `[MEDIUM PENDING]` | Eliminasi render-blocking CSS font & script parser block, stabilisasi INP saat scroll/resize, minim CLS |
-| **Fase 3 (Asset & GPU)** | Optimasi resolusi `assets/` (`srcset`) + Hapus scrub `drop-shadow` & berlebihnya `will-change` | `[MEDIUM-2]`, `[MEDIUM-3]` | `[PENDING]` | Payload halaman & memori VRAM turun drastis pada perangkat mobile, scroll lebih stabil 60fps |
+| **Fase 2 (CWV Tuning)** | Self-host Fonts + Defer CDN/Data + Debounce Resize/Batch DOM Reads | `[HIGH-2]`, `[HIGH-3]`, `[MEDIUM-1]`, `[MEDIUM-4]` | `[DONE]` | Eliminasi render-blocking CSS font & script parser block, stabilisasi INP saat scroll/resize, minim CLS |
+| **Fase 3 (Asset & GPU)** | Optimasi resolusi `assets/` (`srcset`) + Hapus scrub `drop-shadow` & berlebihnya `will-change` | `[MEDIUM-2]`, `[MEDIUM-3]` | `[DONE]` | Payload halaman & memori VRAM turun drastis pada perangkat mobile, scroll lebih stabil 60fps |
 | **Fase 4 (Maintainability & Build)** | Bundling Vite/esbuild + Dynamic Import Modal + Konsolidasi Career/Education | `[LOW-1]`, `[LOW-2]`, `[LOW-3]` | `[PENDING]` | Pengurangan HTTP requests (`39 -> 2-4` asset), penghapusan duplikasi & dead code tersisa |

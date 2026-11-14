@@ -18,13 +18,17 @@
         year: '2023 - PRESENT',
         stack: 'JavaScript • React.js • Material UI • Redux',
         linkUrl: null,
-        image: 'assets/btn/Screenshot 2025-04-25 at 16.07.25.webp',
+        image: 'assets/btn/btn-dashboard-1.webp',
+        imageWidth: 1600,
+        imageHeight: 911,
+        imageSrcset:
+          'assets/btn/btn-dashboard-1-800.webp 800w, assets/btn/btn-dashboard-1-1200.webp 1200w, assets/btn/btn-dashboard-1.webp 1600w',
         imageAlt: 'BTN Mobile Banking Backoffice System',
         gallery: [
-          'assets/btn/Screenshot 2025-04-25 at 16.07.25.webp',
-          'assets/btn/Screenshot 2025-04-25 at 16.08.42.webp',
-          'assets/btn/Screenshot 2025-04-25 at 16.08.59.webp',
-          'assets/btn/Screenshot 2025-04-25 at 16.09.24.webp'
+          'assets/btn/btn-dashboard-1.webp',
+          'assets/btn/btn-dashboard-2.webp',
+          'assets/btn/btn-dashboard-3.webp',
+          'assets/btn/btn-dashboard-4.webp'
         ]
       },
       {
@@ -37,6 +41,10 @@
         stack: 'React • TypeScript • Redux Toolkit • Material UI',
         linkUrl: null,
         image: 'assets/hibank/1745218296927.webp',
+        imageWidth: 1270,
+        imageHeight: 796,
+        imageSrcset:
+          'assets/hibank/1745218296927-800.webp 800w, assets/hibank/1745218296927-1200.webp 1200w, assets/hibank/1745218296927.webp 1270w',
         imageAlt: 'Hibank Client Portal System',
         gallery: [
           'assets/hibank/1745218296927.webp',
@@ -58,6 +66,10 @@
         stack: 'React • TypeScript • Material UI • Tanstack',
         linkUrl: null,
         image: 'assets/cimb/c1.webp',
+        imageWidth: 1600,
+        imageHeight: 902,
+        imageSrcset:
+          'assets/cimb/c1-800.webp 800w, assets/cimb/c1-1200.webp 1200w, assets/cimb/c1.webp 1600w',
         imageAlt: 'CIMB Niaga OCTO Click Revamp',
         gallery: [
           'assets/cimb/c1.webp',
@@ -77,6 +89,10 @@
         stack: 'React.js • TypeScript • Tailwind CSS • Zustand • Tanstack.',
         linkUrl: null,
         image: 'assets/bni/bni1.webp',
+        imageWidth: 1600,
+        imageHeight: 900,
+        imageSrcset:
+          'assets/bni/bni1-800.webp 800w, assets/bni/bni1-1200.webp 1200w, assets/bni/bni1.webp 1600w',
         imageAlt: 'BNI Corporate Transactional Banking Portal',
         gallery: [
           'assets/bni/bni1.webp',
@@ -95,6 +111,10 @@
         stack: 'React Native • Flutter • TypeScript • WebSockets • Node.js',
         linkUrl: 'https://smartbox.build',
         image: 'assets/smartbox/s1.webp',
+        imageWidth: 1600,
+        imageHeight: 904,
+        imageSrcset:
+          'assets/smartbox/s1-800.webp 800w, assets/smartbox/s1-1200.webp 1200w, assets/smartbox/s1.webp 1600w',
         imageAlt: 'Smartbox Automated Locker & IoT Platform',
         gallery: [
           'assets/smartbox/s1.webp',
@@ -114,13 +134,17 @@
         stack: 'JavaScript • jQuery • Bootstrap • HTML5 / CSS3',
         linkUrl: 'https://ignica.com',
         linkText: 'Visit ignica.com',
-        image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp',
+        image: 'assets/ignica/ignica-desktop-1.webp',
+        imageWidth: 1600,
+        imageHeight: 907,
+        imageSrcset:
+          'assets/ignica/ignica-desktop-1-800.webp 800w, assets/ignica/ignica-desktop-1-1200.webp 1200w, assets/ignica/ignica-desktop-1.webp 1600w',
         imageAlt: 'Ignica Digital Retail and In-Store Experience Platform',
         gallery: [
-          'assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp',
-          'assets/ignica/Screenshot 2023-09-13 at 09.33.01.webp',
-          'assets/ignica/ignica.com_(iPad Air).webp',
-          'assets/ignica/ignica.com_(iPhone XR).webp'
+          'assets/ignica/ignica-desktop-1.webp',
+          'assets/ignica/ignica-desktop-2.webp',
+          'assets/ignica/ignica-ipad-air.webp',
+          'assets/ignica/ignica-iphone-xr.webp'
         ]
       },
       {
@@ -132,11 +156,15 @@
         year: '2021 — 2023',
         stack: 'React.js • Redux • JavaScript • CSS3 / SCSS',
         linkUrl: null,
-        image: 'assets/kasumi/home page.webp',
+        image: 'assets/kasumi/kasumi-home-page.webp',
+        imageWidth: 1600,
+        imageHeight: 843,
+        imageSrcset:
+          'assets/kasumi/kasumi-home-page-800.webp 800w, assets/kasumi/kasumi-home-page-1200.webp 1200w, assets/kasumi/kasumi-home-page.webp 1600w',
         imageAlt: 'Kasumi Enterprise HR Management System and Workflow Portal',
         gallery: [
-          'assets/kasumi/home page.webp',
-          'assets/kasumi/form recruitment.webp'
+          'assets/kasumi/kasumi-home-page.webp',
+          'assets/kasumi/kasumi-form-recruitment.webp'
         ]
       }
     ],

@@ -114,7 +114,6 @@
 
 .education-row .text-line-inner {
   display: block;
-  will-change: transform, opacity;
 }
 
 /* ─── RESPONSIVE: EDUCATION ─── */

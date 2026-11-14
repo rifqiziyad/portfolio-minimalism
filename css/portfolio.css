@@ -14,6 +14,10 @@
   border-bottom: none;
 }
 
+.project-showcase-mount {
+  min-height: 100vh;
+}
+
 /* ─── Dedicated Vertical Header Area: PROJECT Title & Giant Outline Text ─── */
 .project-header-area {
   position: relative;
@@ -206,7 +210,6 @@
 
 .text-line-inner {
   display: block;
-  will-change: transform, opacity;
 }
 
 .project-info-desc .text-line-mask + .text-line-mask {
@@ -313,7 +316,6 @@
   z-index: 3;
   background-color: transparent;
   border: none;
-  will-change: clip-path;
 }
 
 .project-image-viewport .project-slide-frame {

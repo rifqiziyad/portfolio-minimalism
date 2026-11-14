@@ -50,9 +50,13 @@
 
       if (elLink) {
         if (item.linkUrl) {
+          const safeHref =
+            window.Portfolio.utils && typeof window.Portfolio.utils.sanitizeUrl === 'function'
+              ? window.Portfolio.utils.sanitizeUrl(item.linkUrl, false)
+              : item.linkUrl;
           elLink.style.display = 'inline-flex';
-          elLink.setAttribute('href', item.linkUrl);
-          if (item.linkUrl.startsWith('http')) {
+          elLink.setAttribute('href', safeHref);
+          if (safeHref.startsWith('http')) {
             elLink.setAttribute('target', '_blank');
             elLink.setAttribute('rel', 'noopener noreferrer');
           } else {

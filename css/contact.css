@@ -15,8 +15,18 @@
   user-select: none;
   z-index: 1;
   opacity: 0.65;
-  will-change: transform, opacity, filter;
-  filter: drop-shadow(0 0 60px rgba(255, 85, 0, 0.22));
+}
+
+.bg-contact-crystal::before {
+  content: '';
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 95, 0, 0.28) 0%, rgba(255, 85, 0, 0) 68%);
+  pointer-events: none;
+  opacity: var(--contact-glow-opacity, 0.45);
+  transform: scale(var(--contact-glow-scale, 1));
+  z-index: -1;
 }
 
 .bg-contact-crystal svg {
@@ -25,13 +35,6 @@
   object-fit: contain;
   overflow: visible;
   display: block;
-}
-
-.bg-contact-crystal .shard-group,
-.bg-contact-crystal .shard-sub-facet,
-.bg-contact-crystal .splinter-piece,
-.bg-contact-crystal .outline-fracture {
-  will-change: transform, opacity;
 }
 
 .contact-container {

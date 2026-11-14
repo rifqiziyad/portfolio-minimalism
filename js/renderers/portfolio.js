@@ -16,11 +16,12 @@
 
   function formatSentenceMasks(text) {
     if (!text) return '';
+    const { escapeHtml } = window.Portfolio.utils;
     const sentences = text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || [text];
     return sentences
       .map((s) => s.trim())
       .filter(Boolean)
-      .map((s) => `<span class="text-line-mask"><span class="text-line-inner">${s}</span></span>`)
+      .map((s) => `<span class="text-line-mask"><span class="text-line-inner">${escapeHtml(s)}</span></span>`)
       .join('');
   }
 
@@ -30,6 +31,8 @@
   function renderProjectShowcaseTo(container, projects) {
     if (!container || !Array.isArray(projects) || projects.length === 0) return;
 
+    const { escapeHtml, escapeAttr, sanitizeUrl } = window.Portfolio.utils;
+
     const items = projects.map((item, idx) =>
       Object.assign({}, item, {
         originalIndex: typeof item.originalIndex === 'number' ? item.originalIndex : idx
@@ -38,6 +41,7 @@
 
     const total = items.length;
     const first = items[0];
+    const firstSafeUrl = first.linkUrl ? sanitizeUrl(first.linkUrl, false) : '';
     const parentSection = container.closest('.project-showcase-section');
     if (parentSection) {
       parentSection.style.setProperty('--portfolio-count', String(total));
@@ -48,16 +52,17 @@
       items
         .map((item, idx) => {
           const activeClass = idx === 0 ? ' is-active' : '';
+          const safeTitle = escapeHtml(item.title);
           if (isLitLayer) {
             return `
               <div class="project-title-item${activeClass}" data-index="${idx}" aria-hidden="true">
-                <span class="project-title-text">${item.title}</span>
+                <span class="project-title-text">${safeTitle}</span>
               </div>
             `;
           }
           return `
-            <button type="button" class="project-title-item project-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${item.title}">
-              <span class="project-title-text">${item.title}</span>
+            <button type="button" class="project-title-item project-title-btn${activeClass}" data-index="${idx}" aria-label="Focus project ${escapeAttr(item.title)}">
+              <span class="project-title-text">${safeTitle}</span>
             </button>
           `;
         })
@@ -68,6 +73,12 @@
       .map((item, idx) => {
         const currentClass = idx === 0 ? ' is-current-frame' : '';
         const loadingAttr = idx === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"';
+        const imgW = item.imageWidth || 1600;
+        const imgH = item.imageHeight || 900;
+        const safeSrc = escapeAttr(sanitizeUrl(item.image, false));
+        const srcsetAttr = item.imageSrcset
+          ? ` srcset="${escapeAttr(item.imageSrcset)}" sizes="(max-width: 768px) 92vw, 48vw"`
+          : '';
         return `
           <div class="project-slide-frame project-img-frame${currentClass}"
                data-slide-index="${idx}"
@@ -75,8 +86,8 @@
                style="z-index: ${idx + 1};"
                role="button"
                tabindex="0"
-               aria-label="View gallery for ${item.title}">
-            <img src="${item.image}" alt="${item.imageAlt || item.title}" class="project-img" ${loadingAttr} width="1200" height="800">
+               aria-label="View gallery for ${escapeAttr(item.title)}">
+            <img src="${safeSrc}"${srcsetAttr} alt="${escapeAttr(item.imageAlt || item.title)}" class="project-img" ${loadingAttr} decoding="async" width="${imgW}" height="${imgH}">
           </div>
         `;
       })
@@ -116,13 +127,13 @@
               <div class="project-spec-item text-line-mask">
                 <div class="text-line-inner project-spec-inner">
                   <span class="project-spec-label">YEAR</span>
-                  <span class="project-spec-val" id="projectActiveYear">${first.year}</span>
+                  <span class="project-spec-val" id="projectActiveYear">${escapeHtml(first.year)}</span>
                 </div>
               </div>
               <div class="project-spec-item text-line-mask">
                 <div class="text-line-inner project-spec-inner">
                   <span class="project-spec-label">STACK</span>
-                  <span class="project-spec-val" id="projectActiveStack">${first.stack}</span>
+                  <span class="project-spec-val" id="projectActiveStack">${escapeHtml(first.stack)}</span>
                 </div>
               </div>
             </div>
@@ -134,12 +145,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" overflow="visible"><defs><mask id="arrow-right-duotone-c0" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="6.19,10.69 2.25,10.69 1.81,13.31 3.56,13.31" fill="#000"/><polygon points="17.81,13.31 21.75,13.31 22.19,10.69 20.44,10.69" fill="#000"/></mask></defs><defs><mask id="arrow-right-duotone-c1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="16.47,6.62 13.69,3.83 11.53,5.38 12.76,6.62" fill="#000"/><polygon points="14.62,15.53 11.83,18.31 13.38,20.47 14.62,19.24" fill="#000"/></mask></defs><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter"><path d="M4 12L20 12" mask="url(#arrow-right-duotone-c0)"/><path d="M14 6L18.939 10.939L18.939 13.061L14 18" mask="url(#arrow-right-duotone-c1)"/></g></svg>
                   </span>
                 </button>
-                <a href="${first.linkUrl || '#'}"
+                <a href="${escapeAttr(firstSafeUrl || '#')}"
                    class="project-live-link"
                    id="projectActiveLink"
-                   ${first.linkUrl ? '' : 'style="display:none;"'}
-                   ${first.linkUrl && first.linkUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
-                  <span id="projectActiveLinkText">${first.linkText || 'Live Demo'}</span>
+                   ${firstSafeUrl ? '' : 'style="display:none;"'}
+                   ${firstSafeUrl && firstSafeUrl.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+                  <span id="projectActiveLinkText">${escapeHtml(first.linkText || 'Live Demo')}</span>
                   <span class="arrow">↗</span>
                 </a>
               </div>
@@ -155,7 +166,7 @@
         <!-- Bottom Architectural Status Bar -->
         <div class="project-bottom-bar">
           <div class="project-bottom-right">
-            <span class="project-bottom-title" id="projectBottomTitle">${first.title}</span>
+            <span class="project-bottom-title" id="projectBottomTitle">${escapeHtml(first.title)}</span>
             <span class="project-bottom-counter" id="projectBottomCounter">
               <strong id="projectCounterCurrent">01</strong>
               <span class="project-counter-sep">|</span>

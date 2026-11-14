@@ -55,11 +55,13 @@
       crystal,
       {
         opacity: 0.45,
-        filter: 'drop-shadow(0 0 40px rgba(255, 85, 0, 0.15))'
+        '--contact-glow-opacity': 0.25,
+        '--contact-glow-scale': 0.9
       },
       {
         opacity: 0.9,
-        filter: 'drop-shadow(0 0 95px rgba(255, 120, 0, 0.5))'
+        '--contact-glow-opacity': 0.85,
+        '--contact-glow-scale': 1.08
       },
       0
     );

@@ -208,13 +208,16 @@
     function renderThumbs() {
       if (!thumbsTrack) return;
       thumbsTrack.innerHTML = '';
+      const utils = window.Portfolio && window.Portfolio.utils;
       currentGallery.forEach((src, idx) => {
+        const safeSrc = utils && typeof utils.sanitizeUrl === 'function' ? utils.sanitizeUrl(src, false) : src;
+        const attrSrc = utils && typeof utils.escapeAttr === 'function' ? utils.escapeAttr(safeSrc) : safeSrc;
         const thumb = document.createElement('button');
         thumb.className = `carousel-thumb-item ${idx === currentSlideIdx ? 'is-active' : ''}`;
         thumb.setAttribute('role', 'tab');
         thumb.setAttribute('aria-label', `Thumbnail ${idx + 1}`);
         thumb.setAttribute('aria-selected', idx === currentSlideIdx ? 'true' : 'false');
-        thumb.innerHTML = `<img src="${src}" alt="Thumbnail ${idx + 1}" loading="lazy">`;
+        thumb.innerHTML = `<img src="${attrSrc}" alt="Thumbnail ${idx + 1}" width="72" height="46" decoding="async" loading="lazy">`;
 
         thumb.addEventListener('click', () => {
           goToSlide(idx, idx > currentSlideIdx ? 1 : -1);

@@ -15,36 +15,50 @@
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let isMoving = false;
+    let rafId = null;
 
-    // Track real mouse position
+    function renderCursor() {
+      rafId = null;
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    }
+
+    // Track real mouse position via rAF + GPU transform3d
     window.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-
-      dot.style.left = `${mouseX}px`;
-      dot.style.top = `${mouseY}px`;
 
       if (!isMoving) {
         document.body.classList.add('has-cursor');
         isMoving = true;
       }
-    });
+
+      if (rafId === null) {
+        rafId = window.requestAnimationFrame(renderCursor);
+      }
+    }, { passive: true });
 
     window.addEventListener('mouseleave', () => {
       document.body.classList.remove('has-cursor');
       isMoving = false;
     });
 
-    // Check interactive elements for subtle dot scaling
-    const interactiveElements = document.querySelectorAll('a, button');
-    interactiveElements.forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        dot.style.transform = 'translate(-50%, -50%) scale(1.6)';
-      });
+    // Event delegation covers static + dynamically rendered interactive elements
+    const INTERACTIVE_SELECTOR = 'a, button, [role="button"], .carousel-thumb-item, .project-slide-frame';
+    document.addEventListener('mouseover', (e) => {
+      if (e.target && typeof e.target.closest === 'function' && e.target.closest(INTERACTIVE_SELECTOR)) {
+        dot.classList.add('is-hovering');
+      }
+    });
 
-      el.addEventListener('mouseleave', () => {
-        dot.style.transform = 'translate(-50%, -50%) scale(1)';
-      });
+    document.addEventListener('mouseout', (e) => {
+      const target = e.target && typeof e.target.closest === 'function' ? e.target.closest(INTERACTIVE_SELECTOR) : null;
+      if (!target) return;
+      const related = e.relatedTarget && typeof e.relatedTarget.closest === 'function'
+        ? e.relatedTarget.closest(INTERACTIVE_SELECTOR)
+        : null;
+      if (related !== target) {
+        dot.classList.remove('is-hovering');
+      }
     });
   }
 

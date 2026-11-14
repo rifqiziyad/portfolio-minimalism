@@ -268,16 +268,19 @@
         const [p1, p2, p3] = item.pts;
         const ptsStr = `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]}`;
         const ptsData = `${p1[0]},${p1[1]};${p2[0]},${p2[1]};${p3[0]},${p3[1]}`;
+        const { escapeAttr, escapeHtml } = window.Portfolio.utils;
+        const safeNameAttr = escapeAttr(item.skill.name);
+        const safeNameHtml = escapeHtml(item.skill.name);
 
         return `
           <g class="skill-shard skill-tri-shard"
              role="button"
              tabindex="0"
-             aria-label="Skill: ${item.skill.name}"
+             aria-label="Skill: ${safeNameAttr}"
              aria-pressed="false"
              data-index="${idx}"
              data-size="${item.skill.size}"
-             data-name="${item.skill.name}"
+             data-name="${safeNameAttr}"
              data-tier="${item.tier}"
              data-cx="${Math.round(item.cx)}"
              data-cy="${Math.round(item.cy)}"
@@ -304,7 +307,7 @@
                         y="0"
                         text-anchor="middle"
                         dominant-baseline="central"
-                        font-size="${item.fontSize}px">${item.skill.name}</text>
+                        font-size="${item.fontSize}px">${safeNameHtml}</text>
                 </g>
                 <polygon class="skill-tri-refract"
                          points="${ptsStr}"
