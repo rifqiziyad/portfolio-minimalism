@@ -11,20 +11,18 @@
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
-  function escapeAttr(str) {
-    return String(str || '').replace(/"/g, '&quot;');
-  }
-
   function renderCareer(career) {
-    const container = document.getElementById('careerTable') || document.getElementById('timelineStream');
+    const container = document.getElementById('careerTable');
     if (!container || !Array.isArray(career)) return;
+
+    const escapeAttr = window.Portfolio.utils.escapeAttr;
 
     const html = career
       .map((item, index) => {
-        const period = item.period || item.year || '';
-        const company = item.company || item.heading || '';
+        const period = item.period || '';
+        const company = item.company || '';
         const role = item.role || 'FRONTEND DEVELOPER';
-        const description = item.description || item.text || '';
+        const description = item.description || '';
 
         return `
           <div class="career-row" data-index="${index}">
@@ -61,6 +59,4 @@
   }
 
   window.Portfolio.renderer.renderCareer = renderCareer;
-  // Backward compatibility
-  window.Portfolio.renderer.renderTimeline = renderCareer;
 })(window, document);

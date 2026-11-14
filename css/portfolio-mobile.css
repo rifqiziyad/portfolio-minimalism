@@ -18,7 +18,7 @@
   .project-sticky-stage {
     position: relative;
     width: 100%;
-    height: auto !important;
+    height: auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -37,12 +37,12 @@
   }
 
   .project-vline-center {
-    left: 8% !important;
+    left: 8%;
   }
 
   .project-vline-right {
-    left: 92% !important;
-    opacity: 1 !important;
+    left: 92%;
+    opacity: 1;
     transform-origin: top center;
     will-change: transform;
   }
@@ -73,8 +73,8 @@
   }
 
   .project-title-layer-lit {
-    clip-path: inset(0 8% 0 8%) !important;
-    -webkit-clip-path: inset(0 8% 0 8%) !important;
+    clip-path: inset(0 8% 0 8%);
+    -webkit-clip-path: inset(0 8% 0 8%);
   }
 
   .project-title-item {
@@ -97,8 +97,8 @@
     margin: 0 auto;
     overflow: hidden;
     z-index: 3;
-    clip-path: none !important;
-    -webkit-clip-path: none !important;
+    clip-path: none;
+    -webkit-clip-path: none;
     touch-action: pan-y;
     cursor: grab;
     will-change: transform;
@@ -169,6 +169,6 @@
 
   /* ─── 5. Bottom Architectural Status Bar (01 | 07) ─── */
   .project-bottom-bar {
-    display: none !important;
+    display: none;
   }
 }

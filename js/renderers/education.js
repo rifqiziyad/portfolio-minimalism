@@ -11,13 +11,11 @@
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
-  function escapeAttr(str) {
-    return String(str || '').replace(/"/g, '&quot;');
-  }
-
   function renderEducation(education) {
     const container = document.getElementById('educationTable');
     if (!container || !Array.isArray(education)) return;
+
+    const escapeAttr = window.Portfolio.utils.escapeAttr;
 
     const html = education
       .map((item, index) => {

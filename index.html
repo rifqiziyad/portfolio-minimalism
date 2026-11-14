@@ -49,16 +49,6 @@
       <div class="loading-percentage" id="loadingPercentage">0%</div>
     </div>
   </div>
-  <script>
-    (function () {
-      try {
-        var title = document.getElementById('loadingTitle');
-        if (title && document.fonts && document.fonts.check && document.fonts.check('800 1rem Syne')) {
-          title.classList.add('is-syne-loaded');
-        }
-      } catch (e) {}
-    })();
-  </script>
 
   <!-- Custom Minimal Cursor Dot -->
   <div id="cursor-dot" aria-hidden="true"></div>
@@ -95,12 +85,8 @@
 
   <main id="mainContent">
     <!-- ═══════════════════════════════════════ -->
-    <!-- VIEW 1: HOME (Landing Page)             -->
+    <!-- HERO / EDITORIAL SECTION (FRONTEND • DEVELOPER) -->
     <!-- ═══════════════════════════════════════ -->
-    <div id="viewHome" class="spa-view is-active">
-      <!-- ═══════════════════════════════════════ -->
-      <!-- HERO / EDITORIAL SECTION (FRONTEND • DEVELOPER) -->
-      <!-- ═══════════════════════════════════════ -->
     <section class="section section-hero" id="hero">
       <div class="container hero-container">
         <div class="hero-wrapper">
@@ -157,7 +143,6 @@
     <!-- CAREER & EXPERIENCE SECTION             -->
     <!-- ═══════════════════════════════════════ -->
     <section class="section section-career" id="career">
-      <a id="timeline" class="sr-only" aria-hidden="true"></a>
       <div class="bg-outline-text bg-text-career" data-parallax="0.10" aria-hidden="true">CAREER</div>
 
       <div class="container career-container">
@@ -273,27 +258,6 @@
         </div>
       </div>
     </section>
-  </div>
-
-  <!-- ═══════════════════════════════════════ -->
-  <!-- VIEW 2: ALL PROJECTS (Portfolio Archive)-->
-  <!-- ═══════════════════════════════════════ -->
-  <div id="viewPortfolio" class="spa-view">
-    <section class="section section-portfolio section-portfolio-page" id="portfolioArchive">
-      <div class="bg-outline-text bg-text-projects" data-parallax="0.2" aria-hidden="true">PROJECTS</div>
-
-      <div class="container portfolio-container">
-        <div class="section-header reveal reveal-fade">
-          <div class="section-title-wrap">
-            <h1 class="section-main-title">ALL PROJECTS</h1>
-          </div>
-        </div>
-
-        <!-- Dynamic Full Portfolio List rendered from data/portfolio-data.js (All items) -->
-        <div class="portfolio-list" id="portfolioFullList"></div>
-      </div>
-    </section>
-  </div>
   </main>
 
   <!-- ═══════════════════════════════════════ -->
@@ -367,11 +331,11 @@
 
   <!-- Modular Application Scripts (Layered Architecture — works on both file:// and HTTP) -->
   <script defer src="js/core/scroll.js"></script>
+  <script defer src="js/core/renderer.js"></script>
   <script defer src="js/renderers/portfolio.js"></script>
   <script defer src="js/renderers/career.js"></script>
   <script defer src="js/renderers/skills.js"></script>
   <script defer src="js/renderers/education.js"></script>
-  <script defer src="js/core/renderer.js"></script>
   <script defer src="js/components/preloader.js"></script>
   <script defer src="js/components/crystal-backgrounds.js"></script>
   <script defer src="js/components/cursor.js"></script>
@@ -382,12 +346,10 @@
   <script defer src="js/animations/project-showcase.js"></script>
   <script defer src="js/animations/project-mobile.js"></script>
   <script defer src="js/animations/outline-text.js"></script>
-  <script defer src="js/animations/archive-parallax.js"></script>
   <script defer src="js/animations/scroll-reveal.js"></script>
   <script defer src="js/animations/parallax.js"></script>
   <script defer src="js/animations/skills.js"></script>
   <script defer src="js/animations/contact.js"></script>
-  <script defer src="js/core/router.js"></script>
   <script defer src="js/main.js"></script>
 </body>
 

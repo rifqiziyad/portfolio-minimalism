@@ -10,7 +10,7 @@
   window.Portfolio = window.Portfolio || {};
 
   function formatIndex(num) {
-    return num < 10 ? `0${num}` : `${num}`;
+    return window.Portfolio.utils ? window.Portfolio.utils.formatIndex(num) : num < 10 ? `0${num}` : `${num}`;
   }
 
   function createProjectInfoController(section, projects) {
@@ -33,56 +33,13 @@
     let currentActiveIdx = -1;
     let infoSwitchTween = null;
 
-    /**
-     * Splits text into individual visual lines matching rendered wrapping
-     * Wraps each line in .text-line-mask > .text-line-inner
-     */
     function formatTextLines(containerEl, text) {
-      if (!containerEl) return;
-      if (!text) {
-        containerEl.innerHTML = '';
-        return;
+      if (window.Portfolio.utils && typeof window.Portfolio.utils.formatTextLines === 'function') {
+        window.Portfolio.utils.formatTextLines(containerEl, text || '', {
+          threshold: 4,
+          fallbackLength: 70
+        });
       }
-
-      // 1. Temporarily place words in DOM to measure exact client-rendered line wrapping
-      const words = text.trim().split(/\s+/);
-      containerEl.innerHTML = words
-        .map((w) => `<span class="temp-word">${w}</span>`)
-        .join(' ');
-
-      const wordEls = containerEl.querySelectorAll('.temp-word');
-      const lines = [];
-      let currentWords = [];
-      let currentTop = -1;
-
-      wordEls.forEach((el) => {
-        const top = el.offsetTop;
-        if (currentTop !== -1 && Math.abs(top - currentTop) > 4) {
-          if (currentWords.length) lines.push(currentWords.join(' '));
-          currentWords = [];
-        }
-        currentWords.push(el.textContent);
-        currentTop = top;
-      });
-      if (currentWords.length) {
-        lines.push(currentWords.join(' '));
-      }
-
-      // Fallback if offsetTop is not measurable (e.g. 0 height before layout)
-      if (lines.length <= 1 && text.length > 70) {
-        const fallbackLines = text.match(/[^,;:.!?]+[,;:.!?]+(\s|$)|[^,;:.!?]+$/g) || [text];
-        containerEl.innerHTML = fallbackLines
-          .map((l) => l.trim())
-          .filter(Boolean)
-          .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
-          .join('');
-        return;
-      }
-
-      // Wrap each visual line into an overflow-hidden mask and inner reveal span
-      containerEl.innerHTML = lines
-        .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
-        .join('');
     }
 
     function applyProjectInfoContent(item, newIdx) {

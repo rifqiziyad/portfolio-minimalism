@@ -13,58 +13,14 @@
   let hasEducationResizeListener = false;
   let resizeTimer = null;
 
-  /**
-   * Splits text into visual lines matching rendered wrapping
-   * Wraps each line in .text-line-mask > .text-line-inner
-   */
   function formatTextLines(containerEl, text) {
-    if (!containerEl) return;
-    const raw = text !== undefined ? text : (containerEl.getAttribute('data-raw-text') || containerEl.textContent || '');
-    if (!raw.trim()) {
-      containerEl.innerHTML = '';
-      return;
+    if (window.Portfolio.utils && typeof window.Portfolio.utils.formatTextLines === 'function') {
+      window.Portfolio.utils.formatTextLines(containerEl, text, {
+        useBoundingRect: true,
+        threshold: 3,
+        fallbackLength: 60
+      });
     }
-
-    // 1. Temporarily place words in DOM to measure exact client-rendered line wrapping
-    const words = raw.trim().split(/\s+/);
-    containerEl.innerHTML = words
-      .map((w) => `<span class="temp-word">${w}</span>`)
-      .join(' ');
-
-    const wordEls = containerEl.querySelectorAll('.temp-word');
-    const lines = [];
-    let currentWords = [];
-    let currentTop = -1;
-
-    wordEls.forEach((el) => {
-      const rect = el.getBoundingClientRect();
-      const top = rect.top || el.offsetTop;
-      if (currentTop !== -1 && Math.abs(top - currentTop) > 3) {
-        if (currentWords.length) lines.push(currentWords.join(' '));
-        currentWords = [];
-      }
-      currentWords.push(el.textContent);
-      currentTop = top;
-    });
-    if (currentWords.length) {
-      lines.push(currentWords.join(' '));
-    }
-
-    // Fallback if offsetTop is not measurable (e.g. 0 height before layout)
-    if (lines.length <= 1 && raw.length > 60) {
-      const fallbackLines = raw.match(/[^,;:.!?]+[,;:.!?]+(\s|$)|[^,;:.!?]+$/g) || [raw];
-      containerEl.innerHTML = fallbackLines
-        .map((l) => l.trim())
-        .filter(Boolean)
-        .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
-        .join('');
-      return;
-    }
-
-    // Wrap each visual line into an overflow-hidden mask and inner reveal span
-    containerEl.innerHTML = lines
-      .map((line) => `<span class="text-line-mask"><span class="text-line-inner">${line}</span></span>`)
-      .join('');
   }
 
   function handleMaskedRowsResize() {
@@ -160,9 +116,6 @@
             batch.forEach((el) => {
               el.classList.add('revealed');
             });
-            if (typeof window.renderTimelinePath === 'function') {
-              window.renderTimelinePath();
-            }
           }
         });
       }

@@ -64,21 +64,6 @@
         const targetId = this.getAttribute('href');
         if (targetId === '#') return;
 
-        // If currently in portfolio view
-        if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
-          if (window.Portfolio.router.getCurrentView() === 'portfolio') {
-            if (targetId === '#project' || targetId === '#portfolio') {
-              // When user is on /all-project and clicks "PROJECT" / "PORTFOLIO", stay without changing scroll
-              e.preventDefault();
-              return;
-            }
-            // For other anchors (e.g. #timeline, #skills, etc.), navigate to home view and scroll to anchor
-            e.preventDefault();
-            window.Portfolio.router.navigateTo('home', targetId, true);
-            return;
-          }
-        }
-
         const targetElement = document.querySelector(targetId);
         if (targetElement && scrollService) {
           e.preventDefault();
@@ -92,12 +77,12 @@
 
     // 4. Real-time Scroll Spy for Active Section Navbar Link with Kinetic Indicator Bar
     function initScrollSpy() {
-      const sectionIds = ['project', 'portfolio', 'career', 'timeline', 'skills', 'education', 'contact'];
+      const sectionIds = ['project', 'career', 'skills', 'education', 'contact'];
       const sectionElements = [];
 
       sectionIds.forEach((id) => {
         const el = document.getElementById(id);
-        if (el && !sectionElements.some((s) => s.id === id || s.element === el)) {
+        if (el) {
           sectionElements.push({ id, element: el });
         }
       });
@@ -115,14 +100,6 @@
         indicator.id = 'navIndicator';
         indicator.setAttribute('aria-hidden', 'true');
         navList.appendChild(indicator);
-      }
-
-      function isPortfolioView() {
-        if (window.Portfolio.router && typeof window.Portfolio.router.getCurrentView === 'function') {
-          return window.Portfolio.router.getCurrentView() === 'portfolio';
-        }
-        const path = window.location.pathname;
-        return path.includes('all-project') || path.includes('portfolio.html') || window.location.search.includes('view=portfolio');
       }
 
       let currentActiveId = null;
@@ -174,10 +151,7 @@
         let activeSection = null;
         let activeSectionProgress = 0;
 
-        if (isPortfolioView()) {
-          activeSection = { id: 'project', element: document.getElementById('portfolioArchive') || document.getElementById('project') || document.getElementById('portfolio') };
-          activeSectionProgress = 0;
-        } else if (typeof forcedSectionId === 'string' && forcedSectionId !== 'hero' && forcedSectionId !== '#hero') {
+        if (typeof forcedSectionId === 'string' && forcedSectionId !== 'hero' && forcedSectionId !== '#hero') {
           const forcedClean = forcedSectionId.replace('#', '');
           const forcedEl = document.getElementById(forcedClean);
           if (forcedEl) {
@@ -214,13 +188,7 @@
         navLinks.forEach((link) => {
           const href = link.getAttribute('href') || '';
           const isMatch =
-            (newActiveId && (
-              href === `#${newActiveId}` ||
-              href.endsWith(`#${newActiveId}`) ||
-              (newActiveId === 'project' && href.includes('portfolio')) ||
-              (newActiveId === 'portfolio' && href.includes('project'))
-            )) ||
-            (isPortfolioView() && (href === '#project' || href === '#portfolio' || href.includes('portfolio') || href.includes('all-project')));
+            newActiveId && (href === `#${newActiveId}` || href.endsWith(`#${newActiveId}`));
 
           if (isMatch) {
             link.classList.add('is-active');
@@ -339,7 +307,7 @@
         }
       });
 
-      // Expose to SPA router
+      // Expose navigation sync helper
       window.Portfolio.navigation.syncActiveState = updateActiveNav;
 
       // Initial check on load

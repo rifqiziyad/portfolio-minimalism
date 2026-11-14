@@ -1,232 +1,5 @@
-/* ─── PORTFOLIO SECTION ─── */
-.section-portfolio {
-  position: relative;
-}
-
-.project-item {
-  display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
-  gap: clamp(2.5rem, 4.5vw, 5.5rem);
-  align-items: center;
-  min-height: 85vh;
-  padding: clamp(3rem, 6vw, 6rem) 0;
-  border-bottom: 1px solid var(--border-subtle);
-  position: relative;
-  z-index: 2;
-}
-
-.project-item:last-child {
-  border-bottom: none;
-}
-
-.project-layout-reversed {
-  grid-template-columns: minmax(0, 6fr) minmax(0, 4fr);
-}
-
-.project-info {
-  min-width: 0;
-  width: 100%;
-}
-
-.project-visual {
-  min-width: 0;
-  width: 100%;
-}
-
-.project-meta {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  margin-bottom: 1rem;
-}
-
-.project-category {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--accent-orange);
-  letter-spacing: 0.15em;
-}
-
-.project-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.25rem, 3vw, 4.5rem);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  margin-bottom: 1.5rem;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.project-desc {
-  font-size: clamp(0.9375rem, 1.1vw, 1.125rem);
-  color: var(--text-secondary);
-  line-height: 1.65;
-  margin-bottom: 2.25rem;
-  max-width: 46ch;
-}
-
-.project-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  border-top: 1px solid var(--border-subtle);
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 1.25rem 0;
-  margin-bottom: 2.25rem;
-}
-
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
-}
-
-.detail-label {
-  color: var(--text-muted);
-  letter-spacing: 0.1em;
-}
-
-.detail-val {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.project-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-family: var(--font-display);
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--text-primary);
-  padding-bottom: 0.35rem;
-}
-
-.project-link .arrow {
-  font-size: 1.1rem;
-  transition: transform var(--transition-fast);
-}
-
-.project-link:hover {
-  color: var(--accent-orange);
-  border-bottom-color: var(--accent-orange);
-}
-
-.project-link:hover .arrow {
-  transform: translate(4px, -4px);
-}
-
-/* Project Visual Frame */
-.project-img-frame {
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--border-medium);
-  background-color: var(--bg-secondary);
-  aspect-ratio: 4/3;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-}
-
-.project-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: left top;
-  transform-origin: center center;
-  will-change: transform;
-  filter: grayscale(20%) brightness(0.95);
-}
-
-/* ─── RESPONSIVE: PORTFOLIO ─── */
-@media (max-width: 1024px) {
-  .project-item,
-  .project-layout-reversed {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .project-layout-reversed .project-visual {
-    order: 2;
-  }
-
-  .project-layout-reversed .project-info {
-    order: 1;
-  }
-}
-
-/* ─── EXPLORE ALL PROJECTS LINK (INDEX.HTML) ─── */
-.portfolio-explore-wrap {
-  display: flex;
-  justify-content: center;
-  margin-top: clamp(3rem, 6vw, 5rem);
-  padding-bottom: clamp(1rem, 2vw, 2rem);
-}
-
-.portfolio-explore-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 1.1rem 2.4rem;
-  font-family: var(--font-label);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  border: 1px solid var(--border-medium);
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-  will-change: transform, border-color, box-shadow;
-  transition: border-color var(--transition-fast),
-              color var(--transition-fast),
-              background-color var(--transition-fast),
-              box-shadow var(--transition-fast),
-              transform var(--transition-fast);
-}
-
-.portfolio-explore-link .arrow {
-  color: var(--accent-orange);
-  font-size: 1.15rem;
-  transition: transform var(--transition-fast);
-  will-change: transform;
-}
-
-.portfolio-explore-link:hover {
-  border-color: var(--accent-orange);
-  color: #ffffff;
-  background: rgba(255, 69, 0, 0.08);
-  box-shadow: 0 0 30px rgba(255, 69, 0, 0.28);
-  transform: translateY(-2px);
-}
-
-.portfolio-explore-link:hover .arrow {
-  transform: translate(4px, -4px);
-}
-
-/* ─── DEDICATED PORTFOLIO PAGE (PORTFOLIO.HTML) ─── */
-.section-portfolio-page {
-  padding-top: clamp(7.5rem, 14vw, 11rem);
-  padding-bottom: clamp(6rem, 10vw, 8rem);
-  min-height: 100vh;
-}
-
-.section-portfolio-page .section-header {
-  margin-bottom: clamp(3rem, 6vw, 5.5rem);
-}
-
-
-
 /* ═══════════════════════════════════════════════════════════════════════════
-   HORIZONTAL SCROLL PORTFOLIO SHOWCASE (HOME #portfolio)
+   HORIZONTAL SCROLL PORTFOLIO SHOWCASE (#project)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .project-showcase-section {
@@ -361,7 +134,7 @@
   background: none;
   border: none;
   text-align: left;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: clamp(1.6rem, 2.8vw, 3.6rem);
   font-weight: 400;
   line-height: 1.05;
@@ -414,7 +187,7 @@
 }
 
 .project-info-desc {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: clamp(0.92rem, 1.05vw, 1.12rem);
   font-weight: 400;
   color: rgba(255, 255, 255, 0.86);
@@ -597,7 +370,7 @@
   display: flex;
   align-items: center;
   gap: 1.35rem;
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.85);
 }
@@ -624,7 +397,7 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-/* ─── 7. Responsive Adaptation (< 1024px & < 768px) ─── */
+/* ─── 7. Responsive Adaptation (< 1024px) ─── */
 @media (max-width: 1024px) {
   .project-title-item {
     font-size: clamp(1.2rem, 2.2vw, 1.75rem);
@@ -632,84 +405,5 @@
 
   .project-info-panel {
     padding: 1.25rem 1.75rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .project-vline-center {
-    left: 28%;
-  }
-
-  .project-vline-right {
-    left: 100%;
-  }
-
-  .project-grid-hline {
-    top: 38%;
-  }
-
-  .project-header-area {
-    padding: clamp(4rem, 10vw, 6rem) 0 clamp(2.5rem, 5vw, 4rem);
-  }
-
-  .project-title-band {
-    left: 0;
-    right: 0;
-    bottom: 62%;
-    height: 4.25rem;
-  }
-
-  .project-title-layer-lit {
-    clip-path: inset(0 4% 0 28%);
-    -webkit-clip-path: inset(0 4% 0 28%);
-  }
-
-  .project-title-item {
-    flex: 0 0 68vw;
-    width: 68vw;
-    min-width: 68vw;
-    font-size: clamp(1.35rem, 5.4vw, 1.85rem);
-  }
-
-  /* On mobile: Image viewport sits on the right column (28% to 96%) below 38% line */
-  .project-image-viewport {
-    left: 28%;
-    top: 38%;
-    width: 68%;
-    height: 34%;
-  }
-
-  /* Info panel sits below the image viewport for clean readability */
-  .project-info-panel {
-    left: 0;
-    top: 72%;
-    width: 100%;
-    height: 22%;
-    padding: 0.85rem 1.25rem;
-    background: linear-gradient(180deg, rgba(10, 10, 12, 0.92) 0%, rgba(10, 10, 12, 0.98) 100%);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .project-info-desc {
-    font-size: 0.82rem;
-    line-height: 1.45;
-    margin-bottom: 0.65rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .project-info-specs {
-    margin-bottom: 0.65rem;
-    gap: 0.65rem 1.5rem;
-  }
-
-  .project-bottom-bar {
-    padding: 0.75rem 1.25rem;
-  }
-
-  .project-bottom-title {
-    display: none;
   }
 }

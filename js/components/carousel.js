@@ -691,11 +691,9 @@
       );
     }
 
-    // 5. Global Event Delegation on Both Home (#portfolioList) & Archive (#portfolioFullList)
+    // 5. Global Event Delegation on Portfolio Showcase (#portfolioList)
     const portfolioContainers = [
-      document.getElementById('portfolioList'),
-      document.getElementById('portfolioFullList'),
-      document.getElementById('worksList')
+      document.getElementById('portfolioList')
     ].filter(Boolean);
 
     portfolioContainers.forEach((portfolioContainer) => {
@@ -731,13 +729,13 @@
     });
 
     // Public API
-    window.Portfolio.carousel = {
+    Object.assign(window.Portfolio.carousel, {
       openGallery,
       closeGallery,
       nextSlide,
       prevSlide,
       goToSlide
-    };
+    });
   }
 
   window.Portfolio.carousel = {

@@ -40,23 +40,38 @@
       app.carousel.initCarousel();
     }
 
-    // 5. Client-Side SPA Router (View Swapping, Scoped GSAP Contexts & History Management)
-    if (app.router && typeof app.router.initRouter === 'function') {
-      app.router.initRouter();
-    } else {
-      // Direct fallback if router is not present
-      if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
-        app.hero.initHeroAnimations();
-      }
-      if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
-        app.parallax.initParallaxAnimations();
-      }
-      if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
-        app.skills.initSkillsCrystalAnimation();
-      }
-      if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
-        app.contact.initContactCrystalAnimation();
-      }
+    // 5. Page Animations & ScrollTrigger Calibration
+    if (app.hero && typeof app.hero.initHeroAnimations === 'function') {
+      app.hero.initHeroAnimations(false);
+    }
+    if (app.parallax && typeof app.parallax.initParallaxAnimations === 'function') {
+      app.parallax.initParallaxAnimations(document);
+    }
+    if (app.skills && typeof app.skills.initSkillsCrystalAnimation === 'function') {
+      app.skills.initSkillsCrystalAnimation();
+    }
+    if (app.contact && typeof app.contact.initContactCrystalAnimation === 'function') {
+      app.contact.initContactCrystalAnimation();
+    }
+
+    if (typeof ScrollTrigger !== 'undefined') {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh(true);
+    }
+
+    // Scroll to anchor hash if URL contains one (e.g. index.html#skills)
+    const initialHash = window.location.hash;
+    if (initialHash && initialHash !== '#hero' && initialHash !== '#') {
+      setTimeout(() => {
+        if (app.scroll && typeof app.scroll.scrollTo === 'function') {
+          app.scroll.scrollTo(initialHash, { offset: -70, duration: 1.0 });
+        }
+        if (app.navigation && typeof app.navigation.syncActiveState === 'function') {
+          app.navigation.syncActiveState(initialHash.replace('#', ''));
+        }
+      }, 50);
+    } else if (app.navigation && typeof app.navigation.syncActiveState === 'function') {
+      app.navigation.syncActiveState();
     }
 
     // 6. Full-Screen Loading Overlay (Real-Time Asset Tracker & Smooth Reveal)

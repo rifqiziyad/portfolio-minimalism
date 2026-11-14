@@ -93,7 +93,7 @@
 }
 
 .education-desc {
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: clamp(0.9rem, 1.02vw, 1.05rem);
   font-weight: 400;
   color: rgba(255, 255, 255, 0.86);

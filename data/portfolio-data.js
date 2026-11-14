@@ -111,7 +111,7 @@
         description:
           'Company profile website that contains product & service, case study, contact, and news sections.',
         year: '2022 — 2023',
-        stack: 'JavaScript • jQuert • Bootstrap • HTML5 / CSS3',
+        stack: 'JavaScript • jQuery • Bootstrap • HTML5 / CSS3',
         linkUrl: 'https://ignica.com',
         linkText: 'Visit ignica.com',
         image: 'assets/ignica/Screenshot 2023-09-13 at 09.32.34.webp',
@@ -165,13 +165,8 @@
         role: 'ACCOUNTING',
         description:
           'Accustomed to using Microsoft Excel to make daily sales records and make reports on raw materials as well as entering bank mutations and entering tax invoices.'
-      },
+      }
     ],
-
-    // Backward compatibility alias for timeline
-    get timeline() {
-      return this.career;
-    },
 
     skills: [
       { name: 'React.js', size: 175 },
@@ -192,7 +187,7 @@
       { name: 'Swift', size: 128 },
       { name: 'Java', size: 128 },
       { name: 'MySQL', size: 126 },
-      { name: 'Analisys', size: 125 },
+      { name: 'Analysis', size: 125 },
       { name: 'Problem Solver', size: 125 },
       { name: 'Git', size: 120 },
       { name: 'Bootstrap', size: 120 }
