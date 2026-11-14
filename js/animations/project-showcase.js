@@ -326,6 +326,8 @@
       const activeFrame = slideFrames[idx];
       if (window.Portfolio.carousel && typeof window.Portfolio.carousel.openGallery === 'function') {
         window.Portfolio.carousel.openGallery(idx, 0, activeFrame);
+      } else if (typeof window.Portfolio.ensureCarouselAndOpen === 'function') {
+        window.Portfolio.ensureCarouselAndOpen(idx, activeFrame);
       } else if (activeFrame) {
         activeFrame.click();
       }

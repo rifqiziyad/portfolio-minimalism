@@ -1,5 +1,6 @@
-/* ─── CAREER & EXPERIENCE SECTION (3-COLUMN MONOCHROME) ─── */
-.section-career {
+/* ─── SHARED 3-COLUMN MONOCHROME TIMELINE SECTIONS (CAREER & EDUCATION) ─── */
+.section-career,
+.section-education {
   position: relative;
   padding-top: clamp(2.5rem, 5vw, 5rem);
   padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
@@ -8,17 +9,19 @@
   color: #ffffff;
 }
 
-/* ─── Giant Outlined Background Text (Vertically Centered Behind Section Header) ─── */
-.section-career .bg-text-career {
+.section-career .bg-text-career,
+.section-education .bg-text-education {
   top: clamp(-2.25rem, -2.5vw, -1rem);
 }
 
-.section-career .section-header {
+.section-career .section-header,
+.section-education .section-header {
   margin-bottom: clamp(3rem, 5.5vw, 5.5rem);
   padding-bottom: 0.5rem;
 }
 
-.career-table {
+.career-table,
+.education-table {
   display: flex;
   flex-direction: column;
   border-top: 1px solid rgba(255, 255, 255, 0.12);
@@ -27,7 +30,8 @@
   margin-top: clamp(1.5rem, 3vw, 3rem);
 }
 
-.career-row {
+.career-row,
+.education-row {
   display: grid;
   grid-template-columns: minmax(130px, 1fr) minmax(220px, 1.8fr) 2.4fr;
   gap: clamp(1.25rem, 2.5vw, 2.5rem);
@@ -38,16 +42,19 @@
   transition: background-color var(--transition-fast);
 }
 
-.career-row:hover {
+.career-row:hover,
+.education-row:hover {
   background-color: rgba(255, 255, 255, 0.015);
 }
 
 /* ─── Column 1: Year ─── */
-.career-col-year {
+.career-col-year,
+.education-col-year {
   padding-top: 0.15rem;
 }
 
-.career-year {
+.career-year,
+.education-year {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: clamp(0.85rem, 0.95vw, 1rem);
@@ -58,14 +65,16 @@
   line-height: 1.4;
 }
 
-/* ─── Column 2: Company & Role ─── */
-.career-col-company {
+/* ─── Column 2: Title & Subtitle ─── */
+.career-col-company,
+.education-col-institution {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
 }
 
-.career-company-name {
+.career-company-name,
+.education-school {
   font-family: var(--font-display);
   font-size: clamp(1.15rem, 1.6vw, 1.55rem);
   font-weight: 700;
@@ -76,7 +85,8 @@
   margin: 0;
 }
 
-.career-role {
+.career-role,
+.education-degree {
   font-family: var(--font-mono);
   font-size: clamp(0.72rem, 0.82vw, 0.85rem);
   font-weight: 500;
@@ -88,11 +98,13 @@
 }
 
 /* ─── Column 3: Description ─── */
-.career-col-desc {
+.career-col-desc,
+.education-col-desc {
   max-width: 58ch;
 }
 
-.career-desc {
+.career-desc,
+.education-desc {
   font-family: var(--font-body);
   font-size: clamp(0.9rem, 1.02vw, 1.05rem);
   font-weight: 400;
@@ -101,22 +113,25 @@
   margin: 0;
 }
 
-.career-col-desc .text-line-mask + .text-line-mask {
+.career-col-desc .text-line-mask + .text-line-mask,
+.education-col-desc .text-line-mask + .text-line-mask {
   margin-top: 0.2rem;
 }
 
-/* ─── Text Line Mask & Inner (Viewport Reveal) ─── */
-.career-row .text-line-mask {
+/* ─── Text Line Mask (Viewport Reveal) ─── */
+.career-row .text-line-mask,
+.education-row .text-line-mask {
   display: block;
   overflow: hidden;
   padding-bottom: 2px;
 }
 
-.career-row .text-line-inner {
+.career-row .text-line-inner,
+.education-row .text-line-inner {
   display: block;
 }
 
-/* ─── RESPONSIVE: CAREER ─── */
+/* ─── RESPONSIVE: SHARED TIMELINE SECTIONS ─── */
 @media (max-width: 900px) {
   .section-career {
     padding-top: clamp(5rem, 12vw, 7.5rem);
@@ -127,26 +142,31 @@
     top: clamp(1rem, 2.5vw, 2.25rem);
   }
 
-  .section-career .section-header {
+  .section-career .section-header,
+  .section-education .section-header {
     margin-bottom: 2.25rem;
     padding-bottom: 0.5rem;
   }
 
-  .career-table {
+  .career-table,
+  .education-table {
     margin-top: 1.25rem;
   }
 
-  .career-row {
+  .career-row,
+  .education-row {
     grid-template-columns: 1fr;
     gap: 0.65rem;
     padding: 1.35rem 0;
   }
 
-  .career-col-company {
+  .career-col-company,
+  .education-col-institution {
     gap: 0.25rem;
   }
 
-  .career-col-desc {
+  .career-col-desc,
+  .education-col-desc {
     max-width: 100%;
     margin-top: 0.2rem;
   }
@@ -162,35 +182,42 @@
     top: 1.5rem;
   }
 
-  .section-career .section-header {
+  .section-career .section-header,
+  .section-education .section-header {
     margin-bottom: 1.75rem;
     padding-bottom: 0.35rem;
   }
 
-  .career-table {
+  .career-table,
+  .education-table {
     margin-top: 1rem;
   }
 
-  .career-row {
+  .career-row,
+  .education-row {
     gap: 0.5rem;
     padding: 1.15rem 0;
   }
 
-  .career-year {
+  .career-year,
+  .education-year {
     font-size: 0.8rem;
     letter-spacing: 0.07em;
   }
 
-  .career-company-name {
+  .career-company-name,
+  .education-school {
     font-size: 1.15rem;
     line-height: 1.25;
   }
 
-  .career-role {
+  .career-role,
+  .education-degree {
     font-size: 0.75rem;
   }
 
-  .career-desc {
+  .career-desc,
+  .education-desc {
     font-size: 0.88rem;
     line-height: 1.55;
   }

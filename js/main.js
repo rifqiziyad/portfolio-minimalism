@@ -35,9 +35,84 @@
       app.navigation.initNavigation();
     }
 
-    // 4. The Monolith Shard Lightbox Carousel for Selected Works
-    if (app.carousel && typeof app.carousel.initCarousel === 'function') {
-      app.carousel.initCarousel();
+    // 4. Lazy On-Demand Carousel Loader & Prefetch
+    let carouselReadyPromise = null;
+    let carouselInitialized = false;
+
+    function ensureCarouselReady() {
+      if (carouselInitialized && app.carousel && typeof app.carousel.openGallery === 'function') {
+        return Promise.resolve(app.carousel);
+      }
+      if (carouselReadyPromise) return carouselReadyPromise;
+
+      if (app.carousel && typeof app.carousel.initCarousel === 'function') {
+        app.carousel.initCarousel();
+        carouselInitialized = true;
+        return Promise.resolve(app.carousel);
+      }
+
+      const chunks = window.__PORTFOLIO_CHUNKS__ || {};
+      const loadScriptOnce = app.utils && app.utils.loadScriptOnce;
+      if (typeof loadScriptOnce !== 'function') {
+        return Promise.resolve(null);
+      }
+
+      carouselReadyPromise = loadScriptOnce(chunks.carousel || 'js/chunk-carousel.min.js')
+        .then(() => {
+          if (app.carousel && typeof app.carousel.initCarousel === 'function' && !carouselInitialized) {
+            app.carousel.initCarousel();
+            carouselInitialized = true;
+          }
+          return app.carousel || null;
+        })
+        .catch(() => {
+          carouselReadyPromise = null;
+          return null;
+        });
+
+      return carouselReadyPromise;
+    }
+
+    app.ensureCarouselAndOpen = function (projectIdx, sourceFrame) {
+      return ensureCarouselReady().then((carousel) => {
+        if (carousel && typeof carousel.openGallery === 'function') {
+          carousel.openGallery(projectIdx, 0, sourceFrame);
+        }
+      });
+    };
+
+    const portfolioMount = document.getElementById('portfolioList');
+    if (portfolioMount) {
+      const prefetchCarousel = () => { ensureCarouselReady(); };
+      portfolioMount.addEventListener('pointerenter', prefetchCarousel, { once: true, passive: true });
+      portfolioMount.addEventListener('focusin', prefetchCarousel, { once: true });
+
+      portfolioMount.addEventListener('click', (e) => {
+        if (carouselInitialized) return;
+        const frame = e.target.closest('.project-img-frame');
+        if (!frame) return;
+        const idxAttr = frame.getAttribute('data-gallery-project');
+        if (idxAttr === null) return;
+        const projectIdx = parseInt(idxAttr, 10);
+        if (!isNaN(projectIdx)) {
+          app.ensureCarouselAndOpen(projectIdx, frame);
+        }
+      });
+
+      portfolioMount.addEventListener('keydown', (e) => {
+        if (carouselInitialized) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+          const frame = e.target.closest('.project-img-frame');
+          if (!frame) return;
+          e.preventDefault();
+          const idxAttr = frame.getAttribute('data-gallery-project');
+          if (idxAttr === null) return;
+          const projectIdx = parseInt(idxAttr, 10);
+          if (!isNaN(projectIdx)) {
+            app.ensureCarouselAndOpen(projectIdx, frame);
+          }
+        }
+      });
     }
 
     // 5. Page Animations & ScrollTrigger Calibration

@@ -22,6 +22,10 @@
     const app = window.Portfolio;
     const isMobile = window.innerWidth <= 768;
     const targetMode = isMobile ? 'mobile' : 'desktop';
+    const chunks = window.__PORTFOLIO_CHUNKS__ || {};
+    const loadScriptOnce = app.utils && app.utils.loadScriptOnce;
+
+    currentProjectMode = targetMode;
 
     if (targetMode === 'mobile') {
       if (app.projectShowcase && typeof app.projectShowcase.cleanupProjectShowcase === 'function') {
@@ -29,6 +33,15 @@
       }
       if (app.projectMobile && typeof app.projectMobile.initProjectMobileCarousel === 'function') {
         app.projectMobile.initProjectMobileCarousel(scope);
+      } else if (typeof loadScriptOnce === 'function') {
+        loadScriptOnce(chunks.mobile || 'js/chunk-mobile.min.js')
+          .then(() => {
+            if (currentProjectMode === 'mobile' && app.projectMobile && typeof app.projectMobile.initProjectMobileCarousel === 'function') {
+              app.projectMobile.initProjectMobileCarousel(scope);
+              if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+            }
+          })
+          .catch(() => {});
       }
     } else {
       if (app.projectMobile && typeof app.projectMobile.cleanupProjectMobile === 'function') {
@@ -36,10 +49,17 @@
       }
       if (app.projectShowcase && typeof app.projectShowcase.initProjectShowcaseScroll === 'function') {
         app.projectShowcase.initProjectShowcaseScroll(scope);
+      } else if (typeof loadScriptOnce === 'function') {
+        loadScriptOnce(chunks.showcase || 'js/chunk-showcase.min.js')
+          .then(() => {
+            if (currentProjectMode === 'desktop' && app.projectShowcase && typeof app.projectShowcase.initProjectShowcaseScroll === 'function') {
+              app.projectShowcase.initProjectShowcaseScroll(scope);
+              if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+            }
+          })
+          .catch(() => {});
       }
     }
-
-    currentProjectMode = targetMode;
   }
 
   function onBreakpointCheck() {

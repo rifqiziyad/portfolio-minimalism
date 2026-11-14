@@ -142,7 +142,7 @@
                 <button type="button" class="project-gallery-trigger" id="projectGalleryTrigger">
                   <span>INSPECT GALLERY</span>
                   <span class="arrow" aria-hidden="true">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" overflow="visible"><defs><mask id="arrow-right-duotone-c0" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="6.19,10.69 2.25,10.69 1.81,13.31 3.56,13.31" fill="#000"/><polygon points="17.81,13.31 21.75,13.31 22.19,10.69 20.44,10.69" fill="#000"/></mask></defs><defs><mask id="arrow-right-duotone-c1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="16.47,6.62 13.69,3.83 11.53,5.38 12.76,6.62" fill="#000"/><polygon points="14.62,15.53 11.83,18.31 13.38,20.47 14.62,19.24" fill="#000"/></mask></defs><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter"><path d="M4 12L20 12" mask="url(#arrow-right-duotone-c0)"/><path d="M14 6L18.939 10.939L18.939 13.061L14 18" mask="url(#arrow-right-duotone-c1)"/></g></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" overflow="visible" aria-hidden="true"><use href="#icon-shard-arrow"/></svg>
                   </span>
                 </button>
                 <a href="${escapeAttr(firstSafeUrl || '#')}"

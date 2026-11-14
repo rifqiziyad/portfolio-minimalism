@@ -238,13 +238,18 @@ Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & dec
 
 ---
 
-## 3. [LOW PRIORITY]
+## 3. [LOW PRIORITY] — [DONE]
+
+> Status: Seluruh temuan `[LOW-1]` sampai `[LOW-3]` telah diimplementasikan (`[DONE]`).
+> - `[DONE]` **[LOW-1]** — Penghapusan token CSS tak terpakai (`--bg-card-hover`, `--accent-red`, `--accent-amber` di `css/variables.css`), class utilitas yatim (`.reveal-left`, `.reveal-right` di `css/global.css`), dan komentar historis `timeline.js` di `js/animations/contact.js`.
+> - `[DONE]` **[LOW-2]** — Konsolidasi aturan layout/tipografi/responsive `career` & `education` pada `css/career.css` + helper bersama `renderTimelineRows()` di `js/core/renderer.js`, serta sentralisasi SVG panah duotone via `<symbol id="icon-shard-arrow">` & `<use href="#icon-shard-arrow"/>`.
+> - `[DONE]` **[LOW-3]** — Bundling & code-splitting via **esbuild** ([package.json](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/package.json) + [scripts/build-assets.mjs](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/scripts/build-assets.mjs)) dengan full AST minification & mangling: `css/bundle.min.css` (`34.8 KB`), `js/bundle.min.js` core (`63.6 KB`), `js/chunk-showcase.min.js` (`6.0 KB`), `js/chunk-mobile.min.js` (`7.3 KB`), `js/chunk-carousel.min.js` (`10.0 KB` lazy-loaded on-demand) beserta cache-busting content hash (`?v=<sha256>`) di `index.html`.
 
 Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jangka panjang, penghapusan sisa token tak terpakai, serta efisiensi bundling/code-splitting.
 
 ---
 
-### [LOW-1] Dead Code Tersisa: Token CSS & Class Utility Tak Terpakai serta Komentar Historis Pra-Refaktor
+### [LOW-1] [DONE] Dead Code Tersisa: Token CSS & Class Utility Tak Terpakai serta Komentar Historis Pra-Refaktor
 
 - **(a) Lokasi File & Baris Kode:**
   - [`css/variables.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/variables.css#L6), [`L14-L15`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/variables.css#L14-L15) (`--bg-card-hover`, `--accent-red`, `--accent-amber` tidak direferensikan oleh selector mana pun)
@@ -261,7 +266,7 @@ Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jang
 
 ---
 
-### [LOW-2] Duplikasi Kode: CSS & DOM Renderer `career` vs `education` Identik serta Duplikasi SVG Panah Inline
+### [LOW-2] [DONE] Duplikasi Kode: CSS & DOM Renderer `career` vs `education` Identik serta Duplikasi SVG Panah Inline
 
 - **(a) Lokasi File & Baris Kode:**
   - [`css/career.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/career.css#L21-L100) vs [`css/education.css`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/css/education.css#L21-L100) (Struktur layout 3 kolom `grid-template-columns: minmax(130px, 1fr) minmax(220px, 1.8fr) 2.4fr`, padding, border, hover, dan tipografi berulang hampir 1:1)
@@ -277,7 +282,7 @@ Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jang
 
 ---
 
-### [LOW-3] Peluang Code-Splitting, Dynamic Imports, & Cache Busting untuk Produksi
+### [LOW-3] [DONE] Peluang Code-Splitting, Dynamic Imports, & Cache Busting untuk Produksi
 
 - **(a) Lokasi File & Baris Kode:**
   - [`index.html`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L27-L40), [`L333-L353`](file:///Users/rifqiziyadimtinan/Documents/Programming/portfolio-minimalism/index.html#L333-L353)
@@ -303,4 +308,4 @@ Temuan pada kelompok ini berfokus pada kebersihan kode, pemeliharaan CSS/JS jang
 | **Fase 1 (Quick Wins)** | Perbaikan SEO & A11y Kritis + Unblock LCP | `[HIGH-1]`, `[HIGH-4]`, `[HIGH-5]` | `[DONE]` | LCP turun signifikan, lolos struktur heading `<h1>`, kepatuhan WCAG keyboard/kontras/reduced-motion, indeksabilitas SEO & Social Share |
 | **Fase 2 (CWV Tuning)** | Self-host Fonts + Defer CDN/Data + Debounce Resize/Batch DOM Reads | `[HIGH-2]`, `[HIGH-3]`, `[MEDIUM-1]`, `[MEDIUM-4]` | `[DONE]` | Eliminasi render-blocking CSS font & script parser block, stabilisasi INP saat scroll/resize, minim CLS |
 | **Fase 3 (Asset & GPU)** | Optimasi resolusi `assets/` (`srcset`) + Hapus scrub `drop-shadow` & berlebihnya `will-change` | `[MEDIUM-2]`, `[MEDIUM-3]` | `[DONE]` | Payload halaman & memori VRAM turun drastis pada perangkat mobile, scroll lebih stabil 60fps |
-| **Fase 4 (Maintainability & Build)** | Bundling Vite/esbuild + Dynamic Import Modal + Konsolidasi Career/Education | `[LOW-1]`, `[LOW-2]`, `[LOW-3]` | `[PENDING]` | Pengurangan HTTP requests (`39 -> 2-4` asset), penghapusan duplikasi & dead code tersisa |
+| **Fase 4 (Maintainability & Build)** | Bundling esbuild + Code-Splitting + Konsolidasi Career/Education + Cache Busting | `[LOW-1]`, `[LOW-2]`, `[LOW-3]` | `[DONE]` | Pengurangan payload JS awal (`129 KB -> 63.6 KB`), penghapusan duplikasi & dead code tersisa, cache-busting `?v=<hash>` |

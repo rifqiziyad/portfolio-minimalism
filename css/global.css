@@ -158,14 +158,6 @@ ul, ol {
   transform: translateY(40px);
 }
 
-.reveal-left {
-  transform: translateX(-40px);
-}
-
-.reveal-right {
-  transform: translateX(40px);
-}
-
 .reveal-scale {
   transform: scale(0.94);
 }

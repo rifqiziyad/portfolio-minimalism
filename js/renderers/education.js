@@ -1,58 +1,32 @@
 /**
  * EDUCATION & CERTIFICATIONS DOM RENDERER
  * Module: js/renderers/education.js
- * Injects 3-column monochrome education rows (Year | Institution + Degree | Description)
- * with text-line masks into #educationTable.
+ * Delegates 3-column monochrome rendering to shared Portfolio.utils.renderTimelineRows.
  */
 
-(function (window, document) {
+(function (window) {
   'use strict';
 
   window.Portfolio = window.Portfolio || {};
   window.Portfolio.renderer = window.Portfolio.renderer || {};
 
   function renderEducation(education) {
-    const container = document.getElementById('educationTable');
-    if (!container || !Array.isArray(education)) return;
+    const utils = window.Portfolio.utils;
+    if (!utils || typeof utils.renderTimelineRows !== 'function') return;
 
-    const { escapeAttr, escapeHtml } = window.Portfolio.utils;
-
-    const html = education
-      .map((item, index) => {
-        return `
-          <div class="education-row" data-index="${index}">
-            <div class="education-col-year">
-              <span class="text-line-mask">
-                <span class="text-line-inner education-year">${escapeHtml(item.period)}</span>
-              </span>
-            </div>
-            <div class="education-col-institution">
-              <h3 class="education-school" data-raw-text="${escapeAttr(item.school)}">
-                <span class="text-line-mask">
-                  <span class="text-line-inner">${escapeHtml(item.school)}</span>
-                </span>
-              </h3>
-              <p class="education-degree" data-raw-text="${escapeAttr(item.degree)}">
-                <span class="text-line-mask">
-                  <span class="text-line-inner">${escapeHtml(item.degree)}</span>
-                </span>
-              </p>
-            </div>
-            <div class="education-col-desc">
-              <p class="education-desc" data-raw-text="${escapeAttr(item.description)}">
-                <span class="text-line-mask">
-                  <span class="text-line-inner">${escapeHtml(item.description)}</span>
-                </span>
-              </p>
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-
-    container.innerHTML = html;
+    utils.renderTimelineRows('educationTable', education, {
+      rowClass: 'education-row',
+      yearColClass: 'education-col-year',
+      yearClass: 'education-year',
+      titleColClass: 'education-col-institution',
+      titleClass: 'education-school',
+      subtitleClass: 'education-degree',
+      descColClass: 'education-col-desc',
+      descClass: 'education-desc',
+      titleKey: 'school',
+      subtitleKey: 'degree'
+    });
   }
 
   window.Portfolio.renderer.renderEducation = renderEducation;
-})(window, document);
-
+})(window);

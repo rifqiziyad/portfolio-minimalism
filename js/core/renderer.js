@@ -138,11 +138,92 @@
     formatTextLinesBatch([{ containerEl, text, options }]);
   }
 
+  const loadedScripts = new Map();
+
+  function loadScriptOnce(src) {
+    if (!src) return Promise.resolve();
+    if (loadedScripts.has(src)) return loadedScripts.get(src);
+
+    const promise = new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = src;
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = (err) => {
+        loadedScripts.delete(src);
+        reject(err);
+      };
+      document.head.appendChild(script);
+    });
+
+    loadedScripts.set(src, promise);
+    return promise;
+  }
+
+  function renderTimelineRows(containerId, items, config) {
+    const container = document.getElementById(containerId);
+    if (!container || !Array.isArray(items)) return;
+
+    const {
+      rowClass,
+      yearColClass,
+      yearClass,
+      titleColClass,
+      titleClass,
+      subtitleClass,
+      descColClass,
+      descClass,
+      titleKey,
+      subtitleKey,
+      subtitleFallback = ''
+    } = config;
+
+    container.innerHTML = items
+      .map((item, index) => {
+        const period = item.period || '';
+        const title = item[titleKey] || '';
+        const subtitle = item[subtitleKey] || subtitleFallback;
+        const description = item.description || '';
+
+        return `
+          <div class="${rowClass}" data-index="${index}">
+            <div class="${yearColClass}">
+              <span class="text-line-mask">
+                <span class="text-line-inner ${yearClass}">${escapeHtml(period)}</span>
+              </span>
+            </div>
+            <div class="${titleColClass}">
+              <h3 class="${titleClass}" data-raw-text="${escapeAttr(title)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${escapeHtml(title)}</span>
+                </span>
+              </h3>
+              <p class="${subtitleClass}" data-raw-text="${escapeAttr(subtitle)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${escapeHtml(subtitle)}</span>
+                </span>
+              </p>
+            </div>
+            <div class="${descColClass}">
+              <p class="${descClass}" data-raw-text="${escapeAttr(description)}">
+                <span class="text-line-mask">
+                  <span class="text-line-inner">${escapeHtml(description)}</span>
+                </span>
+              </p>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  }
+
   window.Portfolio.utils = {
     formatIndex,
     escapeHtml,
     escapeAttr,
     sanitizeUrl,
+    renderTimelineRows,
+    loadScriptOnce,
     formatTextLines,
     formatTextLinesBatch,
     prefersReducedMotion

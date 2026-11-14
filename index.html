@@ -94,10 +94,31 @@
   </script>
 
   <!-- Bundled Modular Stylesheet -->
-  <link rel="stylesheet" href="css/bundle.min.css">
+  <link rel="stylesheet" href="css/bundle.min.css?v=12d82887">
 </head>
 
 <body>
+  <!-- Shared SVG Icon Sprite -->
+  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <mask id="shard-arrow-c0" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+        <rect x="-2" y="-2" width="28" height="28" fill="#fff"/>
+        <polygon points="6.19,10.69 2.25,10.69 1.81,13.31 3.56,13.31" fill="#000"/>
+        <polygon points="17.81,13.31 21.75,13.31 22.19,10.69 20.44,10.69" fill="#000"/>
+      </mask>
+      <mask id="shard-arrow-c1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28">
+        <rect x="-2" y="-2" width="28" height="28" fill="#fff"/>
+        <polygon points="16.47,6.62 13.69,3.83 11.53,5.38 12.76,6.62" fill="#000"/>
+        <polygon points="14.62,15.53 11.83,18.31 13.38,20.47 14.62,19.24" fill="#000"/>
+      </mask>
+      <symbol id="icon-shard-arrow" viewBox="0 0 24 24" overflow="visible">
+        <g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter">
+          <path d="M4 12L20 12" mask="url(#shard-arrow-c0)"/>
+          <path d="M14 6L18.939 10.939L18.939 13.061L14 18" mask="url(#shard-arrow-c1)"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
 
   <!-- Custom Minimal Cursor Dot -->
   <div id="cursor-dot" aria-hidden="true"></div>
@@ -411,7 +432,7 @@
     <!-- Main Stage -->
     <div class="carousel-stage" id="carouselStage">
       <button class="carousel-nav-btn carousel-btn-prev" id="carouselPrevBtn" aria-label="Previous Slide">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" overflow="visible" aria-hidden="true"><defs><mask id="carousel-prev-c0" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="6.19,10.69 2.25,10.69 1.81,13.31 3.56,13.31" fill="#000"/><polygon points="17.81,13.31 21.75,13.31 22.19,10.69 20.44,10.69" fill="#000"/></mask></defs><defs><mask id="carousel-prev-c1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="16.47,6.62 13.69,3.83 11.53,5.38 12.76,6.62" fill="#000"/><polygon points="14.62,15.53 11.83,18.31 13.38,20.47 14.62,19.24" fill="#000"/></mask></defs><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter"><path d="M4 12L20 12" mask="url(#carousel-prev-c0)"/><path d="M14 6L18.939 10.939L18.939 13.061L14 18" mask="url(#carousel-prev-c1)"/></g></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" overflow="visible" aria-hidden="true"><use href="#icon-shard-arrow"/></svg>
       </button>
 
       <div class="carousel-slide-viewport" id="carouselViewport">
@@ -421,7 +442,7 @@
       </div>
 
       <button class="carousel-nav-btn carousel-btn-next" id="carouselNextBtn" aria-label="Next Slide">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" overflow="visible" aria-hidden="true"><defs><mask id="carousel-next-c0" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="6.19,10.69 2.25,10.69 1.81,13.31 3.56,13.31" fill="#000"/><polygon points="17.81,13.31 21.75,13.31 22.19,10.69 20.44,10.69" fill="#000"/></mask></defs><defs><mask id="carousel-next-c1" maskUnits="userSpaceOnUse" x="-2" y="-2" width="28" height="28"><rect x="-2" y="-2" width="28" height="28" fill="#fff"/><polygon points="16.47,6.62 13.69,3.83 11.53,5.38 12.76,6.62" fill="#000"/><polygon points="14.62,15.53 11.83,18.31 13.38,20.47 14.62,19.24" fill="#000"/></mask></defs><g fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="butt" stroke-linejoin="miter"><path d="M4 12L20 12" mask="url(#carousel-next-c0)"/><path d="M14 6L18.939 10.939L18.939 13.061L14 18" mask="url(#carousel-next-c1)"/></g></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" overflow="visible" aria-hidden="true"><use href="#icon-shard-arrow"/></svg>
       </button>
     </div>
 
@@ -448,7 +469,7 @@
   <script defer src="data/portfolio-data.js"></script>
 
   <!-- Bundled Application Script (21 Modules — works on both file:// and HTTP) -->
-  <script defer src="js/bundle.min.js"></script>
+  <script defer src="js/bundle.min.js?v=56ec92d4"></script>
 </body>
 
 </html>

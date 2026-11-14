@@ -1,7 +1,7 @@
 /**
  * CONTACT SECTION CRYSTAL ASSEMBLY (REVERSE SHATTER) CHOREOGRAPHY
  * Module: js/animations/contact.js
- * Explicit .fromTo() reverse of js/animations/timeline.js so shards start scattered
+ * Explicit .fromTo() reverse-shatter choreography (mirroring skills.js) so shards start scattered
  * and lock together at (0, 0, 0) when scroll hits the very bottom (end: 'max').
  */
 
