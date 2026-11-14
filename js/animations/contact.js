@@ -16,7 +16,10 @@
 
     const crystal = document.getElementById('bgContactCrystal');
     const contactSection = document.getElementById('contact');
+    const educationSection = document.getElementById('education');
     if (!crystal || !contactSection) return;
+
+    const contactContainer = contactSection.querySelector('.contact-container');
 
     if (
       window.Portfolio.utils &&
@@ -30,11 +33,44 @@
     const svg = crystal.querySelector('.cyber-cluster-svg');
     const fractures = crystal.querySelectorAll('.outline-fracture');
 
+    // Curtain Reveal + Sticky Parallax Depth:
+    // Triggered by #education (non-transformed) so contactSection stays tucked behind #education
+    // and opens slowly with sticky parallax + depth scale until the bottom of the page.
+    const curtainTrigger = educationSection || contactSection;
+    const curtainStart = educationSection ? 'bottom bottom' : 'top bottom';
+
+    const curtainTl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: curtainTrigger,
+        start: curtainStart,
+        end: 'max',
+        scrub: 0.6,
+        invalidateOnRefresh: true
+      }
+    });
+
+    curtainTl.fromTo(
+      contactSection,
+      { yPercent: -55 },
+      { yPercent: 0 },
+      0
+    );
+
+    if (contactContainer) {
+      curtainTl.fromTo(
+        contactContainer,
+        { scale: 0.95, opacity: 0.35, transformOrigin: '50% 60%' },
+        { scale: 1, opacity: 1, transformOrigin: '50% 60%' },
+        0
+      );
+    }
+
     const assembleTl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: {
-        trigger: contactSection,
-        start: 'top 90%',
+        trigger: curtainTrigger,
+        start: curtainStart,
         end: 'max',
         scrub: 0.8,
         invalidateOnRefresh: true

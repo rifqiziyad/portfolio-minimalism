@@ -89,6 +89,13 @@
         const targetElement = document.querySelector(targetId);
         if (targetElement && scrollService) {
           e.preventDefault();
+          if (targetId === '#contact') {
+            const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+            scrollService.scrollTo(maxScroll, {
+              duration: 1.4
+            });
+            return;
+          }
           scrollService.scrollTo(targetElement, {
             offset: -70,
             duration: 1.4

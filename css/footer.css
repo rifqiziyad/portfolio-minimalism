@@ -1,5 +1,7 @@
 /* ─── SITE FOOTER ─── */
 .site-footer {
+  position: relative;
+  z-index: 3;
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-subtle);
   padding: 2.5rem 0;
