@@ -1,8 +1,13 @@
 /* ─── CONTACT SECTION ─── */
 .section-contact {
   position: relative;
-  z-index: 1;
   padding-bottom: clamp(6rem, 12vw, 12rem);
+}
+
+@media (min-width: 769px) {
+  .section-contact {
+    z-index: 1;
+  }
 }
 
 /* Contact Background Assembling Crystal */

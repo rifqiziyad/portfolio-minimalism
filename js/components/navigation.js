@@ -89,7 +89,7 @@
         const targetElement = document.querySelector(targetId);
         if (targetElement && scrollService) {
           e.preventDefault();
-          if (targetId === '#contact') {
+          if (targetId === '#contact' && window.innerWidth > 768) {
             const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
             scrollService.scrollTo(maxScroll, {
               duration: 1.4
