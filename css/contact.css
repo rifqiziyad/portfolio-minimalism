@@ -42,7 +42,6 @@
 .contact-container {
   position: relative;
   z-index: 2;
-  will-change: transform, opacity;
 }
 
 .contact-bento-grid {

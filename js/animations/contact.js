@@ -19,8 +19,6 @@
     const educationSection = document.getElementById('education');
     if (!crystal || !contactSection) return;
 
-    const contactContainer = contactSection.querySelector('.contact-container');
-
     if (
       window.Portfolio.utils &&
       typeof window.Portfolio.utils.prefersReducedMotion === 'function' &&
@@ -56,15 +54,6 @@
       { yPercent: 0 },
       0
     );
-
-    if (contactContainer) {
-      curtainTl.fromTo(
-        contactContainer,
-        { scale: 0.95, opacity: 0.35, transformOrigin: '50% 60%' },
-        { scale: 1, opacity: 1, transformOrigin: '50% 60%' },
-        0
-      );
-    }
 
     const assembleTl = gsap.timeline({
       defaults: { ease: 'none' },
