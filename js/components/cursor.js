@@ -12,30 +12,18 @@
     const dot = document.getElementById('cursor-dot');
     if (!dot) return;
 
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
     let isMoving = false;
-    let rafId = null;
 
-    function renderCursor() {
-      rafId = null;
-      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-    }
-
-    // Track real mouse position via rAF + GPU transform3d
+    // Track real mouse position directly (zero latency 1:1 tracking)
     window.addEventListener('mousemove', (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
+      dot.style.left = `${e.clientX}px`;
+      dot.style.top = `${e.clientY}px`;
 
       if (!isMoving) {
         document.body.classList.add('has-cursor');
         isMoving = true;
       }
-
-      if (rafId === null) {
-        rafId = window.requestAnimationFrame(renderCursor);
-      }
-    }, { passive: true });
+    });
 
     window.addEventListener('mouseleave', () => {
       document.body.classList.remove('has-cursor');

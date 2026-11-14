@@ -151,7 +151,7 @@ Temuan pada kelompok ini berdampak langsung terhadap metrik Core Web Vitals (**L
 > - `[DONE]` **[MEDIUM-1]** — Reservasi dimensi `.skills-crystal-stage` (`aspect-ratio: 1000 / 960`) & `.project-showcase-mount` (`min-height: 100vh`), perbaikan `@font-face 'SyneFallback'` (menghapus `local('sans-serif')` invalid + menambahkan metrik override), serta penambahan `width="72" height="46" decoding="async"` pada thumbnail carousel.
 > - `[DONE]` **[MEDIUM-2]** — Crop hero ke `3:4` (`480w` `53 KB` & `720w` `68 KB`) + `srcset`/`sizes`, resize cover/galeri proyek maks `1600px` beserta varian `800w`/`1200w`, metadata `imageWidth`/`imageHeight`/`imageSrcset` aktual di `data/portfolio-data.js`, dan rename seluruh file asset ke *kebab-case* tanpa spasi.
 > - `[DONE]` **[MEDIUM-3]** — Penghapusan scrub `filter: drop-shadow(...)` dari `skills.js` & `contact.js` (diganti CSS `radial-gradient` `::before` compositor-only), penggantian `.noise-overlay` `<feTurbulence>` dengan tile statis `assets/noise-tile.webp`, dan pembersihan `will-change` statis/non-compositor (`clip-path`, `width`, `filter`, modal/reveal idle).
-> - `[DONE]` **[MEDIUM-4]** — Pembaruan `cursor.js` ke `rAF` + `transform: translate3d(...)` + event delegation (`mouseover`/`mouseout` & class `.is-hovering`), serta hardening utilitas `escapeHtml`, `escapeAttr`, dan `sanitizeUrl` di `renderer.js` dan seluruh renderer/carousel.
+> - `[DONE]` **[MEDIUM-4]** — Pembaruan `cursor.js` ke presisi positioning 1:1 + centering `transform: translate(-50%, -50%) scale(...)` murni (menghindari artifact jumping akibat komposisi matriks CSS individual `scale` dengan translate viewport) + event delegation (`mouseover`/`mouseout` & class `.is-hovering`), serta hardening utilitas `escapeHtml`, `escapeAttr`, dan `sanitizeUrl` di `renderer.js` dan seluruh renderer/carousel.
 
 Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & decoder gambar, menciptakan *paint/compositing overhead* pada GPU, serta melemahkan keandalan event/DOM injection.
 
@@ -233,7 +233,7 @@ Temuan pada kelompok ini berisiko menimbulkan **CLS**, membebani bandwidth & dec
   - Fungsi `escapeAttr` di `renderer.js:18-20` hanya me-replace karakter `"`, dan sebagian besar isi HTML di renderer disuntikkan mentah ke `innerHTML` tanpa `escapeHtml()` maupun sanitasi protokol `linkUrl`. Saat ini aman karena data lokal statis (`portfolio-data.js`), tetapi berisiko DOM-based XSS jika sumber data diperluas ke CMS/query string.
 
 - **(c) Solusi Teknis Konkret:**
-  - Ganti pembaruan posisi `cursor.js` dengan `dot.style.transform = \`translate3d(\${mouseX}px, \${mouseY}px, 0) translate(-50%, -50%)\`` yang di-coalesce ke 1 pembaruan per `requestAnimationFrame`, dan gunakan event delegation (`mouseover`/`mouseout` pada `document` dengan `closest('a, button, [role="button"]')`).
+  - Pertahankan positioning presisi 1:1 `dot.style.left` & `dot.style.top` dengan centering dan scaling murni melalui `transform: translate(-50%, -50%) scale(...)` (tanpa properti CSS individual `scale:` yang mengalikan jarak translate terhadap viewport), dan gunakan event delegation (`mouseover`/`mouseout` pada `document` dengan `closest('a, button, [role="button"], .carousel-thumb-item, .project-slide-frame')`).
   - Lengkapi utilitas `escapeHtml` & `escapeAttr` (escape `&`, `<`, `>`, `"`, `'`) dan validasi skema `linkUrl` (whitelist `https:`, `http:`, `mailto:`, atau path relatif) di semua renderer serta `carousel.js`.
 
 ---

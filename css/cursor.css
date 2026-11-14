@@ -15,11 +15,10 @@
   pointer-events: none;
   z-index: 10000;
   background-color: #ff4500;
-  transform: translate3d(-100px, -100px, 0) translate(-50%, -50%);
-  scale: 1;
+  transform: translate(-50%, -50%) scale(1);
   mix-blend-mode: difference;
   opacity: 0;
-  transition: opacity 0.3s ease, scale 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.3s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
 
@@ -28,7 +27,7 @@ body.has-cursor #cursor-dot {
 }
 
 #cursor-dot.is-hovering {
-  scale: 1.6;
+  transform: translate(-50%, -50%) scale(1.6);
 }
 
 /* Responsive: Hide cursor on touch / mobile */
