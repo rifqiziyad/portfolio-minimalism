@@ -206,10 +206,6 @@
     let wasDragged = false;
 
     function handleGestureStart(clientX, clientY) {
-      if (snapTween) {
-        snapTween.kill();
-        snapTween = null;
-      }
       if (entranceTween) {
         entranceTween.kill();
         entranceTween = null;
@@ -257,10 +253,18 @@
         if (Math.abs(dy) > Math.abs(dx)) {
           axisLocked = 'y';
           isPointerDown = false;
-          animateToIndex(Math.round(playhead.f), 0.25);
+          if (!snapTween && Math.abs(playhead.f - Math.round(playhead.f)) > 0.001) {
+            animateToIndex(Math.round(playhead.f), 0.25);
+          }
           return;
         }
         axisLocked = 'x';
+        if (snapTween) {
+          snapTween.kill();
+          snapTween = null;
+        }
+        startF = playhead.f;
+        startX = clientX;
       }
 
       if (axisLocked === 'x') {
@@ -290,7 +294,12 @@
       if (!isPointerDown) return;
       isPointerDown = false;
 
-      if (axisLocked !== 'x') return;
+      if (axisLocked !== 'x') {
+        if (!snapTween && Math.abs(playhead.f - Math.round(playhead.f)) > 0.001) {
+          animateToIndex(Math.round(playhead.f), 0.25);
+        }
+        return;
+      }
 
       if (wasDragged) {
         suppressNextClick = true;
