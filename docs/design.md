@@ -149,12 +149,16 @@ Setiap `<section>` baru di dalam `<main>` (atau halaman baru) harus mengikuti st
 ### B. Glass / Bento Card (`.bento-card`)
 - **Geometry**: `border-radius: 0` (sudut tajam 90°).
 - **Surface**: `background: rgba(20, 22, 27, 0.45); backdrop-filter: blur(6px); border: 1px solid rgba(226, 232, 240, 0.14); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);`.
-- **Hover**:
+- **Desktop Hover (`@media (hover: hover) and (pointer: fine)`)**:
   - `border-color: var(--chrome-mint);`
   - `background: rgba(153, 246, 228, 0.05);`
   - `box-shadow: 0 8px 32px 0 rgba(153, 246, 228, 0.14), 0 0 20px 0 rgba(196, 181, 253, 0.1);`
   - `transform: translateY(-4px);`
-- Kartu non-interaktif (mis. `.bento-location`) memakai `cursor: default` dan menonaktifkan efek hover.
+- **Tactile Touch / Active**: `:active` respon taktil halus (`transform: scale(0.985);`, border & background mint tipis).
+- **Mobile Entrance Transition (`max-width: 768px`)**:
+  - Jarak translasi diperhalus menjadi `translateY(22px)` dengan `transition: opacity 0.75s var(--ease-out-expo), transform 0.75s var(--ease-out-expo)`.
+  - `transition-delay: 0s` pada tampilan kolom tunggal ponsel agar kartu masuk secara natural dan selaras saat di-scroll tanpa jeda out-of-order.
+- Kartu non-interaktif (mis. `.bento-location`) memakai `cursor: default` dan menonaktifkan efek hover/active.
 
 ### C. Baris Timeline 3-Kolom (`.career-row` / `.education-row`)
 - Grid desktop: `grid-template-columns: minmax(130px, 1fr) minmax(220px, 1.8fr) 2.4fr;`

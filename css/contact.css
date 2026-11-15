@@ -71,14 +71,46 @@
   justify-content: center;
   text-decoration: none;
   color: var(--text-primary);
-  transition: transform var(--transition-smooth), border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  will-change: transform, opacity;
+  transition:
+    transform var(--transition-smooth),
+    opacity 0.85s var(--ease-out-expo),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
 }
 
-.bento-card:hover {
+.bento-card.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.85s var(--ease-out-expo),
+    transform 0.85s var(--ease-out-expo),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.bento-card.revealed {
+  opacity: 1 !important;
+  transform: translate(0, 0) scale(1) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover {
+    border-color: var(--chrome-mint);
+    background: rgba(153, 246, 228, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(153, 246, 228, 0.14), 0 0 20px 0 rgba(196, 181, 253, 0.1);
+    transform: translateY(-4px);
+  }
+}
+
+/* Tactile press response on touch / click */
+.bento-card:not(.bento-location):active {
+  transform: scale(0.985);
   border-color: var(--chrome-mint);
-  background: rgba(153, 246, 228, 0.05);
-  box-shadow: 0 8px 32px 0 rgba(153, 246, 228, 0.14), 0 0 20px 0 rgba(196, 181, 253, 0.1);
-  transform: translateY(-4px);
+  background: rgba(153, 246, 228, 0.06);
+  box-shadow: 0 4px 16px 0 rgba(153, 246, 228, 0.12);
+  transition-duration: 0.15s;
 }
 
 .bento-card-span-2 {
@@ -89,7 +121,8 @@
   cursor: default;
 }
 
-.bento-card.bento-location:hover {
+.bento-card.bento-location:hover,
+.bento-card.bento-location:active {
   transform: none;
   background: rgba(20, 22, 27, 0.45);
   border-color: rgba(226, 232, 240, 0.14);
@@ -107,9 +140,11 @@
   transition: transform var(--transition-fast), color var(--transition-fast);
 }
 
-.bento-card:hover .bento-arrow {
-  transform: translate(3px, -3px);
-  color: var(--accent-orange);
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover .bento-arrow {
+    transform: translate(3px, -3px);
+    color: var(--accent-orange);
+  }
 }
 
 .bento-main {
@@ -141,7 +176,13 @@
   transition: color var(--transition-fast);
 }
 
-.bento-card:hover .bento-title-lg {
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover .bento-title-lg {
+    color: var(--accent-orange);
+  }
+}
+
+.bento-card:not(.bento-location):active .bento-title-lg {
   color: var(--accent-orange);
 }
 
@@ -182,12 +223,18 @@
   transition: transform var(--transition-fast);
 }
 
-.bento-card:hover .bento-action {
-  gap: 0.85rem;
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover .bento-action {
+    gap: 0.85rem;
+  }
+
+  .bento-card:hover .bento-action .action-arrow {
+    transform: translateX(4px);
+  }
 }
 
-.bento-card:hover .bento-action .action-arrow {
-  transform: translateX(4px);
+.bento-card:not(.bento-location):active .bento-action .action-arrow {
+  transform: translateX(3px);
 }
 
 /* ─── RESPONSIVE: CONTACT ─── */
@@ -212,6 +259,32 @@
 
   .bento-card:nth-child(5) {
     grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Smoother, gentler entrance travel on mobile devices */
+  .bento-card.reveal-up {
+    transform: translateY(22px);
+  }
+
+  .bento-card.reveal {
+    transition:
+      opacity 0.75s var(--ease-out-expo),
+      transform 0.75s var(--ease-out-expo),
+      border-color var(--transition-fast),
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  /* Reset desktop staggered grid delays to avoid erratic out-of-order pop-in on mobile stack */
+  .contact-bento-grid .reveal {
+    transition-delay: 0s;
+  }
+
+  /* Clean tap highlight on touch browsers */
+  .bento-card {
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
