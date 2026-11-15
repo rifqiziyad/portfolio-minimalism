@@ -38,7 +38,6 @@
 
   .project-vline-center {
     left: 8%;
-    will-change: transform;
   }
 
   .project-vline-right {
@@ -49,9 +48,7 @@
   }
 
   .project-grid-hline {
-    display: block;
-    top: 4.1rem;
-    will-change: transform;
+    display: none;
   }
 
   /* ─── 2. Horizontal Sliding Title Band (Centered Spotlight 8% to 92%) ─── */
@@ -64,7 +61,7 @@
     bottom: auto;
     width: 100%;
     height: 4.1rem;
-    border-bottom: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 5;
     touch-action: pan-y;
     cursor: grab;

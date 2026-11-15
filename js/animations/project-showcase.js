@@ -24,9 +24,7 @@
     const trackLit = section.querySelector('#projectTrackLit');
     const titleBand = section.querySelector('.project-title-band');
     const layerLit = section.querySelector('#projectLayerLit') || section.querySelector('.project-title-layer-lit');
-    const vlineCenter = section.querySelector('#projectVlineCenter') || section.querySelector('.project-vline-center');
     const vlineRight = section.querySelector('#projectVlineRight') || section.querySelector('.project-vline-right');
-    const hline = section.querySelector('#projectGridHline') || section.querySelector('.project-grid-hline');
     const imageViewport = section.querySelector('#projectImageViewport') || section.querySelector('.project-image-viewport');
     const dimItems = Array.from(section.querySelectorAll('#projectTrackDim .project-title-item'));
     const litItems = Array.from(section.querySelectorAll('#projectTrackLit .project-title-item'));
@@ -52,7 +50,6 @@
     let spotlightLeftPx = 0;
     let cachedVw = window.innerWidth;
     let cachedStageWidth = window.innerWidth;
-    let cachedStageHeight = window.innerHeight;
     let cachedLastTitleWidth = 0;
     let resizeTimer = null;
     let projectPinTrigger = null;
@@ -71,7 +68,6 @@
     function measureMetrics() {
       cachedVw = window.innerWidth;
       cachedStageWidth = (stageEl && stageEl.clientWidth) || cachedVw;
-      cachedStageHeight = (stageEl && stageEl.clientHeight) || window.innerHeight;
       const isMobile = cachedVw <= 768;
 
       // Spotlight column left boundary: 33% on desktop/tablet, 28% on mobile
@@ -128,8 +124,6 @@
 
       // ─── 1. Dynamic Right Vertical Hairline & Spotlight / Viewport Clipping ───
       const entryT = f < 0 ? Math.max(0, Math.min(1, (f + entrySpan) / entrySpan)) : 1;
-      const entryHalfT = (100 - (baseRightColPct - colWidthPct * 0.5)) / (100 - leftColPct);
-      const linesEntryT = f < 0 ? Math.max(0, Math.min(1, entryT / entryHalfT)) : 1;
       const title0ScreenPct = f < 0 ? 100 - entryT * (100 - leftColPct) : leftColPct;
 
       let rightLinePct = baseRightColPct;
@@ -154,19 +148,6 @@
         const rightLinePx = (rightLinePct / 100) * (cachedStageWidth || vw);
         vlineRight.style.transform = `translate3d(${rightLinePx.toFixed(2)}px, 0, 0)`;
         vlineRight.style.opacity = '1';
-      }
-
-      let vlineCenterX = 0;
-      if (vlineCenter) {
-        const stageW = cachedStageWidth || vw;
-        vlineCenterX = -(1 - linesEntryT) * (((leftColPct + 2) / 100) * stageW);
-        vlineCenter.style.transform = vlineCenterX < -0.1 ? `translate3d(${vlineCenterX.toFixed(2)}px, 0, 0)` : '';
-      }
-
-      let hlineY = 0;
-      if (hline) {
-        hlineY = -(1 - linesEntryT) * (0.32 * (cachedStageHeight || window.innerHeight));
-        hline.style.transform = hlineY < -0.1 ? `translate3d(0, ${hlineY.toFixed(2)}px, 0)` : '';
       }
 
       if (layerLit) {
@@ -305,7 +286,7 @@
 
       if (f < 0) {
         const revealProgress = Math.max(0, Math.min(1, (baseRightColPct - title0ScreenPct) / colWidthPct));
-        stageAlpha = revealProgress < 0.5 ? 0 : Math.min(1, (revealProgress - 0.5) / 0.35);
+        stageAlpha = Math.min(1, revealProgress * 1.6);
       } else if (f > total - 1) {
         const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
         const infoExitRatio = Math.min(1, exitRatio / (pinnedExitSpan / totalExitSpan));
@@ -313,8 +294,7 @@
       }
 
       if (projectInfoCtrl) {
-        const infoOffsetY = hlineY < -0.1 ? hlineY : cushionY > 0.2 ? cushionY * 0.75 : 0;
-        projectInfoCtrl.setInfoOpacity(stageAlpha, infoOffsetY, vlineCenterX);
+        projectInfoCtrl.setInfoOpacity(stageAlpha, cushionY > 0.2 ? cushionY * 0.75 : 0);
         projectInfoCtrl.updateActiveProjectInfo(nearestIdx);
       }
     }
@@ -482,16 +462,10 @@
         frame.style.visibility = '';
         frame.style.pointerEvents = '';
       });
-      if (vlineCenter) {
-        vlineCenter.style.transform = '';
-      }
       if (vlineRight) {
         vlineRight.style.left = '';
         vlineRight.style.transform = '';
         vlineRight.style.opacity = '';
-      }
-      if (hline) {
-        hline.style.transform = '';
       }
     };
   }

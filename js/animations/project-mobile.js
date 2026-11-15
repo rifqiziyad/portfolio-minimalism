@@ -31,7 +31,6 @@
     const layerLit = section.querySelector('#projectLayerLit') || section.querySelector('.project-title-layer-lit');
     const vlineCenter = section.querySelector('#projectVlineCenter') || section.querySelector('.project-vline-center');
     const vlineRight = section.querySelector('#projectVlineRight') || section.querySelector('.project-vline-right');
-    const hline = section.querySelector('#projectGridHline') || section.querySelector('.project-grid-hline');
     const imageViewport = section.querySelector('#projectImageViewport') || section.querySelector('.project-image-viewport');
     const slideFrames = Array.from(section.querySelectorAll('.project-slide-frame'));
     const slideImgs = slideFrames.map((frame) => frame.querySelector('.project-img'));
@@ -53,7 +52,6 @@
     const playhead = { f: 0 };
     let snapTween = null;
     let entranceTrigger = null;
-    let gridLinesTrigger = null;
     let entranceTween = null;
     let hasCompletedEntrance = false;
     let suppressNextClick = false;
@@ -215,10 +213,6 @@
       if (entranceTrigger) {
         entranceTrigger.kill();
         entranceTrigger = null;
-      }
-      if (gridLinesTrigger) {
-        gridLinesTrigger.kill(true);
-        gridLinesTrigger = null;
       }
       if (!hasCompletedEntrance) {
         hasCompletedEntrance = true;
@@ -433,54 +427,13 @@
       if (isAlreadyInView) {
         hasCompletedEntrance = true;
         renderMobileSlide(0);
-        if (vlineCenter) {
-          vlineCenter.style.transform = '';
-        }
         if (vlineRight) {
           vlineRight.style.transform = '';
-        }
-        if (hline) {
-          hline.style.transform = '';
         }
         if (imageViewport) {
           imageViewport.style.transform = '';
         }
         return;
-      }
-
-      // Scroll-scrubbed parallax entry for architectural grid lines
-      // - vlineCenter: glides in from left overflow (-12vw) to resting column (left: 8%)
-      // - hline: drops from directly beneath the PROJECT header down to the title-band bottom
-      if (vlineCenter || hline) {
-        const linesTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: stageEl,
-            start: 'top 95%',
-            end: 'top 74%',
-            scrub: 0.5,
-            invalidateOnRefresh: true
-          }
-        });
-
-        if (vlineCenter) {
-          linesTl.fromTo(
-            vlineCenter,
-            { x: () => -Math.ceil(window.innerWidth * 0.12) },
-            { x: 0, ease: 'none' },
-            0
-          );
-        }
-
-        if (hline) {
-          linesTl.fromTo(
-            hline,
-            { y: () => -(titleBand ? titleBand.offsetHeight : 66) },
-            { y: 0, ease: 'none' },
-            0
-          );
-        }
-
-        gridLinesTrigger = linesTl.scrollTrigger;
       }
 
       // Initial resting DOM state before entrance
@@ -607,7 +560,7 @@
                   stagger: 0.05,
                   ease: 'power3.out'
                 },
-                0.24
+                0.45
               );
             }
           }
@@ -630,10 +583,6 @@
       if (entranceTrigger) {
         entranceTrigger.kill();
         entranceTrigger = null;
-      }
-      if (gridLinesTrigger) {
-        gridLinesTrigger.kill(true);
-        gridLinesTrigger = null;
       }
       if (suppressClickTimer) {
         clearTimeout(suppressClickTimer);
@@ -659,15 +608,11 @@
       }
       if (vlineCenter) {
         vlineCenter.style.left = '';
-        vlineCenter.style.transform = '';
       }
       if (vlineRight) {
         vlineRight.style.left = '';
         vlineRight.style.opacity = '';
         vlineRight.style.transform = '';
-      }
-      if (hline) {
-        hline.style.transform = '';
       }
       const infoInner = section.querySelector('#projectInfoInner');
       if (infoInner) {
