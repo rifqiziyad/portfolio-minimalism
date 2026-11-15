@@ -29,7 +29,6 @@
     }
 
     const svg = crystal.querySelector('.cyber-cluster-svg');
-    const fractures = crystal.querySelectorAll('.outline-fracture');
 
     function buildAssembleTimeline(triggerEl, startPos, endPos) {
       const assembleTl = gsap.timeline({
@@ -160,16 +159,6 @@
           { x: 0, y: 0, rotation: 0, scale: 1, transformOrigin: '50% 50%' },
           0
         );
-
-      // Level 4: Fracture Cleavage Traces (Reverse dash flow + energetic bonding)
-      if (fractures.length) {
-        assembleTl.fromTo(
-          fractures,
-          { strokeDashoffset: -48, opacity: 0.1 },
-          { strokeDashoffset: 0, opacity: 0.85 },
-          0
-        );
-      }
 
       return assembleTl;
     }
