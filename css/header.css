@@ -43,6 +43,13 @@
   color: #ffffff;
 }
 
+.brand-logo-wrap {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
 .brand-logo-svg {
   width: 32px;
   height: 32px;
@@ -53,7 +60,14 @@
   transition: transform var(--transition-smooth), filter var(--transition-smooth);
 }
 
-.nav-brand:hover .brand-logo-svg {
+.nav-brand:hover .brand-logo-wrap {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.brand-logo-svg {
   transform: translateY(-2px) scale(1.08);
   filter: drop-shadow(0 0 12px rgba(192, 132, 252, 0.8)) drop-shadow(0 0 18px rgba(255, 95, 31, 0.65));
 }

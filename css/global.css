@@ -179,6 +179,60 @@ ul, ol {
   transition-delay: 0.24s;
 }
 
+/* ─── IMAGE LOADING SKELETON FALLBACK ─── */
+.img-skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: #0b0b0d;
+}
+
+.img-skeleton::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    #0b0b0d 25%,
+    #16161a 45%,
+    #0b0b0d 65%
+  );
+  background-size: 220% 100%;
+  animation: imgSkeletonShimmer 1.4s ease-in-out infinite;
+  transition: opacity 0.28s ease, visibility 0.28s ease;
+}
+
+.img-skeleton > img {
+  opacity: 0;
+  transition: opacity 0.28s ease;
+}
+
+.img-skeleton.is-loaded::before,
+.img-skeleton.is-error::before {
+  opacity: 0;
+  visibility: hidden;
+  animation: none;
+}
+
+.img-skeleton.is-loaded > img {
+  opacity: 1;
+}
+
+.img-skeleton.is-error::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-color: #0c0c0f;
+}
+
+@keyframes imgSkeletonShimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 /* ─── ACCESSIBILITY & MOTION PREFERENCES ─── */
 .sr-only {
   position: absolute;

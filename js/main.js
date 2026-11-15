@@ -16,6 +16,10 @@
       app.renderer.renderAll();
     }
 
+    if (app.utils && typeof app.utils.bindImageSkeleton === 'function') {
+      app.utils.bindImageSkeleton(document);
+    }
+
     if (app.crystalBackgrounds && typeof app.crystalBackgrounds.renderCrystalBackgrounds === 'function') {
       app.crystalBackgrounds.renderCrystalBackgrounds();
     }

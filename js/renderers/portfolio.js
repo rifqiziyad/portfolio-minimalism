@@ -80,7 +80,7 @@
           ? ` srcset="${escapeAttr(item.imageSrcset)}" sizes="(max-width: 768px) 92vw, 48vw"`
           : '';
         return `
-          <div class="project-slide-frame project-img-frame${currentClass}"
+          <div class="project-slide-frame project-img-frame img-skeleton${currentClass}"
                data-slide-index="${idx}"
                data-gallery-project="${item.originalIndex}"
                style="z-index: ${idx + 1};"

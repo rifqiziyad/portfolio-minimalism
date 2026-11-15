@@ -217,6 +217,48 @@
       .join('');
   }
 
+  function bindImageSkeleton(root) {
+    const scope = root || document;
+    const containers =
+      scope.classList && scope.classList.contains('img-skeleton')
+        ? [scope]
+        : Array.from(scope.querySelectorAll('.img-skeleton'));
+
+    containers.forEach((container) => {
+      const img = container.querySelector('img');
+      if (!img) return;
+      const src = img.getAttribute('src');
+      if (!src) return;
+
+      if (img.complete) {
+        container.classList.toggle('is-loaded', img.naturalWidth > 0);
+        container.classList.toggle('is-error', img.naturalWidth === 0);
+        return;
+      }
+
+      if (container.dataset.skeletonBound === '1') return;
+      container.dataset.skeletonBound = '1';
+
+      img.addEventListener(
+        'load',
+        () => {
+          container.classList.remove('is-error');
+          container.classList.add('is-loaded');
+        },
+        { once: true }
+      );
+
+      img.addEventListener(
+        'error',
+        () => {
+          container.classList.remove('is-loaded');
+          container.classList.add('is-error');
+        },
+        { once: true }
+      );
+    });
+  }
+
   window.Portfolio.utils = {
     formatIndex,
     escapeHtml,
@@ -226,7 +268,8 @@
     loadScriptOnce,
     formatTextLines,
     formatTextLinesBatch,
-    prefersReducedMotion
+    prefersReducedMotion,
+    bindImageSkeleton
   };
 
   function renderAll() {

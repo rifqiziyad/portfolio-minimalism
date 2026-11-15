@@ -264,7 +264,7 @@
       currentGallery.forEach((src, idx) => {
         const safeSrc = utils && typeof utils.sanitizeUrl === 'function' ? utils.sanitizeUrl(src, false) : src;
         const frame = document.createElement('div');
-        frame.className = `carousel-slide-frame${idx === currentSlideIdx ? ' is-current-frame' : ''}`;
+        frame.className = `carousel-slide-frame img-skeleton${idx === currentSlideIdx ? ' is-current-frame' : ''}`;
 
         const img = document.createElement('img');
         img.src = safeSrc;
@@ -288,6 +288,10 @@
         slideFrames.push(frame);
         slideImgs.push(img);
       });
+
+      if (utils && typeof utils.bindImageSkeleton === 'function') {
+        utils.bindImageSkeleton(slideCard);
+      }
     }
 
     function renderThumbs() {
@@ -298,11 +302,11 @@
         const safeSrc = utils && typeof utils.sanitizeUrl === 'function' ? utils.sanitizeUrl(src, false) : src;
         const attrSrc = utils && typeof utils.escapeAttr === 'function' ? utils.escapeAttr(safeSrc) : safeSrc;
         const thumb = document.createElement('button');
-        thumb.className = `carousel-thumb-item ${idx === currentSlideIdx ? 'is-active' : ''}`;
+        thumb.className = `carousel-thumb-item img-skeleton ${idx === currentSlideIdx ? 'is-active' : ''}`;
         thumb.setAttribute('role', 'tab');
         thumb.setAttribute('aria-label', `Thumbnail ${idx + 1}`);
         thumb.setAttribute('aria-selected', idx === currentSlideIdx ? 'true' : 'false');
-        thumb.innerHTML = `<img src="${attrSrc}" alt="Thumbnail ${idx + 1}" width="72" height="46" decoding="async" loading="lazy">`;
+        thumb.innerHTML = `<img src="${attrSrc}" alt="Thumbnail ${idx + 1}" width="72" height="46" decoding="async">`;
 
         thumb.addEventListener('click', () => {
           goToSlide(idx, idx > currentSlideIdx ? 1 : -1);
@@ -310,6 +314,10 @@
 
         thumbsTrack.appendChild(thumb);
       });
+
+      if (utils && typeof utils.bindImageSkeleton === 'function') {
+        utils.bindImageSkeleton(thumbsTrack);
+      }
     }
 
     function goToSlide(targetIdx, direction = 1) {

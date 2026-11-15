@@ -250,6 +250,7 @@
 }
 
 .carousel-thumb-item {
+  position: relative;
   width: 72px;
   height: 46px;
   border-radius: 0;
