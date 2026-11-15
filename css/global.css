@@ -208,6 +208,10 @@ ul, ol {
   transition: opacity 0.28s ease;
 }
 
+.img-skeleton.is-loaded {
+  background-color: transparent;
+}
+
 .img-skeleton.is-loaded::before,
 .img-skeleton.is-error::before {
   opacity: 0;

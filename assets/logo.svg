@@ -1,65 +1,118 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" aria-label="RZI Crystal Monolith Logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 116" width="100%" height="100%" aria-label="RIFQI 3D Chiseled Liquid Chrome Logo">
   <defs>
-    <linearGradient id="logo-g-orange" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
-      <stop offset="45%" stop-color="#cbd5e1" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#334155" stop-opacity="0.88" />
+    <!-- Primary High-Contrast Mirror Horizon Chrome Gradient (SLICK + Chronic + Holo) -->
+    <linearGradient id="chrome-mirror" x1="0%" y1="6%" x2="6%" y2="94%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="18%" stop-color="#f1f5f9" />
+      <stop offset="32%" stop-color="#94a3b8" />
+      <stop offset="44%" stop-color="#04070d" />
+      <stop offset="48%" stop-color="#0b1120" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="57%" stop-color="#e2e8f0" />
+      <stop offset="69%" stop-color="#99f6e4" />
+      <stop offset="80%" stop-color="#c4b5fd" />
+      <stop offset="89%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#1e293b" />
     </linearGradient>
-    <linearGradient id="logo-g-violet" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#0f172a" stop-opacity="0.94" />
-      <stop offset="50%" stop-color="#475569" stop-opacity="0.82" />
-      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0.98" />
+
+    <!-- Cool Shaded Chisel Bevel Facet (Deep Obsidian + Metallic Slate-Indigo Contrast) -->
+    <linearGradient id="chrome-chisel-shadow" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#334155" stop-opacity="0.72" />
+      <stop offset="32%" stop-color="#090d16" stop-opacity="0.88" />
+      <stop offset="48%" stop-color="#94a3b8" stop-opacity="0.42" />
+      <stop offset="56%" stop-color="#03050a" stop-opacity="0.9" />
+      <stop offset="76%" stop-color="#4338ca" stop-opacity="0.34" />
+      <stop offset="92%" stop-color="#cbd5e1" stop-opacity="0.52" />
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0.85" />
     </linearGradient>
-    <linearGradient id="logo-g-magenta" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.95" />
-      <stop offset="45%" stop-color="#64748b" stop-opacity="0.85" />
-      <stop offset="100%" stop-color="#1e293b" stop-opacity="0.92" />
+
+    <!-- Crisp Specular Metallic Rim Bevel -->
+    <linearGradient id="chrome-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="28%" stop-color="#cbd5e1" />
+      <stop offset="48%" stop-color="#ffffff" />
+      <stop offset="66%" stop-color="#475569" />
+      <stop offset="84%" stop-color="#e0f2fe" />
+      <stop offset="100%" stop-color="#94a3b8" />
     </linearGradient>
-    <linearGradient id="logo-g-amber" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.98" />
-      <stop offset="55%" stop-color="#94a3b8" stop-opacity="0.86" />
-      <stop offset="100%" stop-color="#334155" stop-opacity="0.78" />
-    </linearGradient>
-    <radialGradient id="logo-g-star" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
-      <stop offset="30%" stop-color="#e2e8f0" stop-opacity="0.95" />
-      <stop offset="70%" stop-color="#94a3b8" stop-opacity="0.45" />
-      <stop offset="100%" stop-color="#64748b" stop-opacity="0" />
-    </radialGradient>
+
+    <!-- Tight Glassy Liquid Specular Sheen + Crisp 3D Extrusion Shader -->
+    <filter id="liquid-chrome-3d" x="-6%" y="-10%" width="112%" height="124%" color-interpolation-filters="sRGB">
+      <!-- Tight heightmap for crisp chiseled liquid ridge (preserves dark horizon contrast) -->
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1.7" result="dome" />
+
+      <feSpecularLighting in="dome" surfaceScale="4.2" specularConstant="1.15" specularExponent="38" lighting-color="#ffffff" result="specMain">
+        <feDistantLight azimuth="228" elevation="48" />
+      </feSpecularLighting>
+      <feComposite in="specMain" in2="SourceAlpha" operator="in" result="specClipped" />
+      <feComponentTransfer in="specClipped" result="specSoft">
+        <feFuncA type="linear" slope="0.52" />
+      </feComponentTransfer>
+
+      <feBlend in="SourceGraphic" in2="specSoft" mode="screen" result="litBody" />
+
+      <!-- Dark 3D Metallic Extrusion & Edge Lip -->
+      <feOffset in="SourceAlpha" dx="1.2" dy="3.2" result="extrudeOff" />
+      <feFlood flood-color="#020307" flood-opacity="0.96" result="extrudeCol" />
+      <feComposite in="extrudeCol" in2="extrudeOff" operator="in" result="extrudeShadow" />
+
+      <feMerge>
+        <feMergeNode in="extrudeShadow" />
+        <feMergeNode in="litBody" />
+      </feMerge>
+    </filter>
+
+    <!-- Master Vector Glyph Geometry (Neo-Gothic Chiseled Liquid Chrome) -->
+    <path id="glyph-r" d="M 12 29 C 19 20, 29 14, 44 15 C 67 16, 89 21, 88 37 C 87 48, 76 54, 62 56 C 74 63, 83 78, 98 81 C 90 91, 78 96, 67 90 C 59 83, 53 69, 44 61 C 42 70, 44 80, 52 87 C 41 94, 23 95, 13 88 C 21 81, 24 72, 24 61 L 16 54 L 24 47 C 24 38, 21 32, 12 29 Z M 42 26 C 43 32, 43 40, 42 48 C 57 48, 69 44, 69 37 C 69 29, 57 25, 42 26 Z" />
+    <path id="glyph-i1" d="M 103 27 C 113 18, 126 14, 141 20 C 132 27, 130 35, 130 47 L 136 53 L 130 59 C 130 72, 133 80, 142 86 C 130 94, 115 95, 104 87 C 112 80, 115 72, 115 59 L 108 53 L 115 47 C 115 36, 112 30, 103 27 Z" />
+    <path id="glyph-f" d="M 149 27 C 160 18, 184 14, 217 18 C 213 28, 207 36, 198 37 C 192 31, 184 28, 175 29 C 174 35, 174 41, 175 47 C 185 47, 195 44, 205 40 C 202 51, 195 60, 184 60 C 180 60, 177 59, 175 59 C 175 72, 178 80, 188 86 C 175 94, 159 95, 149 87 C 157 80, 160 72, 160 59 L 153 53 L 160 47 C 160 36, 157 30, 149 27 Z" />
+    <path id="glyph-q" d="M 264 14 C 282 15, 302 27, 307 49 L 313 54 L 306 60 C 304 70, 299 78, 291 83 C 300 88, 308 89, 317 87 C 307 98, 291 101, 276 91 C 271 93, 267 94, 262 94 C 243 93, 224 81, 220 60 L 214 54 L 220 48 C 224 27, 243 15, 264 14 Z M 263 28 C 247 29, 239 39, 239 54 C 239 69, 248 79, 263 80 C 266 80, 269 79, 271 78 C 268 74, 266 69, 264 63 C 272 63, 279 66, 285 71 C 287 66, 288 60, 288 54 C 288 39, 279 28, 263 28 Z" />
+    <path id="glyph-i2" d="M 326 27 C 336 18, 349 14, 364 20 C 355 27, 353 35, 353 47 L 359 53 L 353 59 C 353 72, 356 80, 365 86 C 353 94, 338 95, 327 87 C 335 80, 338 72, 338 59 L 331 53 L 338 47 C 338 36, 335 30, 326 27 Z" />
+
+    <!-- Individual Glyph Clip Paths -->
+    <clipPath id="clip-r"><use href="#glyph-r" /></clipPath>
+    <clipPath id="clip-i1"><use href="#glyph-i1" /></clipPath>
+    <clipPath id="clip-f"><use href="#glyph-f" /></clipPath>
+    <clipPath id="clip-q"><use href="#glyph-q" /></clipPath>
+    <clipPath id="clip-i2"><use href="#glyph-i2" /></clipPath>
   </defs>
 
-  <!-- Shard Group R (Left Wing) -->
-  <g class="logo-shard logo-shard-r">
-    <polygon points="12,24 24,16 24,52" fill="url(#logo-g-orange)" stroke="#e2e8f0" stroke-width="1.2" />
-    <polygon points="12,24 24,52 12,76" fill="url(#logo-g-violet)" stroke="#cbd5e1" stroke-width="1.2" />
-    <polygon points="12,76 24,52 24,84" fill="url(#logo-g-magenta)" stroke="#94a3b8" stroke-width="1.2" />
-    <polygon points="24,16 48,20 24,34" fill="url(#logo-g-amber)" stroke="#ffffff" stroke-width="1.2" />
-    <polygon points="48,20 42,40 24,34" fill="url(#logo-g-magenta)" stroke="#cbd5e1" stroke-width="1.2" />
-    <polygon points="24,34 42,40 24,50" fill="url(#logo-g-violet)" stroke="#64748b" stroke-width="1.1" />
-    <polygon points="24,48 38,42 46,76 34,84" fill="url(#logo-g-orange)" stroke="#94a3b8" stroke-width="1.2" />
-    <line x1="24" y1="16" x2="24" y2="52" stroke="#ffffff" stroke-width="1.4" />
-  </g>
+  <g filter="url(#liquid-chrome-3d)">
+    <!-- 1. Base Ultra-High-Contrast Mirror Chrome Surface -->
+    <g fill="url(#chrome-mirror)" fill-rule="evenodd">
+      <use href="#glyph-r" />
+      <use href="#glyph-i1" />
+      <use href="#glyph-f" />
+      <use href="#glyph-q" />
+      <use href="#glyph-i2" />
+    </g>
 
-  <!-- Shard Group Z (Central Slash Monolith) -->
-  <g class="logo-shard logo-shard-z">
-    <polygon points="44,14 50,4 74,14 54,24" fill="url(#logo-g-amber)" stroke="#ffffff" stroke-width="1.3" />
-    <polygon points="74,14 66,38 48,60 54,24" fill="url(#logo-g-magenta)" stroke="#94a3b8" stroke-width="1.2" />
-    <polygon points="66,38 56,74 42,84 48,60" fill="url(#logo-g-orange)" stroke="#cbd5e1" stroke-width="1.2" />
-    <polygon points="42,84 56,74 74,76 50,96" fill="url(#logo-g-violet)" stroke="#e2e8f0" stroke-width="1.3" />
-    <line x1="74" y1="14" x2="42" y2="84" stroke="#ffffff" stroke-width="1.3" opacity="0.9" />
-    <circle cx="50" cy="4" r="6" fill="url(#logo-g-star)" />
-    <circle cx="50" cy="4" r="2" fill="#ffffff" />
-    <circle cx="50" cy="96" r="5.5" fill="url(#logo-g-star)" />
-    <circle cx="50" cy="96" r="1.8" fill="#ffffff" />
-  </g>
+    <!-- 2. Organic Mitered 3D Chisel Shadow Halves (Follows letter curvature without flat seams) -->
+    <g fill="url(#chrome-chisel-shadow)">
+      <!-- R Curved Arch & Spine Shaded Chisel Half -->
+      <path clip-path="url(#clip-r)" d="M 32 22 C 58 21, 76 26, 78 36 L 94 24 L 94 54 C 76 58, 60 56, 44 54 C 63 60, 77 75, 92 86 L 102 96 L 32 96 L 32 85 Z" />
 
-  <!-- Shard Group I (Right Vertical Crystal Obelisk) -->
-  <g class="logo-shard logo-shard-i">
-    <polygon points="82,16 89,23 82,30 75,23" fill="url(#logo-g-amber)" stroke="#ffffff" stroke-width="1.3" />
-    <polygon points="76,35 82,31 82,82 76,76" fill="url(#logo-g-violet)" stroke="#cbd5e1" stroke-width="1.2" />
-    <polygon points="82,31 88,37 88,74 82,82" fill="url(#logo-g-orange)" stroke="#94a3b8" stroke-width="1.2" />
-    <circle cx="82" cy="23" r="5" fill="url(#logo-g-star)" />
-    <circle cx="82" cy="23" r="1.8" fill="#ffffff" />
+      <!-- I1 Mitered Diamond Chisel Right Half -->
+      <path clip-path="url(#clip-i1)" d="M 122 22 L 146 14 L 146 95 L 122 86 C 122 65, 122 43, 122 22 Z" />
+
+      <!-- F Mitered Chisel Right & Underside Half -->
+      <path clip-path="url(#clip-f)" d="M 167 22 C 186 21, 202 22, 222 18 L 222 96 L 167 86 L 167 54 C 182 54, 195 51, 210 43 L 210 64 L 167 64 L 167 22 Z" />
+
+      <!-- Q Concentric Diagonal Chisel Bevel (Smooth 135deg lighting split, no vertical seam!) -->
+      <path clip-path="url(#clip-q)" d="M 297 22 C 309 39, 308 69, 294 84 L 322 92 L 296 105 L 246 98 L 235 84 C 258 88, 281 82, 290 66 C 296 52, 292 34, 276 23 L 288 14 Z" />
+      <path clip-path="url(#clip-q)" d="M 263 23 C 242 23, 232 36, 232 54 C 232 72, 243 85, 263 85 C 248 80, 240 69, 240 54 C 240 39, 249 28, 263 28 Z" />
+
+      <!-- I2 Mitered Diamond Chisel Right Half -->
+      <path clip-path="url(#clip-i2)" d="M 345 22 L 370 14 L 370 95 L 345 86 C 345 65, 345 43, 345 22 Z" />
+    </g>
+
+    <!-- 3. Razor Specular Outer Metallic Rim Bevel -->
+    <g fill="none" stroke="url(#chrome-rim)" stroke-width="1.2" stroke-linejoin="round">
+      <use href="#glyph-r" />
+      <use href="#glyph-i1" />
+      <use href="#glyph-f" />
+      <use href="#glyph-q" />
+      <use href="#glyph-i2" />
+    </g>
   </g>
 </svg>
-

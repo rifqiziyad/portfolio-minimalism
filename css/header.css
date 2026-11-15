@@ -35,45 +35,30 @@
 .nav-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.65rem;
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
   color: #ffffff;
 }
 
 .brand-logo-wrap {
-  width: 32px;
-  height: 32px;
+  height: 38px;
   display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  background: transparent;
+  overflow: visible;
 }
 
 .brand-logo-svg {
-  width: 32px;
-  height: 32px;
+  width: auto;
+  height: 38px;
   flex-shrink: 0;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(226, 232, 240, 0.35)) drop-shadow(0 0 10px rgba(148, 163, 184, 0.25));
   transition: transform var(--transition-smooth), filter var(--transition-smooth);
 }
 
-.nav-brand:hover .brand-logo-wrap {
-  width: 32px;
-  height: 32px;
-  display: inline-flex;
-  flex-shrink: 0;
-}
-
-.brand-logo-svg {
-  transform: translateY(-2px) scale(1.08);
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 18px rgba(203, 213, 225, 0.55));
-}
-
-.brand-name {
-  color: #ffffff;
+.nav-brand:hover .brand-logo-svg {
+  transform: translateY(-2px) scale(1.04);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.55));
 }
 
 .nav-list {
@@ -157,6 +142,11 @@
 
 /* ─── RESPONSIVE: HEADER & MOBILE NAVIGATION ─── */
 @media (max-width: 768px) {
+  .brand-logo-wrap,
+  .brand-logo-svg {
+    height: 32px;
+  }
+
   .site-header.is-menu-open {
     mix-blend-mode: normal;
     background-color: var(--bg-primary);
