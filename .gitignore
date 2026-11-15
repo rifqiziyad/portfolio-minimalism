@@ -4,4 +4,5 @@
 skills-lock.json
 node_modules/
 build/
+graphify-out/
 
