@@ -147,36 +147,36 @@
 
     const baseDefs = [
       // Shard A: Upper Needle Crystal (Level 1 + Sub-Facet A)
-      { pts: [V.P_160_50, V.P_250_135, V.P_190_170], grad: 'orange-intense', stroke: '#e2e8f0', ridge: [V.P_160_50, V.P_190_170], node: V.P_160_50, tier: 'needle-upper' },
-      { pts: [V.P_160_50, V.P_190_170, V.P_120_130], grad: 'violet-radiant', stroke: '#cbd5e1', tier: 'sub-a' },
+      { pts: [V.P_160_50, V.P_250_135, V.P_190_170], grad: 'orange-intense', stroke: '#99f6e4', ridge: [V.P_160_50, V.P_190_170], node: V.P_160_50, tier: 'needle-upper' },
+      { pts: [V.P_160_50, V.P_190_170, V.P_120_130], grad: 'violet-radiant', stroke: '#c4b5fd', tier: 'sub-a' },
 
       // Shard B: Lateral Right Spike (Level 1 + Sub-Facet B)
-      { pts: [V.P_250_135, V.I_352_162, V.P_320_225], grad: 'amber-gold',     stroke: '#f8fafc', tier: 'spike-right' },
-      { pts: [V.I_352_162, V.P_430_175, V.P_320_225], grad: 'amber-gold',     stroke: '#e2e8f0', ridge: [V.P_430_175, V.P_320_225], node: V.P_430_175, tier: 'spike-right' },
-      { pts: [V.P_430_175, V.P_355_275, V.P_320_225], grad: 'magenta-flare',  stroke: '#94a3b8', node: V.P_320_225, tier: 'sub-b' },
-      { pts: [V.P_250_135, V.P_320_225, V.P_255_230], grad: 'violet-radiant', stroke: '#64748b', tier: 'spike-right' },
+      { pts: [V.P_250_135, V.I_352_162, V.P_320_225], grad: 'amber-gold',     stroke: '#ffffff', tier: 'spike-right' },
+      { pts: [V.I_352_162, V.P_430_175, V.P_320_225], grad: 'amber-gold',     stroke: '#99f6e4', ridge: [V.P_430_175, V.P_320_225], node: V.P_430_175, tier: 'spike-right' },
+      { pts: [V.P_430_175, V.P_355_275, V.P_320_225], grad: 'magenta-flare',  stroke: '#7dd3fc', node: V.P_320_225, tier: 'sub-b' },
+      { pts: [V.P_250_135, V.P_320_225, V.P_255_230], grad: 'violet-radiant', stroke: '#c4b5fd', tier: 'spike-right' },
 
       // Shard C: Central Fractured Core Monolith (Level 1 + Sub-Facet C)
       { pts: [V.P_190_170, V.P_250_135, V.P_205_245], grad: 'magenta-flare',  stroke: '#cbd5e1', node: V.P_250_135, tier: 'core-monolith' },
-      { pts: [V.P_250_135, V.P_255_230, V.P_205_245], grad: 'magenta-flare',  stroke: '#94a3b8', ridge: [V.P_250_135, V.P_270_320], tier: 'core-monolith' },
-      { pts: [V.P_205_245, V.P_255_230, V.P_270_320], grad: 'orange-intense', stroke: '#e2e8f0', node: V.P_205_245, tier: 'core-monolith' },
-      { pts: [V.P_255_230, V.P_320_225, V.P_270_320], grad: 'orange-intense', stroke: '#cbd5e1', tier: 'core-monolith' },
-      { pts: [V.P_190_170, V.P_205_245, V.P_155_265], grad: 'violet-radiant', stroke: '#64748b', tier: 'sub-c' },
+      { pts: [V.P_250_135, V.P_255_230, V.P_205_245], grad: 'magenta-flare',  stroke: '#7dd3fc', ridge: [V.P_250_135, V.P_270_320], tier: 'core-monolith' },
+      { pts: [V.P_205_245, V.P_255_230, V.P_270_320], grad: 'orange-intense', stroke: '#99f6e4', node: V.P_205_245, tier: 'core-monolith' },
+      { pts: [V.P_255_230, V.P_320_225, V.P_270_320], grad: 'orange-intense', stroke: '#ffffff', tier: 'core-monolith' },
+      { pts: [V.P_190_170, V.P_205_245, V.P_155_265], grad: 'violet-radiant', stroke: '#c4b5fd', tier: 'sub-c' },
 
       // Shard D: Lower Dagger Crystal (Level 1 + Sub-Facets D1 & D2)
-      { pts: [V.P_205_245, V.P_155_265, V.I_218_342], grad: 'violet-radiant', stroke: '#94a3b8', tier: 'sub-d1' },
+      { pts: [V.P_205_245, V.P_155_265, V.I_218_342], grad: 'violet-radiant', stroke: '#c4b5fd', tier: 'sub-d1' },
       { pts: [V.P_155_265, V.P_175_440, V.I_218_342], grad: 'violet-radiant', stroke: '#cbd5e1', ridge: [V.P_205_245, V.P_175_440], tier: 'sub-d1' },
-      { pts: [V.P_205_245, V.P_270_320, V.I_218_342], grad: 'orange-intense', stroke: '#e2e8f0', tier: 'dagger-lower' },
-      { pts: [V.I_218_342, V.P_270_320, V.P_175_440], grad: 'orange-intense', stroke: '#cbd5e1', node: V.P_175_440, tier: 'dagger-lower' },
-      { pts: [V.P_270_320, V.P_355_275, V.P_255_385], grad: 'magenta-flare',  stroke: '#94a3b8', node: V.P_270_320, tier: 'sub-d2' },
+      { pts: [V.P_205_245, V.P_270_320, V.I_218_342], grad: 'orange-intense', stroke: '#99f6e4', tier: 'dagger-lower' },
+      { pts: [V.I_218_342, V.P_270_320, V.P_175_440], grad: 'orange-intense', stroke: '#ffffff', node: V.P_175_440, tier: 'dagger-lower' },
+      { pts: [V.P_270_320, V.P_355_275, V.P_255_385], grad: 'magenta-flare',  stroke: '#7dd3fc', node: V.P_270_320, tier: 'sub-d2' },
       { pts: [V.P_270_320, V.P_255_385, V.P_175_440], grad: 'amber-gold',     stroke: '#cbd5e1', tier: 'dagger-lower' },
 
       // Detached Floating Crystal Splinters (Level 3: 5 Splinters)
-      { pts: [V.P_160_50,  V.P_320_105, V.P_250_135], grad: 'amber-gold',     stroke: '#f8fafc', tier: 'splinter-1' },
-      { pts: [V.P_120_130, V.P_190_170, V.P_155_265], grad: 'violet-radiant', stroke: '#cbd5e1', tier: 'splinter-2' },
-      { pts: [V.P_320_225, V.P_355_275, V.P_270_320], grad: 'orange-intense', stroke: '#94a3b8', tier: 'splinter-3' },
-      { pts: [V.P_250_135, V.P_320_105, V.P_430_175], grad: 'magenta-flare',  stroke: '#cbd5e1', tier: 'splinter-4' },
-      { pts: [V.P_155_265, V.P_120_330, V.P_175_440], grad: 'amber-gold',     stroke: '#e2e8f0', tier: 'splinter-5' }
+      { pts: [V.P_160_50,  V.P_320_105, V.P_250_135], grad: 'amber-gold',     stroke: '#ffffff', tier: 'splinter-1' },
+      { pts: [V.P_120_130, V.P_190_170, V.P_155_265], grad: 'violet-radiant', stroke: '#c4b5fd', tier: 'splinter-2' },
+      { pts: [V.P_320_225, V.P_355_275, V.P_270_320], grad: 'orange-intense', stroke: '#99f6e4', tier: 'splinter-3' },
+      { pts: [V.P_250_135, V.P_320_105, V.P_430_175], grad: 'magenta-flare',  stroke: '#7dd3fc', tier: 'splinter-4' },
+      { pts: [V.P_155_265, V.P_120_330, V.P_175_440], grad: 'amber-gold',     stroke: '#99f6e4', tier: 'splinter-5' }
     ];
 
     // If user adds more skills in JSON beyond 22, dynamically split largest triangle along its longest edge
@@ -332,33 +332,45 @@
            overflow="visible">
         <defs>
           <linearGradient id="skills-g-shard-orange-intense" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#e2e8f0" stop-opacity="0.92" />
-            <stop offset="45%" stop-color="#64748b" stop-opacity="0.86" />
-            <stop offset="100%" stop-color="#1e293b" stop-opacity="0.92" />
-          </linearGradient>
-
-          <linearGradient id="skills-g-shard-violet-radiant" x1="0%" y1="100%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#0f172a" stop-opacity="0.94" />
-            <stop offset="50%" stop-color="#334155" stop-opacity="0.82" />
-            <stop offset="100%" stop-color="#94a3b8" stop-opacity="0.9" />
-          </linearGradient>
-
-          <linearGradient id="skills-g-shard-magenta-flare" x1="100%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.88" />
-            <stop offset="45%" stop-color="#475569" stop-opacity="0.84" />
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96" />
+            <stop offset="28%" stop-color="#94a3b8" stop-opacity="0.9" />
+            <stop offset="47%" stop-color="#04070d" stop-opacity="0.95" />
+            <stop offset="51%" stop-color="#ffffff" stop-opacity="0.98" />
+            <stop offset="74%" stop-color="#99f6e4" stop-opacity="0.9" />
             <stop offset="100%" stop-color="#0f172a" stop-opacity="0.94" />
           </linearGradient>
 
+          <linearGradient id="skills-g-shard-violet-radiant" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#04070d" stop-opacity="0.96" />
+            <stop offset="35%" stop-color="#1e293b" stop-opacity="0.9" />
+            <stop offset="52%" stop-color="#c4b5fd" stop-opacity="0.88" />
+            <stop offset="68%" stop-color="#ffffff" stop-opacity="0.94" />
+            <stop offset="100%" stop-color="#475569" stop-opacity="0.9" />
+          </linearGradient>
+
+          <linearGradient id="skills-g-shard-magenta-flare" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#f8fafc" stop-opacity="0.94" />
+            <stop offset="30%" stop-color="#7dd3fc" stop-opacity="0.88" />
+            <stop offset="48%" stop-color="#090d16" stop-opacity="0.95" />
+            <stop offset="55%" stop-color="#e2e8f0" stop-opacity="0.92" />
+            <stop offset="80%" stop-color="#c4b5fd" stop-opacity="0.88" />
+            <stop offset="100%" stop-color="#0b1120" stop-opacity="0.95" />
+          </linearGradient>
+
           <linearGradient id="skills-g-shard-amber-gold" x1="0%" y1="50%" x2="100%" y2="50%">
-            <stop offset="0%" stop-color="#f1f5f9" stop-opacity="0.9" />
-            <stop offset="55%" stop-color="#64748b" stop-opacity="0.8" />
-            <stop offset="100%" stop-color="#1e293b" stop-opacity="0.88" />
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.96" />
+            <stop offset="34%" stop-color="#cbd5e1" stop-opacity="0.88" />
+            <stop offset="49%" stop-color="#04070d" stop-opacity="0.94" />
+            <stop offset="53%" stop-color="#ffffff" stop-opacity="0.97" />
+            <stop offset="78%" stop-color="#99f6e4" stop-opacity="0.88" />
+            <stop offset="100%" stop-color="#1e293b" stop-opacity="0.92" />
           </linearGradient>
 
           <linearGradient id="skills-g-glass-refract" x1="0%" y1="0%" x2="60%" y2="100%">
-            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22" />
-            <stop offset="35%" stop-color="#cbd5e1" stop-opacity="0.06" />
-            <stop offset="100%" stop-color="#475569" stop-opacity="0.1" />
+            <stop offset="0%" stop-color="#ffffff" stop-opacity="0.24" />
+            <stop offset="35%" stop-color="#99f6e4" stop-opacity="0.08" />
+            <stop offset="70%" stop-color="#c4b5fd" stop-opacity="0.06" />
+            <stop offset="100%" stop-color="#0b1120" stop-opacity="0.14" />
           </linearGradient>
         </defs>
 

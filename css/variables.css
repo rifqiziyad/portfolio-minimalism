@@ -1,23 +1,52 @@
 /* ─── CSS CUSTOM PROPERTIES (DESIGN TOKENS) ─── */
 :root {
   --bg-primary: #070708;
-  --bg-secondary: #0e1013;
-  --bg-card: #14161b;
+  --bg-secondary: #0c0e14;
+  --bg-card: #12151e;
 
   --text-primary: #f8fafc;
-  --text-secondary: #b4bcc8;
-  --text-muted: #7e8794;
+  --text-secondary: #b8c2d0;
+  --text-muted: #7e899b;
 
-  --accent-orange: #e2e8f0;
-  --accent-orange-glow: rgba(226, 232, 240, 0.35);
+  --chrome-mint: #99f6e4;
+  --chrome-ice: #7dd3fc;
+  --chrome-lavender: #c4b5fd;
 
-  --chrome-gradient: linear-gradient(135deg, #ffffff 0%, #cbd5e1 35%, #475569 70%, #f1f5f9 100%);
-  --chrome-glow: rgba(203, 213, 225, 0.28);
+  --accent-orange: #99f6e4;
+  --accent-orange-glow: rgba(153, 246, 228, 0.35);
 
-  --border-subtle: rgba(226, 232, 240, 0.08);
-  --border-medium: rgba(226, 232, 240, 0.16);
-  --border-strong: rgba(248, 250, 252, 0.34);
-  --border-accent: rgba(226, 232, 240, 0.65);
+  --chrome-gradient: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #f1f5f9 18%,
+    #94a3b8 32%,
+    #04070d 44%,
+    #0b1120 48%,
+    #ffffff 50%,
+    #e2e8f0 57%,
+    #99f6e4 69%,
+    #c4b5fd 80%,
+    #ffffff 89%,
+    #1e293b 100%
+  );
+  --chrome-text-gradient: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #e2e8f0 24%,
+    #94a3b8 42%,
+    #090d16 48%,
+    #ffffff 52%,
+    #99f6e4 70%,
+    #c4b5fd 84%,
+    #f8fafc 100%
+  );
+  --chrome-rim-border: linear-gradient(135deg, #ffffff 0%, #94a3b8 30%, #99f6e4 65%, #c4b5fd 100%);
+  --chrome-glow: rgba(153, 246, 228, 0.25);
+
+  --border-subtle: rgba(203, 213, 225, 0.09);
+  --border-medium: rgba(203, 213, 225, 0.18);
+  --border-strong: rgba(248, 250, 252, 0.36);
+  --border-accent: rgba(153, 246, 228, 0.65);
 
   --font-display: 'Syne', 'SyneFallback', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;

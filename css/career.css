@@ -52,7 +52,7 @@
 
 .career-row:hover,
 .education-row:hover {
-  background-color: rgba(255, 255, 255, 0.015);
+  background: linear-gradient(90deg, rgba(153, 246, 228, 0.03) 0%, rgba(196, 181, 253, 0.03) 50%, transparent 100%);
 }
 
 /* ─── Column 1: Year ─── */
@@ -100,7 +100,7 @@
   font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(196, 181, 253, 0.68);
   line-height: 1.4;
   margin: 0;
 }

@@ -29,7 +29,7 @@
   position: absolute;
   inset: 8%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(203, 213, 225, 0.18) 0%, rgba(203, 213, 225, 0) 68%);
+  background: radial-gradient(circle, rgba(153, 246, 228, 0.15) 0%, rgba(196, 181, 253, 0.08) 42%, rgba(153, 246, 228, 0) 68%);
   pointer-events: none;
   opacity: var(--contact-glow-opacity, 0.45);
   transform: scale(var(--contact-glow-scale, 1));
@@ -75,9 +75,9 @@
 }
 
 .bento-card:hover {
-  border-color: var(--accent-orange);
-  background: rgba(226, 232, 240, 0.06);
-  box-shadow: 0 8px 32px 0 rgba(226, 232, 240, 0.12);
+  border-color: var(--chrome-mint);
+  background: rgba(153, 246, 228, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(153, 246, 228, 0.14), 0 0 20px 0 rgba(196, 181, 253, 0.1);
   transform: translateY(-4px);
 }
 

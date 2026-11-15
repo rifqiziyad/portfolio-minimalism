@@ -28,7 +28,7 @@
   position: absolute;
   inset: 10%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(203, 213, 225, 0.16) 0%, rgba(203, 213, 225, 0) 68%);
+  background: radial-gradient(circle, rgba(153, 246, 228, 0.14) 0%, rgba(196, 181, 253, 0.08) 42%, rgba(153, 246, 228, 0) 68%);
   pointer-events: none;
   opacity: var(--skills-glow-opacity, 0.45);
   transform: scale(var(--skills-glow-scale, 1));
@@ -86,8 +86,8 @@
 .skill-tri-shard.is-hovered .skill-shard-body,
 .skill-tri-shard.is-active .skill-shard-body {
   filter:
-    drop-shadow(0 0 22px rgba(255, 255, 255, 0.85))
-    drop-shadow(0 0 45px rgba(148, 163, 184, 0.65))
+    drop-shadow(0 0 22px rgba(153, 246, 228, 0.85))
+    drop-shadow(0 0 45px rgba(196, 181, 253, 0.7))
     brightness(1.22);
 }
 

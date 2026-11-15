@@ -168,6 +168,7 @@
 .project-title-layer-lit .project-title-item {
   color: #ffffff;
   opacity: 1;
+  text-shadow: 0 0 24px rgba(153, 246, 228, 0.22);
 }
 
 .project-title-layer-lit .project-title-item.is-active {
