@@ -18,6 +18,14 @@
   }
 
   function initScroll() {
+    if (typeof TouchEvent !== 'undefined' && TouchEvent.prototype && TouchEvent.prototype.preventDefault) {
+      const origTouchPreventDefault = TouchEvent.prototype.preventDefault;
+      TouchEvent.prototype.preventDefault = function () {
+        if (!this.cancelable) return;
+        return origTouchPreventDefault.apply(this, arguments);
+      };
+    }
+
     const hasGSAP = typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
     const hasLenis = typeof Lenis !== 'undefined' && !isReducedMotion();
 
