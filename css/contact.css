@@ -29,7 +29,7 @@
   position: absolute;
   inset: 8%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 95, 0, 0.28) 0%, rgba(255, 85, 0, 0) 68%);
+  background: radial-gradient(circle, rgba(203, 213, 225, 0.18) 0%, rgba(203, 213, 225, 0) 68%);
   pointer-events: none;
   opacity: var(--contact-glow-opacity, 0.45);
   transform: scale(var(--contact-glow-scale, 1));
@@ -60,10 +60,10 @@
 .bento-card {
   position: relative;
   z-index: 2;
-  background: rgba(18, 18, 18, 0.45);
+  background: rgba(20, 22, 27, 0.45);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(226, 232, 240, 0.14);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   padding: clamp(1.25rem, 2vw, 1.75rem);
   display: flex;
@@ -76,8 +76,8 @@
 
 .bento-card:hover {
   border-color: var(--accent-orange);
-  background: rgba(255, 69, 0, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(255, 69, 0, 0.18);
+  background: rgba(226, 232, 240, 0.06);
+  box-shadow: 0 8px 32px 0 rgba(226, 232, 240, 0.12);
   transform: translateY(-4px);
 }
 
@@ -91,8 +91,8 @@
 
 .bento-card.bento-location:hover {
   transform: none;
-  background: rgba(18, 18, 18, 0.45);
-  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(20, 22, 27, 0.45);
+  border-color: rgba(226, 232, 240, 0.14);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 

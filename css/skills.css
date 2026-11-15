@@ -28,7 +28,7 @@
   position: absolute;
   inset: 10%;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 85, 0, 0.24) 0%, rgba(255, 85, 0, 0) 68%);
+  background: radial-gradient(circle, rgba(203, 213, 225, 0.16) 0%, rgba(203, 213, 225, 0) 68%);
   pointer-events: none;
   opacity: var(--skills-glow-opacity, 0.45);
   transform: scale(var(--skills-glow-scale, 1));
@@ -75,9 +75,9 @@
   text-transform: uppercase;
   fill: #ffffff;
   paint-order: stroke fill;
-  stroke: rgba(10, 4, 20, 0.65);
-  stroke-width: 0.9px;
-  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.85));
+  stroke: rgba(7, 7, 8, 0.88);
+  stroke-width: 1.3px;
+  filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.92));
   transition: fill 0.3s ease, filter 0.3s ease;
   pointer-events: none;
 }
@@ -86,8 +86,8 @@
 .skill-tri-shard.is-hovered .skill-shard-body,
 .skill-tri-shard.is-active .skill-shard-body {
   filter:
-    drop-shadow(0 0 22px rgba(255, 115, 0, 0.95))
-    drop-shadow(0 0 45px rgba(168, 85, 247, 0.85))
+    drop-shadow(0 0 22px rgba(255, 255, 255, 0.85))
+    drop-shadow(0 0 45px rgba(148, 163, 184, 0.65))
     brightness(1.22);
 }
 

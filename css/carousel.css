@@ -35,7 +35,7 @@
 .carousel-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(7, 7, 7, 0.95);
+  background: rgba(7, 7, 8, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   z-index: 0;
@@ -89,7 +89,7 @@
   padding: 0.45rem 0.95rem;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 0;
-  background: rgba(7, 7, 7, 0.85);
+  background: rgba(7, 7, 8, 0.85);
   color: #ffffff;
   cursor: pointer;
   display: inline-flex;
@@ -170,7 +170,7 @@
   height: 48px;
   border-radius: 0;
   border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(7, 7, 7, 0.85);
+  background: rgba(7, 7, 8, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   color: #ffffff;

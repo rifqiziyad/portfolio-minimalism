@@ -1,20 +1,23 @@
 /* ─── CSS CUSTOM PROPERTIES (DESIGN TOKENS) ─── */
 :root {
-  --bg-primary: #070707;
-  --bg-secondary: #0e0e0e;
-  --bg-card: #121212;
+  --bg-primary: #070708;
+  --bg-secondary: #0e1013;
+  --bg-card: #14161b;
 
-  --text-primary: #f5f5f7;
-  --text-secondary: #a0a0a5;
-  --text-muted: #8e8e96;
+  --text-primary: #f8fafc;
+  --text-secondary: #b4bcc8;
+  --text-muted: #7e8794;
 
-  --accent-orange: #ff4500;
-  --accent-orange-glow: rgba(255, 69, 0, 0.4);
-  
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-medium: rgba(255, 255, 255, 0.16);
-  --border-strong: rgba(255, 255, 255, 0.3);
-  --border-accent: rgba(255, 69, 0, 0.6);
+  --accent-orange: #e2e8f0;
+  --accent-orange-glow: rgba(226, 232, 240, 0.35);
+
+  --chrome-gradient: linear-gradient(135deg, #ffffff 0%, #cbd5e1 35%, #475569 70%, #f1f5f9 100%);
+  --chrome-glow: rgba(203, 213, 225, 0.28);
+
+  --border-subtle: rgba(226, 232, 240, 0.08);
+  --border-medium: rgba(226, 232, 240, 0.16);
+  --border-strong: rgba(248, 250, 252, 0.34);
+  --border-accent: rgba(226, 232, 240, 0.65);
 
   --font-display: 'Syne', 'SyneFallback', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;

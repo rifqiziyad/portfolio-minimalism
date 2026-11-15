@@ -56,7 +56,7 @@
   flex-shrink: 0;
   display: block;
   object-fit: contain;
-  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.35)) drop-shadow(0 0 10px rgba(255, 69, 0, 0.25));
+  filter: drop-shadow(0 0 6px rgba(226, 232, 240, 0.35)) drop-shadow(0 0 10px rgba(148, 163, 184, 0.25));
   transition: transform var(--transition-smooth), filter var(--transition-smooth);
 }
 
@@ -69,7 +69,7 @@
 
 .brand-logo-svg {
   transform: translateY(-2px) scale(1.08);
-  filter: drop-shadow(0 0 12px rgba(192, 132, 252, 0.8)) drop-shadow(0 0 18px rgba(255, 95, 31, 0.65));
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.75)) drop-shadow(0 0 18px rgba(203, 213, 225, 0.55));
 }
 
 .brand-name {
