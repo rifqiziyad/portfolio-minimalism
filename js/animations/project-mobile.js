@@ -72,6 +72,9 @@
       if (vlineRight) {
         vlineRight.style.left = '92%';
         vlineRight.style.opacity = '1';
+        if (hasCompletedEntrance) {
+          vlineRight.style.transform = '';
+        }
       }
       if (layerLit) {
         const litClip = 'inset(0 8% 0 8%)';

@@ -43,6 +43,7 @@
   .project-vline-right {
     left: 92%;
     opacity: 1;
+    transform: none;
     transform-origin: top center;
     will-change: transform;
   }
