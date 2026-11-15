@@ -765,7 +765,11 @@
         if (projectIdxAttr !== null) {
           const projectIdx = parseInt(projectIdxAttr, 10);
           if (!isNaN(projectIdx)) {
-            openGallery(projectIdx, 0, frame);
+            if (typeof window.Portfolio.openProjectGallery === 'function') {
+              window.Portfolio.openProjectGallery(projectIdx, frame);
+            } else {
+              openGallery(projectIdx, 0, frame);
+            }
           }
         }
       });
@@ -780,7 +784,11 @@
             if (projectIdxAttr !== null) {
               const projectIdx = parseInt(projectIdxAttr, 10);
               if (!isNaN(projectIdx)) {
-                openGallery(projectIdx, 0, frame);
+                if (typeof window.Portfolio.openProjectGallery === 'function') {
+                  window.Portfolio.openProjectGallery(projectIdx, frame);
+                } else {
+                  openGallery(projectIdx, 0, frame);
+                }
               }
             }
           }
@@ -794,7 +802,8 @@
       closeGallery,
       nextSlide,
       prevSlide,
-      goToSlide
+      goToSlide,
+      isBusy: () => isOpen || isAnimating
     });
   }
 

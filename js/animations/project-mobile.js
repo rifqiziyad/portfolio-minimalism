@@ -15,6 +15,7 @@
   window.Portfolio = window.Portfolio || {};
 
   let cleanupMobileCarouselController = null;
+  let prepareMobileGalleryHandler = null;
 
   function initProjectMobileCarousel(scope) {
     if (cleanupMobileCarouselController) {
@@ -160,7 +161,7 @@
       }
     }
 
-    function animateToIndex(targetIdx, duration = 0.42) {
+    function animateToIndex(targetIdx, duration = 0.42, onCompleteCallback = null) {
       const clampedIdx = Math.max(0, Math.min(total - 1, targetIdx));
       if (snapTween) {
         snapTween.kill();
@@ -177,19 +178,57 @@
           },
           onComplete: () => {
             snapTween = null;
+            if (typeof onCompleteCallback === 'function') {
+              onCompleteCallback();
+            }
           }
         });
       } else {
         playhead.f = clampedIdx;
         renderMobileSlide(playhead.f);
+        if (typeof onCompleteCallback === 'function') {
+          onCompleteCallback();
+        }
       }
     }
+
+    function prepareProjectForGallery(projectIndex, onReady) {
+      if (typeof onReady !== 'function') return;
+      const targetIdx = Math.max(0, Math.min(total - 1, projectIndex));
+
+      if (hasCompletedEntrance && !snapTween && Math.abs(playhead.f - targetIdx) <= 0.015) {
+        onReady();
+        return;
+      }
+
+      if (!hasCompletedEntrance) {
+        if (entranceTween) {
+          entranceTween.kill();
+          entranceTween = null;
+        }
+        if (entranceTrigger) {
+          entranceTrigger.kill();
+          entranceTrigger = null;
+        }
+        hasCompletedEntrance = true;
+        if (vlineRight) gsap.set(vlineRight, { clearProps: 'transform' });
+        if (imageViewport) gsap.set(imageViewport, { clearProps: 'transform' });
+        if (slideImgs[0]) gsap.set(slideImgs[0], { clearProps: 'transform' });
+        gsap.set([trackDim, trackLit], { clearProps: 'x' });
+      }
+
+      animateToIndex(targetIdx, 0.32, onReady);
+    }
+
+    prepareMobileGalleryHandler = prepareProjectForGallery;
 
     function openActiveGallery() {
       const activeIdx = projectInfoCtrl ? projectInfoCtrl.getCurrentActiveIndex() : Math.round(playhead.f);
       const idx = activeIdx >= 0 ? activeIdx : 0;
       const activeFrame = slideFrames[idx];
-      if (window.Portfolio.carousel && typeof window.Portfolio.carousel.openGallery === 'function') {
+      if (typeof window.Portfolio.openProjectGallery === 'function') {
+        window.Portfolio.openProjectGallery(idx, activeFrame);
+      } else if (window.Portfolio.carousel && typeof window.Portfolio.carousel.openGallery === 'function') {
         window.Portfolio.carousel.openGallery(idx, 0, activeFrame);
       } else if (typeof window.Portfolio.ensureCarouselAndOpen === 'function') {
         window.Portfolio.ensureCarouselAndOpen(idx, activeFrame);
@@ -574,6 +613,7 @@
     initMobileEntrance();
 
     cleanupMobileCarouselController = () => {
+      prepareMobileGalleryHandler = null;
       clearTimeout(mobileResizeTimer);
       if (snapTween) {
         snapTween.kill();
@@ -651,6 +691,13 @@
 
   window.Portfolio.projectMobile = {
     initProjectMobileCarousel,
+    prepareProjectForGallery: (projectIndex, onReady) => {
+      if (typeof prepareMobileGalleryHandler === 'function') {
+        prepareMobileGalleryHandler(projectIndex, onReady);
+      } else if (typeof onReady === 'function') {
+        onReady();
+      }
+    },
     cleanupProjectMobile: () => {
       if (cleanupMobileCarouselController) {
         cleanupMobileCarouselController();

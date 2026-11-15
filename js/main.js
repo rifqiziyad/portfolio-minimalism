@@ -81,6 +81,22 @@
       });
     };
 
+    app.openProjectGallery = function (projectIdx, sourceFrame) {
+      if (app.carousel && typeof app.carousel.isBusy === 'function' && app.carousel.isBusy()) {
+        return;
+      }
+
+      const isMobile = window.innerWidth <= 768;
+      const activeController = isMobile ? app.projectMobile : app.projectShowcase;
+      const launch = () => app.ensureCarouselAndOpen(projectIdx, sourceFrame);
+
+      if (activeController && typeof activeController.prepareProjectForGallery === 'function') {
+        activeController.prepareProjectForGallery(projectIdx, launch);
+      } else {
+        launch();
+      }
+    };
+
     const portfolioMount = document.getElementById('portfolioList');
     if (portfolioMount) {
       const prefetchCarousel = () => { ensureCarouselReady(); };
@@ -95,7 +111,7 @@
         if (idxAttr === null) return;
         const projectIdx = parseInt(idxAttr, 10);
         if (!isNaN(projectIdx)) {
-          app.ensureCarouselAndOpen(projectIdx, frame);
+          app.openProjectGallery(projectIdx, frame);
         }
       });
 
@@ -109,7 +125,7 @@
           if (idxAttr === null) return;
           const projectIdx = parseInt(idxAttr, 10);
           if (!isNaN(projectIdx)) {
-            app.ensureCarouselAndOpen(projectIdx, frame);
+            app.openProjectGallery(projectIdx, frame);
           }
         }
       });

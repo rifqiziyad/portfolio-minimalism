@@ -10,6 +10,7 @@
   window.Portfolio = window.Portfolio || {};
 
   let cleanupProjectShowcaseController = null;
+  let prepareShowcaseGalleryHandler = null;
 
   function initProjectShowcaseScroll(scope) {
     if (cleanupProjectShowcaseController) {
@@ -52,6 +53,8 @@
     let cachedStageWidth = window.innerWidth;
     let cachedLastTitleWidth = 0;
     let resizeTimer = null;
+    let activeAlignTimer = null;
+    let isAligningForGallery = false;
     let projectPinTrigger = null;
     let projectScrollTrigger = null;
     let projectScrubTween = null;
@@ -320,11 +323,71 @@
       }
     }
 
+    function prepareProjectForGallery(projectIndex, onReady) {
+      if (typeof onReady !== 'function') return;
+
+      const targetIdx = Math.max(0, Math.min(total - 1, projectIndex));
+      const currentF = fMin + playhead.progress * fRange;
+
+      if (!projectScrollTrigger || Math.abs(currentF - targetIdx) <= 0.015) {
+        onReady();
+        return;
+      }
+
+      if (isAligningForGallery) return;
+      isAligningForGallery = true;
+
+      if (activeAlignTimer) {
+        clearTimeout(activeAlignTimer);
+        activeAlignTimer = null;
+      }
+
+      const ratio = (targetIdx - fMin) / fRange;
+      const targetY =
+        projectScrollTrigger.start +
+        ratio * (projectScrollTrigger.end - projectScrollTrigger.start);
+
+      let completed = false;
+      const finishAlignment = () => {
+        if (completed) return;
+        completed = true;
+        isAligningForGallery = false;
+        if (activeAlignTimer) {
+          clearTimeout(activeAlignTimer);
+          activeAlignTimer = null;
+        }
+        playhead.progress = ratio;
+        renderFrame(ratio);
+        if (typeof ScrollTrigger !== 'undefined') {
+          ScrollTrigger.update();
+        }
+        onReady();
+      };
+
+      const scrollService = window.Portfolio.scroll;
+      const lenis = scrollService && typeof scrollService.getLenis === 'function' ? scrollService.getLenis() : null;
+
+      if (lenis && typeof lenis.scrollTo === 'function') {
+        lenis.scrollTo(targetY, {
+          duration: 0.45,
+          onComplete: finishAlignment
+        });
+        activeAlignTimer = setTimeout(finishAlignment, 520);
+      } else {
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
+        activeAlignTimer = setTimeout(finishAlignment, 450);
+      }
+    }
+
+    prepareShowcaseGalleryHandler = prepareProjectForGallery;
+
     function openActiveGallery() {
       const activeIdx = projectInfoCtrl ? projectInfoCtrl.getCurrentActiveIndex() : 0;
       const idx = activeIdx >= 0 ? activeIdx : 0;
       const activeFrame = slideFrames[idx];
-      if (window.Portfolio.carousel && typeof window.Portfolio.carousel.openGallery === 'function') {
+      if (typeof window.Portfolio.openProjectGallery === 'function') {
+        window.Portfolio.openProjectGallery(idx, activeFrame);
+      } else if (window.Portfolio.carousel && typeof window.Portfolio.carousel.openGallery === 'function') {
         window.Portfolio.carousel.openGallery(idx, 0, activeFrame);
       } else if (typeof window.Portfolio.ensureCarouselAndOpen === 'function') {
         window.Portfolio.ensureCarouselAndOpen(idx, activeFrame);
@@ -432,6 +495,12 @@
 
     cleanupProjectShowcaseController = () => {
       clearTimeout(resizeTimer);
+      if (activeAlignTimer) {
+        clearTimeout(activeAlignTimer);
+        activeAlignTimer = null;
+      }
+      isAligningForGallery = false;
+      prepareShowcaseGalleryHandler = null;
       section.removeEventListener('click', onSectionClick);
       if (elGalleryBtn) {
         elGalleryBtn.removeEventListener('click', openActiveGallery);
@@ -472,6 +541,13 @@
 
   window.Portfolio.projectShowcase = {
     initProjectShowcaseScroll,
+    prepareProjectForGallery: (projectIndex, onReady) => {
+      if (typeof prepareShowcaseGalleryHandler === 'function') {
+        prepareShowcaseGalleryHandler(projectIndex, onReady);
+      } else if (typeof onReady === 'function') {
+        onReady();
+      }
+    },
     cleanupProjectShowcase: () => {
       if (cleanupProjectShowcaseController) {
         cleanupProjectShowcaseController();
