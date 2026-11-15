@@ -67,7 +67,7 @@
 .hero-image-box {
   position: relative;
   z-index: 1;
-  width: clamp(260px, 32vw, 460px);
+  width: clamp(300px, 32vw, 460px);
   border: 1px solid rgba(226, 232, 240, 0.24);
   background-color: var(--bg-card);
   padding: 0.75rem;
