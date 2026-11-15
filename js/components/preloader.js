@@ -117,13 +117,22 @@
     }
 
     function unlockScroll() {
+      const preservedY = window.scrollY || window.pageYOffset || 0;
       document.documentElement.style.overflow = '';
       const currentLenis =
         window.Portfolio.scroll && typeof window.Portfolio.scroll.getLenis === 'function'
           ? window.Portfolio.scroll.getLenis()
           : null;
-      if (currentLenis && typeof currentLenis.start === 'function') {
-        currentLenis.start();
+      if (currentLenis) {
+        if (typeof currentLenis.resize === 'function') {
+          currentLenis.resize();
+        }
+        if (typeof currentLenis.start === 'function') {
+          currentLenis.start();
+        }
+        if (preservedY > 0 && typeof currentLenis.scrollTo === 'function') {
+          currentLenis.scrollTo(preservedY, { immediate: true, force: true });
+        }
       }
     }
 
