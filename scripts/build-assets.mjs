@@ -205,7 +205,7 @@ function copyDirRecursive(srcDir, destDir) {
 function copyStaticFiles() {
   copyDirRecursive(path.join(ROOT_DIR, 'assets'), path.join(BUILD_DIR, 'assets'));
 
-  for (const file of ['robots.txt', 'sitemap.xml']) {
+  for (const file of ['robots.txt', 'sitemap.xml', 'google85eb38a07632ed4a.html']) {
     const src = path.join(ROOT_DIR, file);
     if (fs.existsSync(src)) {
       fs.copyFileSync(src, path.join(BUILD_DIR, file));

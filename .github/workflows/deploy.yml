@@ -3,7 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 # Permissions for GITHUB_TOKEN to deploy to GitHub Pages
