@@ -124,6 +124,8 @@
 }
 
 .project-title-track {
+  width: 100%;
+  flex-shrink: 0;
   display: flex;
   align-items: baseline;
   gap: 0;
@@ -132,9 +134,9 @@
 }
 
 .project-title-item {
-  flex: 0 0 55vw;
-  width: 55vw;
-  min-width: 55vw;
+  flex: 0 0 55%;
+  width: 55%;
+  min-width: 55%;
   box-sizing: border-box;
   padding-right: clamp(1.5rem, 3vw, 3.5rem);
   background: none;

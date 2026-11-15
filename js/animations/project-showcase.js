@@ -73,19 +73,18 @@
       cachedStageWidth = (stageEl && stageEl.clientWidth) || cachedVw;
       const isMobile = cachedVw <= 768;
 
-      // Spotlight column left boundary: 33% on desktop/tablet, 28% on mobile
-      spotlightLeftPx = cachedVw * (isMobile ? 0.28 : 0.33);
-
-      // Column width matches .project-image-viewport (55vw on desktop, 68vw on mobile)
-      const colWidthPx = cachedVw * (isMobile ? 0.68 : 0.55);
+      // Spotlight column left boundary: match .project-image-viewport inside stage
+      spotlightLeftPx = imageViewport
+        ? imageViewport.offsetLeft
+        : cachedStageWidth * (isMobile ? 0.28 : 0.33);
 
       // Cache last title span width so renderFrame avoids offsetWidth reads during scroll
       const lastTitleEl = dimItems[total - 1];
       const lastTextSpan = lastTitleEl ? lastTitleEl.querySelector('.project-title-text') : null;
-      cachedLastTitleWidth = (lastTextSpan && lastTextSpan.offsetWidth) || cachedVw * 0.18;
+      cachedLastTitleWidth = (lastTextSpan && lastTextSpan.offsetWidth) || cachedStageWidth * 0.18;
 
       // Record exact anchor offset of each title item to stay strictly in line (sebaris) with slide frames
-      itemOffsets = dimItems.map((el, idx) => idx * colWidthPx);
+      itemOffsets = dimItems.map((el) => el.offsetLeft);
     }
 
     if (vlineRight) {
@@ -178,11 +177,12 @@
 
       if (f < 0) {
         // Title 01 starts from 100% (offscreen) and glides to 33% (spotlight)
-        const title0ScreenPx = (title0ScreenPct / 100) * vw;
+        const stageW = cachedStageWidth || vw;
+        const title0ScreenPx = (title0ScreenPct / 100) * stageW;
         trackX = title0ScreenPx - firstOffset;
       } else if (f > total - 1) {
         const exitRatio = Math.max(0, Math.min(1, (f - (total - 1)) / totalExitSpan));
-        const textWidth = cachedLastTitleWidth || vw * 0.18;
+        const textWidth = cachedLastTitleWidth || (cachedStageWidth || vw) * 0.18;
         const exitShiftPx = exitRatio * (textWidth * 0.55);
         trackX = spotlightLeftPx - lastOffset - exitShiftPx;
       } else {
@@ -493,8 +493,27 @@
 
     window.addEventListener('resize', onResize, { passive: true });
 
+    let stageResizeObserver = null;
+    if (typeof ResizeObserver !== 'undefined' && stageEl) {
+      let lastObservedStageW = cachedStageWidth;
+      stageResizeObserver = new ResizeObserver((entries) => {
+        const entry = entries[0];
+        const nextW = entry ? Math.round(entry.contentRect.width) : stageEl.clientWidth;
+        if (nextW > 0 && nextW !== lastObservedStageW) {
+          lastObservedStageW = nextW;
+          measureMetrics();
+          renderFrame(projectScrollTrigger ? playhead.progress : 0);
+        }
+      });
+      stageResizeObserver.observe(stageEl);
+    }
+
     cleanupProjectShowcaseController = () => {
       clearTimeout(resizeTimer);
+      if (stageResizeObserver) {
+        stageResizeObserver.disconnect();
+        stageResizeObserver = null;
+      }
       if (activeAlignTimer) {
         clearTimeout(activeAlignTimer);
         activeAlignTimer = null;

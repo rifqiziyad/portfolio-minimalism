@@ -94,8 +94,12 @@
       }
 
       // 2. Synchronized Horizontal Sliding Title Band
-      const spotlightLeftPx = vw * LEFT_COL_RATIO;
-      const colWidthPx = vw * COL_WIDTH_RATIO;
+      const stageEl = section.querySelector('#projectStickyStage') || section;
+      const stageWidth = (stageEl && stageEl.clientWidth) || vw;
+      const vpRect = imageViewport ? imageViewport.getBoundingClientRect() : null;
+      const stageRect = stageEl ? stageEl.getBoundingClientRect() : null;
+      const spotlightLeftPx = vpRect && stageRect ? vpRect.left - stageRect.left : stageWidth * LEFT_COL_RATIO;
+      const colWidthPx = vpRect ? vpRect.width : stageWidth * COL_WIDTH_RATIO;
       const trackX = spotlightLeftPx - f * colWidthPx;
       const trackTransform = `translate3d(${trackX.toFixed(2)}px, 0, 0)`;
 
