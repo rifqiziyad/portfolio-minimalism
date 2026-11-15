@@ -32,6 +32,9 @@
     let currentProject = null;
     let currentGallery = [];
     let currentSlideIdx = 0;
+    let slideFrames = [];
+    let slideImgs = [];
+    let activeSlideTween = null;
     let activeSourceFrame = null;
     let activeParallaxState = null;
     let lastFocusedElement = null;
@@ -56,19 +59,19 @@
       ).filter((el) => !el.disabled && el.offsetParent !== null);
     }
 
-    // Helper: measure target bounding rect of #carouselSlideCard in its neutral centered state
-    function getTargetRect(sourceFrame) {
-      const rect = slideCard.getBoundingClientRect();
-      if (rect.width > 40 && rect.height > 40) {
-        return rect;
-      }
+    function getActiveSlideImg() {
+      return slideImgs[currentSlideIdx] || (slideCard && slideCard.querySelector('.carousel-slide-img')) || mainImg;
+    }
 
+    function computeViewportBox(sourceFrame) {
       const vpRect = (viewport || stage).getBoundingClientRect();
       const srcImg = sourceFrame ? sourceFrame.querySelector('img') : null;
       const aspect =
-        srcImg && srcImg.naturalWidth && srcImg.naturalHeight
-          ? srcImg.naturalWidth / srcImg.naturalHeight
-          : 4 / 3;
+        currentProject && currentProject.imageWidth && currentProject.imageHeight
+          ? currentProject.imageWidth / currentProject.imageHeight
+          : srcImg && srcImg.naturalWidth && srcImg.naturalHeight
+            ? srcImg.naturalWidth / srcImg.naturalHeight
+            : 16 / 10;
 
       const maxW = Math.min(vpRect.width || window.innerWidth * 0.85, 1000);
       const maxH = window.innerHeight * 0.62;
@@ -80,15 +83,27 @@
         width = height * aspect;
       }
 
-      const centerX = vpRect.left + vpRect.width / 2;
-      const centerY = vpRect.top + vpRect.height / 2;
+      const left = vpRect.left + (vpRect.width - width) / 2;
+      const top = vpRect.top + (vpRect.height - height) / 2;
 
-      return {
-        left: centerX - width / 2,
-        top: centerY - height / 2,
-        width,
-        height
-      };
+      return { left, top, width, height };
+    }
+
+    function syncCardViewportSize(sourceFrame) {
+      if (!slideCard) return null;
+      const box = computeViewportBox(sourceFrame);
+      slideCard.style.width = `${Math.round(box.width)}px`;
+      slideCard.style.height = `${Math.round(box.height)}px`;
+      return box;
+    }
+
+    // Helper: measure target bounding rect of #carouselSlideCard in its neutral centered state
+    function getTargetRect(sourceFrame) {
+      const rect = slideCard.getBoundingClientRect();
+      if (rect.width > 40 && rect.height > 40) {
+        return rect;
+      }
+      return computeViewportBox(sourceFrame);
     }
 
     // Helper: calculate Preserving Crop Morph (uniform scale + dynamic top-left clip-path)
@@ -205,6 +220,76 @@
       updateActiveThumb(index);
     }
 
+    function applyViewportParallax(frameEl, imgEl, delta) {
+      let frameXPercent = 0;
+      let imgXPercent = 0;
+      let imgScale = 1.0;
+
+      if (delta >= 1) {
+        frameXPercent = 100.5;
+        imgXPercent = -22;
+        imgScale = 1.25;
+      } else if (delta >= 0) {
+        frameXPercent = delta * 100;
+        imgXPercent = -22 * delta;
+        imgScale = 1.0 + delta * 0.25;
+      } else if (delta > -1) {
+        frameXPercent = delta * 28;
+        imgXPercent = -delta * 14;
+        imgScale = 1.0;
+      } else {
+        frameXPercent = -28;
+        imgXPercent = 14;
+        imgScale = 1.0;
+      }
+
+      if (frameEl) {
+        frameEl.style.transform = `translate3d(${frameXPercent.toFixed(2)}%, 0, 0)`;
+        frameEl.style.opacity = '1';
+      }
+      if (imgEl) {
+        imgEl.style.transform = `translate3d(${imgXPercent.toFixed(2)}%, 0, 0) scale(${imgScale.toFixed(3)})`;
+      }
+    }
+
+    function renderSlides() {
+      if (!slideCard) return;
+      slideCard.innerHTML = '';
+      slideFrames = [];
+      slideImgs = [];
+
+      const utils = window.Portfolio && window.Portfolio.utils;
+      const titleText = (currentProject && currentProject.title) || 'Portfolio Showcase';
+
+      currentGallery.forEach((src, idx) => {
+        const safeSrc = utils && typeof utils.sanitizeUrl === 'function' ? utils.sanitizeUrl(src, false) : src;
+        const frame = document.createElement('div');
+        frame.className = `carousel-slide-frame${idx === currentSlideIdx ? ' is-current-frame' : ''}`;
+
+        const img = document.createElement('img');
+        img.src = safeSrc;
+        img.alt = `${titleText} — Slide ${idx + 1}`;
+        img.className = 'carousel-slide-img carousel-main-img';
+        img.width = 1200;
+        img.height = 800;
+        img.decoding = 'async';
+
+        if (idx === currentSlideIdx) {
+          frame.style.visibility = 'visible';
+          frame.style.zIndex = '1';
+          applyViewportParallax(frame, img, 0);
+        } else {
+          frame.style.visibility = 'hidden';
+          frame.style.zIndex = '0';
+        }
+
+        frame.appendChild(img);
+        slideCard.appendChild(frame);
+        slideFrames.push(frame);
+        slideImgs.push(img);
+      });
+    }
+
     function renderThumbs() {
       if (!thumbsTrack) return;
       thumbsTrack.innerHTML = '';
@@ -229,49 +314,94 @@
 
     function goToSlide(targetIdx, direction = 1) {
       if (!currentGallery.length || isAnimating) return;
-      if (targetIdx === currentSlideIdx) return;
-
       const total = currentGallery.length;
       const newIdx = (targetIdx + total) % total;
+      if (newIdx === currentSlideIdx) return;
+
+      const fromIdx = currentSlideIdx;
+      const fromFrame = slideFrames[fromIdx];
+      const fromImg = slideImgs[fromIdx];
+      const toFrame = slideFrames[newIdx];
+      const toImg = slideImgs[newIdx];
+
+      if (!fromFrame || !toFrame) {
+        currentSlideIdx = newIdx;
+        updateMeta(newIdx);
+        return;
+      }
+
       isAnimating = true;
+      updateMeta(newIdx);
 
-      // GSAP Hardware-Accelerated Kinetic Slide
+      // Hide unrelated frames while animating only the active transition pair
+      slideFrames.forEach((frame, idx) => {
+        if (idx !== fromIdx && idx !== newIdx) {
+          frame.style.visibility = 'hidden';
+          frame.style.zIndex = '0';
+          frame.classList.remove('is-current-frame');
+        }
+      });
+
+      fromFrame.style.visibility = 'visible';
+      toFrame.style.visibility = 'visible';
+      fromFrame.classList.remove('is-current-frame');
+
+      // Mirror project-image-viewport layering:
+      // Forward (direction >= 0): incoming wipes over outgoing from +100% -> 0%
+      // Backward (direction < 0): outgoing wipes off to +100%, revealing incoming from -28% -> 0%
+      if (direction >= 0) {
+        fromFrame.style.zIndex = '1';
+        toFrame.style.zIndex = '2';
+      } else {
+        toFrame.style.zIndex = '1';
+        fromFrame.style.zIndex = '2';
+      }
+
+      if (fromImg) fromImg.style.transformOrigin = 'center center';
+      if (toImg) toImg.style.transformOrigin = 'center center';
+
       if (typeof gsap !== 'undefined') {
-        const outX = -direction * 45;
-        const inX = direction * 45;
+        if (activeSlideTween) {
+          activeSlideTween.kill();
+          activeSlideTween = null;
+        }
 
-        gsap.to(slideCard, {
-          x: outX,
-          scale: 0.97,
-          autoAlpha: 0,
-          duration: 0.18,
-          ease: 'power2.in',
+        const progressProxy = { t: 0 };
+        activeSlideTween = gsap.to(progressProxy, {
+          t: 1,
+          duration: 0.52,
+          ease: 'power3.out',
+          onUpdate: () => {
+            const t = progressProxy.t;
+            if (direction >= 0) {
+              applyViewportParallax(fromFrame, fromImg, -t);
+              applyViewportParallax(toFrame, toImg, 1 - t);
+            } else {
+              applyViewportParallax(toFrame, toImg, -(1 - t));
+              applyViewportParallax(fromFrame, fromImg, t);
+            }
+          },
           onComplete: () => {
+            activeSlideTween = null;
             currentSlideIdx = newIdx;
-            mainImg.src = currentGallery[newIdx];
-            updateMeta(newIdx);
+            fromFrame.style.visibility = 'hidden';
+            fromFrame.style.zIndex = '0';
+            fromFrame.style.transform = '';
+            if (fromImg) fromImg.style.transform = '';
 
-            gsap.fromTo(
-              slideCard,
-              { x: inX, scale: 0.97, autoAlpha: 0 },
-              {
-                x: 0,
-                scale: 1,
-                autoAlpha: 1,
-                duration: 0.35,
-                ease: 'power3.out',
-                onComplete: () => {
-                  isAnimating = false;
-                }
-              }
-            );
+            toFrame.style.zIndex = '1';
+            toFrame.classList.add('is-current-frame');
+            applyViewportParallax(toFrame, toImg, 0);
+            isAnimating = false;
           }
         });
       } else {
-        // Fallback without GSAP
         currentSlideIdx = newIdx;
-        mainImg.src = currentGallery[newIdx];
-        updateMeta(newIdx);
+        fromFrame.style.visibility = 'hidden';
+        fromFrame.style.zIndex = '0';
+        toFrame.style.zIndex = '1';
+        toFrame.classList.add('is-current-frame');
+        applyViewportParallax(toFrame, toImg, 0);
         isAnimating = false;
       }
     }
@@ -312,8 +442,9 @@
       // Populate header details
       if (projectTitle) projectTitle.textContent = project.title || 'PROJECT';
 
-      // Render initial image & thumbnails
-      if (mainImg) mainImg.src = currentGallery[currentSlideIdx];
+      // Render initial stacked slides & thumbnails
+      renderSlides();
+      syncCardViewportSize(activeSourceFrame);
       updateMeta(currentSlideIdx);
       renderThumbs();
 
@@ -335,6 +466,11 @@
 
       // Animate modal open with FLIP from clicked portfolio thumbnail
       if (typeof gsap !== 'undefined') {
+        if (activeSlideTween) {
+          activeSlideTween.kill();
+          activeSlideTween = null;
+        }
+        const activeImg = getActiveSlideImg();
         const uiTargets = [
           modal,
           backdrop,
@@ -342,7 +478,7 @@
           header,
           footer,
           slideCard,
-          mainImg,
+          activeImg,
           prevBtn,
           nextBtn,
           activeSourceFrame
@@ -351,11 +487,13 @@
 
         // Make modal container immediately visible so slideCard is 100% opaque from frame 0
         gsap.set(modal, { autoAlpha: 1 });
-        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, autoAlpha: 1, borderRadius: '6px' });
-        gsap.set(mainImg, { transformOrigin: 'left top' });
+        gsap.set(slideCard, { x: 0, y: 0, scale: 1, scaleX: 1, scaleY: 1, autoAlpha: 1, borderRadius: '0px' });
+        if (activeImg) {
+          gsap.set(activeImg, { transformOrigin: 'left top' });
+        }
 
         const targetRect = getTargetRect(activeSourceFrame);
-        const srcImg = (activeSourceFrame ? activeSourceFrame.querySelector('img') : null) || mainImg;
+        const srcImg = (activeSourceFrame ? activeSourceFrame.querySelector('img') : null) || activeImg;
         const flip = computeCropMorphDelta(sourceRect, targetRect, srcImg);
         activeParallaxState = getParallaxState(srcImg);
 
@@ -389,18 +527,18 @@
           );
         }
 
-        // 4. Navigation arrows scale & fade in with slight stagger
+        // 4. Navigation buttons enter cleanly without bounce
         const navBtns = [prevBtn, nextBtn].filter(Boolean);
         if (navBtns.length) {
           gsap.fromTo(
             navBtns,
-            { scale: 0.8, autoAlpha: 0 },
+            { scale: 0.92, autoAlpha: 0 },
             {
               scale: 1,
               autoAlpha: 1,
               duration: 0.42,
-              ease: 'back.out(1.6)',
-              delay: 0.1,
+              ease: 'power3.out',
+              delay: 0.08,
               clearProps: 'transform'
             }
           );
@@ -409,27 +547,29 @@
         // 5. Main image card & inner parallax image expand simultaneously
         if (flip) {
           // Inner Image: Animate from thumbnail's live parallax transform to neutral
-          gsap.fromTo(
-            mainImg,
-            {
-              scale: activeParallaxState.scale,
-              yPercent: activeParallaxState.yPercent,
-              y: activeParallaxState.y,
-              x: activeParallaxState.x,
-              transformOrigin: 'left top'
-            },
-            {
-              scale: 1,
-              yPercent: 0,
-              y: 0,
-              x: 0,
-              duration: 0.58,
-              ease: 'expo.out',
-              clearProps: 'transform'
-            }
-          );
+          if (activeImg) {
+            gsap.fromTo(
+              activeImg,
+              {
+                scale: activeParallaxState.scale,
+                yPercent: activeParallaxState.yPercent,
+                y: activeParallaxState.y,
+                x: activeParallaxState.x,
+                transformOrigin: 'left top'
+              },
+              {
+                scale: 1,
+                yPercent: 0,
+                y: 0,
+                x: 0,
+                duration: 0.58,
+                ease: 'expo.out',
+                clearProps: 'transform,transformOrigin'
+              }
+            );
+          }
 
-          // Outer Card Frame: Morph position, scale, clipPath, and borderRadius (0px -> 6px)
+          // Outer Card Frame: Morph position, scale, and clipPath with sharp monolith corners
           gsap.fromTo(
             slideCard,
             {
@@ -449,7 +589,7 @@
               scaleX: 1,
               scaleY: 1,
               clipPath: flip.clipEnd,
-              borderRadius: '6px',
+              borderRadius: '0px',
               autoAlpha: 1,
               duration: 0.58,
               ease: 'expo.out',
@@ -460,16 +600,18 @@
             }
           );
         } else {
-          gsap.set(mainImg, { clearProps: 'transform' });
+          if (activeImg) {
+            gsap.set(activeImg, { clearProps: 'transform,transformOrigin' });
+          }
           gsap.fromTo(
             slideCard,
-            { scale: 0.93, y: 18, autoAlpha: 0, x: 0, borderRadius: '6px' },
+            { scale: 0.94, y: 16, autoAlpha: 0, x: 0, borderRadius: '0px' },
             {
               scale: 1,
               y: 0,
               autoAlpha: 1,
               x: 0,
-              borderRadius: '6px',
+              borderRadius: '0px',
               duration: 0.48,
               ease: 'expo.out',
               onComplete: () => {
@@ -491,8 +633,13 @@
       isAnimating = true;
 
       const sourceFrame = activeSourceFrame;
+      const activeImg = getActiveSlideImg();
 
       if (typeof gsap !== 'undefined') {
+        if (activeSlideTween) {
+          activeSlideTween.kill();
+          activeSlideTween = null;
+        }
         const uiTargets = [
           modal,
           backdrop,
@@ -500,7 +647,7 @@
           header,
           footer,
           slideCard,
-          mainImg,
+          activeImg,
           prevBtn,
           nextBtn,
           sourceFrame
@@ -565,7 +712,10 @@
             gsap.set(sourceFrame, { clearProps: 'opacity,visibility' });
           }
           gsap.set(slideCard, { clearProps: 'transform,opacity,visibility,clipPath,borderRadius' });
-          gsap.set(mainImg, { clearProps: 'transform' });
+          slideCard.style.width = '';
+          slideCard.style.height = '';
+          slideFrames.forEach((f) => gsap.set(f, { clearProps: 'transform,opacity,visibility,zIndex' }));
+          slideImgs.forEach((img) => gsap.set(img, { clearProps: 'transform,transformOrigin' }));
           gsap.set(modal, { autoAlpha: 0 });
           modal.setAttribute('aria-hidden', 'true');
           modal.classList.remove('is-active');
@@ -593,17 +743,19 @@
           }
 
           // Inner Image: Animate from neutral back to thumbnail's live parallax transform
-          gsap.to(mainImg, {
-            scale: parallaxState.scale,
-            yPercent: parallaxState.yPercent,
-            y: parallaxState.y,
-            x: parallaxState.x,
-            transformOrigin: 'left top',
-            duration: 0.46,
-            ease: 'expo.inOut'
-          });
+          if (activeImg) {
+            gsap.to(activeImg, {
+              scale: parallaxState.scale,
+              yPercent: parallaxState.yPercent,
+              y: parallaxState.y,
+              x: parallaxState.x,
+              transformOrigin: 'left top',
+              duration: 0.46,
+              ease: 'expo.inOut'
+            });
+          }
 
-          // Outer Card Frame: Shrink back to thumbnail rect with borderRadius (6px -> 0px)
+          // Outer Card Frame: Shrink back to thumbnail rect with sharp monolith corners
           gsap.to(slideCard, {
             x: flip.x,
             y: flip.y,
@@ -641,6 +793,8 @@
           sourceFrame.style.opacity = '';
           sourceFrame.style.visibility = '';
         }
+        slideCard.style.width = '';
+        slideCard.style.height = '';
         modal.style.opacity = '0';
         modal.style.visibility = 'hidden';
         modal.setAttribute('aria-hidden', 'true');
@@ -795,6 +949,23 @@
         }
       });
     });
+
+    // 6. Keep locked viewport dimensions responsive when window resizes while modal is open
+    let resizeRafId = 0;
+    window.addEventListener(
+      'resize',
+      () => {
+        if (!isOpen || isAnimating) return;
+        if (resizeRafId) cancelAnimationFrame(resizeRafId);
+        resizeRafId = requestAnimationFrame(() => {
+          resizeRafId = 0;
+          if (isOpen && !isAnimating) {
+            syncCardViewportSize(activeSourceFrame);
+          }
+        });
+      },
+      { passive: true }
+    );
 
     // Public API
     Object.assign(window.Portfolio.carousel, {
