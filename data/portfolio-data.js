@@ -26,7 +26,6 @@
         imageAlt: 'BTN Mobile Banking Backoffice System',
         gallery: [
           'assets/btn/btn-dashboard-1.webp',
-          'assets/btn/btn-dashboard-2.webp',
           'assets/btn/btn-dashboard-3.webp',
           'assets/btn/btn-dashboard-4.webp'
         ]
@@ -96,7 +95,6 @@
         imageAlt: 'BNI Corporate Transactional Banking Portal',
         gallery: [
           'assets/bni/bni1.webp',
-          'assets/bni/bni2.webp',
           'assets/bni/bni3.webp',
           'assets/bni/bni4.webp'
         ]
