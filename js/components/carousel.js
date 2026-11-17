@@ -273,6 +273,7 @@
         img.width = 1200;
         img.height = 800;
         img.decoding = 'async';
+        img.draggable = false;
 
         if (idx === currentSlideIdx) {
           frame.style.visibility = 'visible';
@@ -306,7 +307,7 @@
         thumb.setAttribute('role', 'tab');
         thumb.setAttribute('aria-label', `Thumbnail ${idx + 1}`);
         thumb.setAttribute('aria-selected', idx === currentSlideIdx ? 'true' : 'false');
-        thumb.innerHTML = `<img src="${attrSrc}" alt="Thumbnail ${idx + 1}" width="72" height="46" decoding="async">`;
+        thumb.innerHTML = `<img src="${attrSrc}" alt="Thumbnail ${idx + 1}" width="72" height="46" decoding="async" draggable="false">`;
 
         thumb.addEventListener('click', () => {
           goToSlide(idx, idx > currentSlideIdx ? 1 : -1);

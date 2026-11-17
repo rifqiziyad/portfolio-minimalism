@@ -87,7 +87,7 @@
                role="button"
                tabindex="0"
                aria-label="View gallery for ${escapeAttr(item.title)}">
-            <img src="${safeSrc}"${srcsetAttr} alt="${escapeAttr(item.imageAlt || item.title)}" class="project-img" ${loadingAttr} decoding="async" width="${imgW}" height="${imgH}">
+            <img src="${safeSrc}"${srcsetAttr} alt="${escapeAttr(item.imageAlt || item.title)}" class="project-img" ${loadingAttr} decoding="async" width="${imgW}" height="${imgH}" draggable="false">
           </div>
         `;
       })

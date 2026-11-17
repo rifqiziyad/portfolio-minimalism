@@ -8,6 +8,17 @@
 (function (window, document) {
   'use strict';
 
+  // Disable native drag on all images and media across all browsers
+  document.addEventListener(
+    'dragstart',
+    function (e) {
+      if (e.target && (e.target.nodeName === 'IMG' || (e.target.closest && e.target.closest('img')))) {
+        e.preventDefault();
+      }
+    },
+    false
+  );
+
   function bootstrap() {
     const app = window.Portfolio || {};
 
